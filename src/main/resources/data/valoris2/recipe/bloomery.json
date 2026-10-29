@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MCM",
+    "C C",
+    "MFM"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:mud_bricks"
+    },
+    "C": {
+      "item": "minecraft:clay_ball"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "id": "valoris2:bloomery",
+    "count": 1
+  }
+}

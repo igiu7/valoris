@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,lit=false": { "model": "valoris2:block/bronze_furnace" },
+    "facing=north,lit=true": { "model": "valoris2:block/bronze_furnace_on" },
+    "facing=east,lit=false": { "model": "valoris2:block/bronze_furnace", "y": 90 },
+    "facing=east,lit=true": { "model": "valoris2:block/bronze_furnace_on", "y": 90 },
+    "facing=south,lit=false": { "model": "valoris2:block/bronze_furnace", "y": 180 },
+    "facing=south,lit=true": { "model": "valoris2:block/bronze_furnace_on", "y": 180 },
+    "facing=west,lit=false": { "model": "valoris2:block/bronze_furnace", "y": 270 },
+    "facing=west,lit=true": { "model": "valoris2:block/bronze_furnace_on", "y": 270 }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "valoris2:block/bronze_furnace",
+  "textures": {
+    "embers": "minecraft:block/magma",
+    "melt": "minecraft:block/lava_still",
+    "mouth": "minecraft:block/magma"
+  }
+}

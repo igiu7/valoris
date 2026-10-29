@@ -1,0 +1,12 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "antiquelegacy"
+    }
+  ],
+  "type": "neoforge:remove_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "antiquelegacy:ore_tin",
+  "steps": "underground_ores"
+}

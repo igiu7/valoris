@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "ingredient": {
+    "item": "valoris2:raw_horse_meat"
+  },
+  "result": {
+    "id": "valoris2:cooked_horse_meat"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

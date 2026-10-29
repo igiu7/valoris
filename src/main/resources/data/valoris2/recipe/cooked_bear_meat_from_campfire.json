@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "valoris2:raw_bear_meat"
+  },
+  "result": {
+    "id": "valoris2:cooked_bear_meat"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

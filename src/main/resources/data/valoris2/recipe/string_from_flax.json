@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "valoris2:flax" },
+    { "item": "valoris2:flax" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:string"
+  }
+}

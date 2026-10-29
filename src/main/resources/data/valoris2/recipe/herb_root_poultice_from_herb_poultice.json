@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "valoris2:honey_herb_poultice"
+    },
+    {
+      "item": "valoris2:medicinal_root"
+    }
+  ],
+  "result": {
+    "id": "valoris2:herb_root_poultice",
+    "count": 1
+  }
+}

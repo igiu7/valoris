@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tacz"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "III",
+    "TFP",
+    "  P"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "T": {
+      "item": "minecraft:tripwire_hook"
+    },
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "tacz:modern_kinetic_gun",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": {
+        "GunId": "qkl:fk15",
+        "GunFireMode": "SEMI",
+        "GunCurrentAmmoCount": 0,
+        "HasBulletInBarrel": false
+      }
+    }
+  }
+}

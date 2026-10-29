@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "S",
+    "|",
+    "|"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:ingots/bronze"
+    },
+    "|": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "valoris2:bronze_shovel",
+    "count": 1
+  }
+}

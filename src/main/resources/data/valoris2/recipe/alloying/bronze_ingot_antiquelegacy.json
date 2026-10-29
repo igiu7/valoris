@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "alltheores"
+      }
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "antiquelegacy"
+    }
+  ],
+  "type": "valoris2:alloying",
+  "first": [
+    { "tag": "c:ingots/copper" },
+    { "tag": "c:raw_materials/copper" }
+  ],
+  "first_count": 1,
+  "second": [
+    { "tag": "c:ingots/tin" },
+    { "tag": "c:raw_materials/tin" }
+  ],
+  "second_count": 1,
+  "result": {
+    "id": "antiquelegacy:bronze_ingot",
+    "count": 1
+  },
+  "experience": 0.5,
+  "cookingtime": 300
+}

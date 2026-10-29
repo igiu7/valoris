@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "ingredient": {
+    "item": "valoris2:raw_wolf_meat"
+  },
+  "result": {
+    "id": "valoris2:cooked_wolf_meat"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

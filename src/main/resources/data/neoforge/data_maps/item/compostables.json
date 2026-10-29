@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": {
+    "valoris2:flax_seeds": {
+      "chance": 0.3
+    },
+    "valoris2:flax": {
+      "chance": 0.65
+    },
+    "valoris2:medicinal_herbs": {
+      "chance": 0.3
+    },
+    "valoris2:medicinal_root": {
+      "chance": 0.3
+    }
+  }
+}

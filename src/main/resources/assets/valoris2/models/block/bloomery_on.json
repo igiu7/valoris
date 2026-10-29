@@ -1,0 +1,6 @@
+{
+  "parent": "valoris2:block/bloomery",
+  "textures": {
+    "mouth": "minecraft:block/magma"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "|S|",
+    "BBB",
+    "BNB"
+  ],
+  "key": {
+    "|": {
+      "item": "minecraft:stick"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "B": {
+      "tag": "c:ingots/bronze"
+    },
+    "N": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "result": {
+    "id": "minecraft:bell",
+    "count": 1
+  }
+}

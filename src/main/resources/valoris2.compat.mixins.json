@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.valoris.compatmixin",
+  "plugin": "com.valoris.compat.CompatMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractWagonMixin",
+    "LanceChargeMixin",
+    "SiegeExplosionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

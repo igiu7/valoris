@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:mul",
+  "argument1": 0.125,
+  "argument2": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:cache_2d",
+      "argument": {
+        "type": "valoris2:map_height"
+      }
+    },
+    "argument2": {
+      "type": "minecraft:y_clamped_gradient",
+      "from_y": -64,
+      "to_y": 320,
+      "from_value": 64.0,
+      "to_value": -320.0
+    }
+  }
+}

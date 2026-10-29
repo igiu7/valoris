@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "valoris2:city_banner",
+    "valoris2:bloomery",
+    "valoris2:steel_furnace",
+    "valoris2:bronze_furnace",
+    "valoris2:quartz_ore",
+    "valoris2:deepslate_quartz_ore"
+  ]
+}

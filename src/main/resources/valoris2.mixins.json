@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.valoris.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CraftingMenuMixin",
+    "MushroomBlockMixin",
+    "LiquidBlockMixin",
+    "ChunkTeamDataImplMixin",
+    "SmithingMenuMixin",
+    "TrackedEntityMixin",
+    "TrackedEntityAccessor",
+    "ChunkMapAccessor",
+    "PlayerLeaveMessageMixin",
+    "PartyTeamMixin",
+    "SaplingBlockMixin",
+    "BambooSaplingBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "HumanoidModelMixin",
+    "MapScreenButtonPanelMixin",
+    "LargeMapScreenMixin",
+    "ChunkScreenMixin",
+    "ChunkScreenTopPanelMixin",
+    "WaypointManagerImplMixin",
+    "FTBChunksClientMixin"
+  ]
+}

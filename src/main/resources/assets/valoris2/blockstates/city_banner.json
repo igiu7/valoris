@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "valoris2:block/city_banner" },
+    "facing=east":  { "model": "valoris2:block/city_banner", "y": 90 },
+    "facing=south": { "model": "valoris2:block/city_banner", "y": 180 },
+    "facing=west":  { "model": "valoris2:block/city_banner", "y": 270 }
+  }
+}

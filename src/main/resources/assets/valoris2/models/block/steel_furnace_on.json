@@ -1,0 +1,6 @@
+{
+  "parent": "valoris2:block/steel_furnace",
+  "textures": {
+    "mouth": "minecraft:block/magma"
+  }
+}

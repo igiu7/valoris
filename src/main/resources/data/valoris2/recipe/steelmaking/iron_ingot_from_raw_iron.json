@@ -1,0 +1,12 @@
+{
+  "type": "valoris2:steelmaking",
+  "category": "misc",
+  "ingredient": {
+    "tag": "c:raw_materials/iron"
+  },
+  "result": {
+    "id": "minecraft:iron_ingot"
+  },
+  "experience": 0.7,
+  "cookingtime": 200
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "valoris2:flax"
+    }
+  },
+  "result": {
+    "id": "valoris2:linen_bandage",
+    "count": 2
+  }
+}

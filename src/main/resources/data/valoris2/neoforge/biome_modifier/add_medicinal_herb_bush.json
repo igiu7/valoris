@@ -1,0 +1,27 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:and",
+    "values": [
+      "#minecraft:is_overworld",
+      {
+        "type": "neoforge:not",
+        "value": {
+          "type": "neoforge:or",
+          "values": [
+            "#minecraft:is_badlands",
+            "#c:is_desert",
+            [
+              "minecraft:desert",
+              "minecraft:badlands",
+              "minecraft:eroded_badlands",
+              "minecraft:wooded_badlands"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "features": "valoris2:patch_medicinal_herb_bush",
+  "step": "vegetal_decoration"
+}

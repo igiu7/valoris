@@ -1,0 +1,10 @@
+{
+  "music.track": {
+    "sounds": [
+      {
+        "name": "valoris2:music/silence",
+        "stream": true
+      }
+    ]
+  }
+}

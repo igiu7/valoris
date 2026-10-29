@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:honey_bottle"
+    },
+    {
+      "item": "valoris2:linen_bandage"
+    },
+    {
+      "item": "valoris2:linen_bandage"
+    }
+  ],
+  "result": {
+    "id": "valoris2:honey_poultice",
+    "count": 1
+  }
+}
