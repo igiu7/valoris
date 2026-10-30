@@ -1024,7 +1024,7 @@ public final class HubScreen extends ValorisFrame {
             "Make gear at the Armory Table or crafting table, smelt metal - better materials give more",
             "Harvest ripe crops, flax, melons, pumpkins, cane, berries and herbs, breed animals",
             "Mine stone and ores with a pickaxe - rarer ores and harder stone give more",
-            "Hunt wolf packs and wild animals - wolves and pack leaders give the most"};
+            "Hunt wolf packs, bears and animals, and fish with a rod - bears give the most"};
     private static final int MAX_SKILL_LEVEL = com.valoris.skill.SkillCurve.MAX_LEVEL;
 
     private static Icon skillIcon(int i) {

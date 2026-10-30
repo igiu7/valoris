@@ -269,20 +269,29 @@ public final class XpRules {
 
     // ------------------------------------------------------------------ hunter
 
-    public static final double WOLF = 100;
-    public static final double WOLF_LEADER = 200;
+    // a whole pack (6-8 wolves) is worth about 240-320 XP. The leader is worth no more: when it dies another wolf
+    // of the pack takes the lead, so a bonus for leaders could be earned again and again on one pack
+    public static final double WOLF = 40;
+    public static final double WOLF_LEADER = WOLF;
     /** A lone bear: 60 health and a heavy blow. */
-    public static final double BEAR = 300;
+    public static final double BEAR = 150;
+
+    // fishing (FishingRules): a fish, treasure (name tag, saddle, nautilus shell...), junk
+    public static final double FISH = 12;
+    public static final double FISH_TREASURE = 25;
+    public static final double FISH_JUNK = 4;
 
     /**
      * XP for killing a creature. Hostile mobs no longer spawn on their own, so wolf packs (6-8 wolves, every pack
-     * fights together) are the hunter's main prey; wild animals give a little; pets and babies give nothing.
+     * fights together) are the hunter's main prey; wild animals give a little; pets and babies give nothing; fish
+     * almost nothing (hunters catch them with a rod, see FishingRules).
      */
     public static double hunter(LivingEntity victim) {
         if (victim.isBaby()) return 0;
         if (victim instanceof OwnableEntity owned && owned.getOwnerUUID() != null) return 0; // someone's pet or horse
         if (victim instanceof Wolf wolf) return WolfPacks.isLeader(wolf) ? WOLF_LEADER : WOLF;
         if (victim instanceof com.valoris.mobs.Bear) return BEAR;
+        if (victim instanceof net.minecraft.world.entity.animal.AbstractFish) return 1;
         if (victim instanceof EnderDragon) return 1500;
         if (victim instanceof WitherBoss) return 1200;
         if (victim instanceof Warden) return 800;
@@ -290,7 +299,7 @@ public final class XpRules {
         float hp = victim.getMaxHealth();
         if (victim instanceof Enemy) return clamp(hp * 0.8, 3, 120);          // spawner and structure mobs
         if (victim instanceof Animal || victim instanceof WaterAnimal || victim instanceof AmbientCreature) {
-            return clamp(hp, 3, 30);                                           // cow and pig 10, chicken 4
+            return clamp(hp * 0.5, 2, 15);                                     // cow and pig 5, chicken 2
         }
         return 0;
     }

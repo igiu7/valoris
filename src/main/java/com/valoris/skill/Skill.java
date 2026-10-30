@@ -11,7 +11,7 @@ public enum Skill {
     BLACKSMITH("Blacksmith", "Make tools, weapons and armor at the Armory Table or crafting table, smelt metal in the bloomery and steel furnace (better materials give more)"),
     FARMER("Farmer", "Harvest ripe crops, flax, melons, pumpkins, cane, berries and medicinal herbs, and breed animals"),
     MINER("Miner", "Mine stone and ores with a pickaxe (rarer ores and harder stone give more)"),
-    HUNTER("Hunter", "Hunt wolf packs and wild animals (wolves, and pack leaders most of all, give the most)");
+    HUNTER("Hunter", "Hunt wolf packs, bears and wild animals, and catch fish with a fishing rod (bears give the most)");
 
     public final String title;
     public final String description;

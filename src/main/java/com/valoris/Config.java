@@ -276,6 +276,10 @@ public class Config {
     public static final ModConfigSpec.IntValue MOOSHROOM_STEW_MINUTES = BUILDER
             .comment("A mooshroom gives stew (or suspicious stew) only once every this many minutes (server time)")
             .defineInRange("food.mooshroomStewMinutes", 20, 0, 10000);
+    public static final ModConfigSpec.DoubleValue FISH_MOB_DROP_CHANCE = BUILDER
+            .comment("Chance that a fish killed in the water (cod, salmon, tropical fish, pufferfish) drops anything;",
+                    "fish are caught with a fishing rod (which also gives Hunter XP). 1 = always, as in vanilla")
+            .defineInRange("food.fishMobDropChance", 0.25, 0.0, 1.0);
     public static final ModConfigSpec.BooleanValue STEW_NO_REGENERATION = BUILDER
             .comment("Suspicious stew never gives Regeneration")
             .define("food.stewNoRegeneration", true);

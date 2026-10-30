@@ -28,6 +28,7 @@
     "ChunkScreenMixin",
     "ChunkScreenTopPanelMixin",
     "WaypointManagerImplMixin",
-    "FTBChunksClientMixin"
+    "FTBChunksClientMixin",
+    "TitleBackgroundMixin"
   ]
 }
