@@ -31,10 +31,14 @@ public abstract class ChunkTeamDataImplMixin {
         cir.setReturnValue(0);
     }
 
-    /** Everyone from any city of a kingdom may do everything in every city of that kingdom, like its residents. */
+    /**
+     * Everyone from any city of a kingdom may do everything in every city of that kingdom, like its residents; so may
+     * the winners of a siege in the fallen city during its looting time (war.Looting).
+     */
     @Inject(method = "canPlayerUse", at = @At("HEAD"), cancellable = true)
     private void valoris$kingdomShares(ServerPlayer player, PrivacyProperty property, CallbackInfoReturnable<Boolean> cir) {
-        if (KingdomProtection.sameKingdom(player, ((ChunkTeamDataImpl) (Object) this).getTeam().getId())) {
+        java.util.UUID team = ((ChunkTeamDataImpl) (Object) this).getTeam().getId();
+        if (KingdomProtection.sameKingdom(player, team) || com.valoris.war.Looting.mayLoot(player, team)) {
             cir.setReturnValue(true);
         }
     }

@@ -26,8 +26,8 @@ final class WarCommands {
                         .then(Commands.literal("subjugate").executes(c -> CommandUtil.run(c, ConquestService::subjugate)))
                         // the ruler is no longer asked: the old command forces the city in as well
                         .then(Commands.literal("invite").executes(c -> CommandUtil.run(c, ConquestService::subjugate)))
-                        .then(Commands.literal("destroy").executes(c -> CommandUtil.run(c, ConquestService::destroy)))
                         .then(Commands.literal("release").executes(c -> CommandUtil.run(c, ConquestService::release)))
+                        .then(Commands.literal("loot").executes(c -> CommandUtil.run(c, ConquestService::loot)))
                         .then(Commands.literal("accept").executes(c -> CommandUtil.run(c, ConquestService::accept)))
                         .then(Commands.literal("decline").executes(c -> CommandUtil.run(c, ConquestService::decline))));
     }

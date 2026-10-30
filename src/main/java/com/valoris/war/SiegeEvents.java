@@ -195,6 +195,30 @@ public class SiegeEvents {
         return siege.isPresent() && !SiegeService.isParticipant(player, siege.get()) && !player.isCreative();
     }
 
+    /** Doors, trapdoors, fence gates, buttons and levers: what the attackers may not use during the siege. */
+    private static boolean isDefenderMechanism(net.minecraft.world.level.block.state.BlockState state) {
+        var b = state.getBlock();
+        return b instanceof net.minecraft.world.level.block.DoorBlock
+                || b instanceof net.minecraft.world.level.block.TrapDoorBlock
+                || b instanceof net.minecraft.world.level.block.FenceGateBlock
+                || b instanceof net.minecraft.world.level.block.ButtonBlock
+                || b instanceof net.minecraft.world.level.block.LeverBlock;
+    }
+
+    /** An attacker (not in creative mode) on the land of a city under an active siege. */
+    public static boolean attackerInActiveSiege(ServerPlayer player, BlockPos pos) {
+        if (player.isCreative() || !(player.level() instanceof ServerLevel level)) return false;
+        ValorisData data = ValorisData.get(level.getServer());
+        if (data.sieges().isEmpty()) return false;
+        Optional<Siege> siege = activeSiegeAt(data, level, pos);
+        return siege.isPresent() && SiegeService.isAttacker(player, siege.get());
+    }
+
+    /** Pressure plates do not react to attackers standing on them during an active siege (mixin.PressurePlateMixin). */
+    public static boolean blocksAttacker(net.minecraft.world.entity.Entity entity) {
+        return entity instanceof ServerPlayer player && attackerInActiveSiege(player, player.blockPosition());
+    }
+
     private static void deny(ServerPlayer player, String message) {
         player.displayClientMessage(Msg.text(message, ChatFormatting.RED), true);
     }
@@ -206,6 +230,13 @@ public class SiegeEvents {
         if (outsider(player, event.getPos())) {
             event.setCanceled(true);
             deny(player, "This city is under siege. Only the two sides may act here.");
+            return;
+        }
+        // the attackers cannot open the defenders' doors and gates or work their buttons and levers: they must
+        // break in (pressure plates do not react to them either, see blocksAttacker)
+        if (isDefenderMechanism(player.level().getBlockState(event.getPos())) && attackerInActiveSiege(player, event.getPos())) {
+            event.setCanceled(true);
+            deny(player, "Besiegers cannot open doors and gates or use buttons and levers here. Break through!");
             return;
         }
         // no flooding or burning a besieged city

@@ -34,8 +34,8 @@ import net.minecraft.server.level.ServerPlayer;
 /**
  * What happens after a city fell: a conquering king appoints a new ruler (a resident of the city or one of his
  * own) or forces the city to submit with its current ruler - both add the city to his kingdom; or he leaves the
- * city alone (it is free again) or destroys it with its FTB team. The ruler of an independent city has no kingdom
- * to add it to, so he can only leave it alone or destroy it. A fallen capital has already ended its kingdom
+ * city alone (it is free again). A conquered city is never destroyed: the winners loot it instead (see Looting).
+ * The ruler of an independent city has no kingdom to add it to, so he can only leave it alone. A fallen capital has already ended its kingdom
  * (SiegeService.captured): its other cities are free, and its king may go on ruling it under the conqueror.
  */
 public final class ConquestService {
@@ -127,11 +127,11 @@ public final class ConquestService {
 
     /**
      * A conquered city can only be added to a kingdom: the ruler of an independent city (no kingdom) can just leave
-     * it alone or destroy it.
+     * it alone.
      */
     private static void requireKingdomWithRoom(Realm atk) throws CommandSyntaxException {
         if (!atk.isKingdom()) {
-            throw Errors.of("The City of " + atk.name() + " has no kingdom to add the city to. Leave it alone or destroy it.");
+            throw Errors.of("The City of " + atk.name() + " has no kingdom to add the city to. Leave it alone.");
         }
         KingdomService.checkRoom(atk.kingdom());
     }
@@ -230,23 +230,28 @@ public final class ConquestService {
         ValorisData data = ValorisData.get(server);
         if (c.state == ConquestState.AWAITING_RULER) throw Errors.of("You are waiting for the ruler's answer.");
         data.removeConquest(c.cityTeam);
+        Looting.forgetWinners(c.cityTeam);
         Msg.broadcast(server, Msg.text("The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " spared the city of "
                 + c.cityName + ". It is free again.", ChatFormatting.YELLOW));
         data.byTeam(c.cityTeam).ifPresent(city -> Msg.toPlayer(server, city.ruler,
                 Msg.text("Your city was spared and is free again.", ChatFormatting.GREEN)));
     }
 
-    /** Option 3: destroy the city and its FTB team. */
-    public static void destroy(ServerPlayer king) throws CommandSyntaxException {
+    /**
+     * Option 3: loot the city. Everyone who won the siege may plunder its land for lootingMinutes (see Looting);
+     * then the city is free again, like a released one. Open to the ruler of an independent city too.
+     */
+    public static void loot(ServerPlayer king) throws CommandSyntaxException {
         Conquest c = requireOwn(king);
         MinecraftServer server = king.getServer();
         ValorisData data = ValorisData.get(server);
-        City city = data.byTeam(c.cityTeam).orElseThrow(() -> Errors.of("That city no longer exists."));
-        String name = city.name;
-        CityService.destroyCity(server, city, server.createCommandSourceStack());
+        if (c.state == ConquestState.AWAITING_RULER) throw Errors.of("You are waiting for the ruler's answer.");
+        if (Looting.minutes() <= 0) throw Errors.of("Looting is turned off on this server.");
+        data.byTeam(c.cityTeam).orElseThrow(() -> Errors.of("That city no longer exists."));
         data.removeConquest(c.cityTeam);
-        Msg.broadcast(server, Msg.text("The city of " + name + " has been destroyed by the "
-                + Realms.title(data, c.attackerKingdom, c.attackerName) + ".", ChatFormatting.DARK_RED));
+        Msg.broadcast(server, Msg.text("The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " loots the city of "
+                + c.cityName + "! It will be free again in " + Looting.minutes() + " minutes.", ChatFormatting.DARK_RED));
+        Looting.start(server, c.cityTeam, c.cityName, c.attackerKingdom);
     }
 
     // ------------------------------------------------------------ the conquered ruler's answer
@@ -295,6 +300,7 @@ public final class ConquestService {
     /** The conquered city joins the conqueror; an independent conqueror becomes a kingdom for that. */
     private static Kingdom annex(MinecraftServer server, ValorisData data, Conquest c, City city, Realm atk) {
         data.removeConquest(c.cityTeam);
+        Looting.forgetWinners(c.cityTeam);
         Kingdom k = Realms.asKingdom(server, data, atk);
         KingdomService.dropCityDiplomacy(data, city);
         k.cities.add(city.teamId);
@@ -312,6 +318,7 @@ public final class ConquestService {
         for (Conquest c : List.copyOf(data.conquests())) {
             if (data.byTeam(c.cityTeam).isEmpty() || Realms.byId(data, c.attackerKingdom).isEmpty()) {
                 data.removeConquest(c.cityTeam); // city or conquering kingdom is gone: the city stays independent
+                Looting.forgetWinners(c.cityTeam);
                 continue;
             }
             if (c.state == ConquestState.CHOOSING) {
@@ -320,6 +327,7 @@ public final class ConquestService {
                     data.touch();
                 } else if (now >= c.decideBy) {   // the conqueror never decided: the city goes free
                     data.removeConquest(c.cityTeam);
+                    Looting.forgetWinners(c.cityTeam);
                     Msg.broadcast(server, Msg.text("The " + Realms.title(data, c.attackerKingdom, c.attackerName)
                             + " did not decide the fate of " + c.cityName + " in time. The city is free again.",
                             ChatFormatting.YELLOW));

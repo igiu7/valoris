@@ -15,7 +15,8 @@
     "PlayerLeaveMessageMixin",
     "PartyTeamMixin",
     "SaplingBlockMixin",
-    "BambooSaplingBlockMixin"
+    "BambooSaplingBlockMixin",
+    "PressurePlateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

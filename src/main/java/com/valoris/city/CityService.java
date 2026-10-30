@@ -384,9 +384,10 @@ public final class CityService {
             throw Errors.of("Your city belongs to the Kingdom of " + kingdom.get().name
                     + ". Only the king can release it, or you can rebel.");
         }
-        if (SiegeService.isUnderSiege(data, city.teamId)) {
-            throw Errors.of("You cannot disband the city during a siege.");
-        }
+        // neither a besieged city nor an independent city that is besieging another one can slip away
+        boolean siege = data.sieges().stream().anyMatch(s -> s.isAttacking(city.teamId) || s.cityTeam.equals(city.teamId));
+        if (siege) throw Errors.of("You cannot disband the city during a siege.");
+        if (com.valoris.war.Looting.involves(city.teamId)) throw Errors.of("You cannot disband the city during the looting time.");
         com.valoris.war.ConquestService.checkNotConquered(data, city);
         destroyCity(player.getServer(), city, player.createCommandSourceStack());
         CityBanner.removeAll(player);

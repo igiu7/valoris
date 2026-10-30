@@ -27,7 +27,8 @@ public final class HubScreen extends ValorisFrame {
         DIPLOMACY("Diplomacy", Icons.GLOBE),
         TECH("Technology", Icons.BEACON),
         SKILLS("Skills", Icons.BOOK),
-        NOTICES("Notice Board", ItemIcon.getItemIcon(Items.OAK_SIGN));
+        NOTICES("Notice Board", ItemIcon.getItemIcon(Items.OAK_SIGN)),
+        LEADERBOARD("Leaderboard", ItemIcon.getItemIcon(Items.GOLDEN_HELMET));
 
         final String label;
         final Icon icon;
@@ -102,16 +103,52 @@ public final class HubScreen extends ValorisFrame {
         };
     }
 
+    private static final int TAB_STEP = 27;
+    private static double sidebarScroll;
+
+    /** The tabs scroll with the mouse wheel when they do not all fit (small windows). */
     @Override
     protected void addSidebar() {
-        GuiState s = state();
-        int y = HEADER_H + 6;
-        for (Tab t : Tab.values()) {
-            Buttons.SidebarButton button = new Buttons.SidebarButton(this, sidebarW - 8, t.label, t.icon,
-                    t == tab, badgeFor(t, s), accent(), () -> select(t));
-            button.setPos(4, y);
-            add(button);
-            y += 27;
+        int top = HEADER_H + 6, h = height - HEADER_H - FOOTER_H - 8;
+        TabPanel tabs = new TabPanel(this);
+        tabs.setPosAndSize(4, top, sidebarW - 9, h);
+        add(tabs);
+        dev.ftb.mods.ftblibrary.ui.PanelScrollBar bar = new dev.ftb.mods.ftblibrary.ui.PanelScrollBar(this,
+                dev.ftb.mods.ftblibrary.ui.ScrollBar.Plane.VERTICAL, tabs);
+        bar.setPosAndSize(sidebarW - 4, top, 3, h);
+        add(bar);
+    }
+
+    private final class TabPanel extends Panel {
+        TabPanel(Panel parent) {
+            super(parent);
+            setOnlyRenderWidgetsInside(true);
+            setOnlyInteractWithWidgetsInside(true);
+            setScrollStep(TAB_STEP);
+        }
+
+        @Override
+        public void addWidgets() {
+            GuiState s = state();
+            int y = 0;
+            for (Tab t : Tab.values()) {
+                Buttons.SidebarButton button = new Buttons.SidebarButton(this, width, t.label, t.icon,
+                        t == tab, badgeFor(t, s), accent(), () -> select(t));
+                button.setPos(0, y);
+                add(button);
+                y += TAB_STEP;
+            }
+            setScrollY(sidebarScroll);
+        }
+
+        @Override
+        public void alignWidgets() {
+        }
+
+        @Override
+        public void setScrollY(double scroll) {
+            super.setScrollY(scroll);
+            sidebarScroll = scroll;
         }
     }
 
@@ -194,7 +231,33 @@ public final class HubScreen extends ValorisFrame {
             case TECH -> technology(p, cw, s);
             case SKILLS -> skills(p, cw, s);
             case NOTICES -> notices(p, cw, s);
+            case LEADERBOARD -> leaderboard(p, cw, s);
         }
+    }
+
+    // ---- leaderboard ----
+
+    private static LeaderboardWidgets.Sort leaderSort = LeaderboardWidgets.Sort.KILLS;
+
+    private void leaderboard(Panel p, int cw, GuiState s) {
+        section(p, cw, "Leaderboard");
+        if (s.leaderboard.isEmpty()) {
+            note(p, cw, "There are no kingdoms or cities yet. Found a city to appear here.", Ui.GRAY, Icons.INFO);
+            return;
+        }
+        List<com.valoris.net.LeaderRow> sorted = LeaderboardWidgets.sorted(s.leaderboard, leaderSort);
+        p.add(new LeaderboardWidgets.Podium(p, cw, sorted, leaderSort));
+        p.add(new LeaderboardWidgets.SortBar(p, cw, leaderSort, i -> {
+            leaderSort = LeaderboardWidgets.Sort.values()[i];
+            refreshWidgets();
+        }));
+        section(p, cw, "All realms (" + sorted.size() + ")");
+        for (int i = 0; i < sorted.size(); i++) {
+            p.add(new LeaderboardWidgets.RankRow(p, cw, sorted.get(i), i + 1, leaderSort));
+        }
+        note(p, cw, "Kingdoms and free cities. Kills and deaths add up every resident's (kills: players killed; deaths: any"
+                + " cause). Sieges are counted for the realm that fought them. Hover a realm for all its statistics.",
+                Ui.GRAY, Icons.INFO);
     }
 
     // ---- overview ----

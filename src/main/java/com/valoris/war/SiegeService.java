@@ -227,6 +227,7 @@ public final class SiegeService {
             }
         }
         SiegeAnnouncer.cleanBars(data);
+        Looting.tick(server);
         ConquestService.tick(server, data, now);
     }
 
@@ -280,6 +281,11 @@ public final class SiegeService {
 
     // ------------------------------------------------------------ outcomes
 
+    /** The city a realm's leaderboard credits go to: the capital of a kingdom, or the independent city itself. */
+    private static Optional<java.util.UUID> leaderCity(ValorisData data, java.util.UUID realm) {
+        return Realms.byId(data, realm).map(r -> r.isKingdom() ? r.kingdom().capital : r.city().teamId);
+    }
+
     /** The wars a siege belongs to: those in which one of its attackers fights the defender. */
     public static java.util.Set<ValorisData.War> warsOf(ValorisData data, Siege s) {
         java.util.Set<ValorisData.War> out = new java.util.LinkedHashSet<>();
@@ -295,6 +301,9 @@ public final class SiegeService {
             w.log("The " + Realms.title(data, s.attackerKingdom, s.attackerName) + " conquered " + s.cityName + ".");
         }
         List<ServerPlayer> involved = SiegeAnnouncer.participants(server, s);
+        java.util.Set<java.util.UUID> winners = attackersOf(data, s);
+        com.valoris.data.LeaderboardData board = com.valoris.data.LeaderboardData.get(server);
+        for (java.util.UUID realm : winners) leaderCity(data, realm).ifPresent(board::addSiegeWon);
         SiegeAnnouncer.removeBar(s.id);
         SiegeAnnouncer.captured(server, s, involved);
         Msg.broadcast(server, Msg.text("VICTORY for " + attackersTitle(data, s) + "! The city banner of " + s.cityName
@@ -308,6 +317,8 @@ public final class SiegeService {
         data.addConquest(conquest);
         // the city leaves its old kingdom (if it was the capital, that kingdom falls)
         data.kingdomById(s.defenderKingdom).ifPresent(k -> KingdomService.detachCity(server, data, k, city));
+        // everyone who won the siege takes part if the conqueror chooses to loot the city
+        Looting.rememberWinners(city.teamId, winners);
         ConquestService.openMenu(server, data, conquest, "");
     }
 
@@ -316,6 +327,7 @@ public final class SiegeService {
             w.siegesRepelled[w.sideOf(s.defenderKingdom)]++;
             w.log("The defenders held " + s.cityName + " against " + attackersTitle(data, s) + ".");
         }
+        leaderCity(data, s.defenderKingdom).ifPresent(com.valoris.data.LeaderboardData.get(server)::addSiegeRepelled);
         SiegeAnnouncer.removeBar(s.id);
         SiegeAnnouncer.defended(server, s);
         Msg.broadcast(server, Msg.text("The siege of " + s.cityName + " has failed! The defenders of the "

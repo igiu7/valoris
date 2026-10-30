@@ -277,6 +277,42 @@ public final class StateBuilder {
         // truces of my realm
         realm.ifPresent(mine -> data.trucesOf(mine.id()).forEach((id, until) -> Realms.byId(data, id).ifPresent(other ->
                 s.truces.add(new Row(other.name(), "", "", (int) Math.max(1, (until - System.currentTimeMillis()) / 1000), 0)))));
+
+        s.leaderboard = leaderboard(server, data, realm.map(Realm::id).orElse(null));
         return s;
+    }
+
+    /**
+     * Every kingdom and independent city with its statistics: kills and deaths of all its residents, its land,
+     * residents, cities, technologies and sieges won / repelled (LeaderboardData).
+     */
+    private static List<LeaderRow> leaderboard(MinecraftServer server, ValorisData data, UUID mine) {
+        com.valoris.data.LeaderboardData board = com.valoris.data.LeaderboardData.get(server);
+        List<LeaderRow> out = new java.util.ArrayList<>();
+        for (Realm r : Realms.all(data)) {
+            int[] st = new int[LeaderRow.COUNT];
+            java.util.Set<UUID> residents = new java.util.HashSet<>();
+            for (UUID cityId : Realms.citiesOf(r)) {
+                Team team = FTBTeamsAPI.api().getManager().getTeamByID(cityId).orElse(null);
+                if (team != null) {
+                    residents.addAll(team.getMembers());
+                    st[LeaderRow.LAND] += FTBChunksAPI.api().getManager().getOrCreateData(team).getClaimedChunks().size();
+                }
+                data.byTeam(cityId).ifPresent(c -> st[LeaderRow.TECHS] = Math.max(st[LeaderRow.TECHS], c.techs.size()));
+                st[LeaderRow.SIEGES_WON] += board.siegesWon(cityId);
+                st[LeaderRow.SIEGES_REPELLED] += board.siegesRepelled(cityId);
+            }
+            for (UUID id : residents) {
+                st[LeaderRow.KILLS] += board.kills(id);
+                st[LeaderRow.DEATHS] += board.deaths(id);
+            }
+            st[LeaderRow.RESIDENTS] = residents.size();
+            st[LeaderRow.CITIES] = Realms.citiesOf(r).size();
+            String leaderName = Realms.leaderOf(data, r).map(id -> Msg.nameOf(server, id)).orElse("?");
+            int color = r.isKingdom() ? com.valoris.realm.Heraldry.kingdomColor(r.kingdom())
+                    : com.valoris.realm.Heraldry.teamColor(r.city().teamId);
+            out.add(new LeaderRow(r.name(), leaderName, r.isKingdom(), color, r.id().equals(mine), st));
+        }
+        return out;
     }
 }

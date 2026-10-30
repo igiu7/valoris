@@ -161,7 +161,7 @@ public final class Inbox {
         int left = (int) Math.max(0, (c.deadline - server.overworld().getGameTime()) / 20);
         return new Entry("cq:" + c.cityTeam, "conquest", "The " + by + " conquered " + c.cityName,
                 "Your city fell in a siege. The " + by + " asks you to stay its ruler and join them. If you decline, they "
-                        + "decide again: they may appoint another resident as ruler or destroy the city.",
+                        + "decide again: they may appoint another resident as ruler or let the city go.",
                 "Join them", "valoris war conquest accept", "Decline", "valoris war conquest decline", left);
     }
 

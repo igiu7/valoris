@@ -320,6 +320,7 @@ public final class KingdomService {
         if (!data.warsOf(k.id).isEmpty()) throw Errors.of("Your kingdom is at war. Make peace before dissolving it.");
         boolean siege = data.sieges().stream().anyMatch(s -> s.isAttacking(k.id) || s.defenderKingdom.equals(k.id));
         if (siege) throw Errors.of("Your kingdom is involved in a siege.");
+        if (com.valoris.war.Looting.involves(k.id)) throw Errors.of("Your kingdom is looting a city. Wait until the looting time is over.");
         Msg.broadcast(server, Msg.text("The Kingdom of " + k.name + " has been dissolved by its king.", ChatFormatting.GOLD));
         dissolve(ValorisData.get(server), k);
     }

@@ -7,11 +7,12 @@ import com.valoris.net.Row;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 
 /**
  * Shown to the conquering king after a city fell: appoint a ruler (a resident of the city or one of his own),
- * force the city into the kingdom with its current ruler, leave the city alone or destroy the city and its FTB team.
+ * force the city into the kingdom with its current ruler, loot it (then it is free) or leave it alone.
  */
 public final class ConquestScreen extends ValorisFrame {
     private final ConquestPayload data;
@@ -91,10 +92,10 @@ public final class ConquestScreen extends ValorisFrame {
 
         if (!data.kingdom()) {
             p.add(new Widgets.InfoBox(p, cw, "Your city belongs to no kingdom, so it cannot take the conquered city in."
-                    + " You can leave it alone or destroy it. (Found a kingdom first to be able to add conquered cities to it.)",
+                    + " You can leave it alone or loot it. (Found a kingdom first to be able to add conquered cities to it.)",
                     Ui.ORANGE, Icons.INFO));
         } else if (data.full()) {
-            p.add(new Widgets.InfoBox(p, cw, "Your kingdom is full, so the city cannot join it. You can leave it alone or destroy it.",
+            p.add(new Widgets.InfoBox(p, cw, "Your kingdom is full, so the city cannot join it. You can leave it alone or loot it.",
                     Ui.ORANGE, Icons.INFO));
         } else {
             p.add(new Widgets.SectionHeader(p, cw, "Keep the city"));
@@ -111,20 +112,23 @@ public final class ConquestScreen extends ValorisFrame {
                             })));
         }
 
+        p.add(new Widgets.SectionHeader(p, cw, "Plunder it"));
+        p.add(new Tile(p, cw, "Loot the city", "Everyone who won the siege may plunder it for a few minutes; then it is free",
+                ItemIcon.getItemIcon(net.minecraft.world.item.Items.CHEST)).accent(Ui.ORANGE)
+                .click(() -> confirm("Loot " + data.city() + "?",
+                        "Looting Time! For a few minutes your side may do anything on the city's land: open its chests"
+                                + " and doors, break and build. Then the city becomes free (independent) again.",
+                        Ui.ORANGE, () -> {
+                            ClientActions.command("valoris war conquest loot");
+                            closeGui();
+                        })));
+
         p.add(new Widgets.SectionHeader(p, cw, "Leave it"));
         p.add(new Tile(p, cw, "Leave the city alone", "Nothing happens to it: it keeps its ruler and land and is free again",
                 Icons.CANCEL).accent(Ui.GRAY)
                 .click(() -> confirm("Leave " + data.city() + " alone?",
                         "The city stays as it is and becomes free (independent) again. You cannot decide later.", Ui.GRAY, () -> {
                             ClientActions.command("valoris war conquest release");
-                            closeGui();
-                        })));
-
-        p.add(new Widgets.SectionHeader(p, cw, "Destroy"));
-        p.add(new Tile(p, cw, "Destroy the city", "Removes the city, its claims and its team", Icons.BIN).accent(Ui.RED)
-                .click(() -> confirm("Destroy " + data.city() + "?",
-                        "The city and its FTB team are removed for good. This cannot be undone.", Ui.RED, () -> {
-                            ClientActions.command("valoris war conquest destroy");
                             closeGui();
                         })));
     }

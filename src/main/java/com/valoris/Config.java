@@ -51,6 +51,11 @@ public class Config {
                     "seconds per player (bystanders cannot build there at all). 0 = no limit")
             .defineInRange("siegeBlockPlaceSeconds", 10, 0, 3600);
 
+    public static final ModConfigSpec.IntValue LOOTING_MINUTES = BUILDER
+            .comment("Looting time, one of the choices after a won siege: the winning side may do anything on the fallen city's land (break,",
+                    "build, open chests and doors...) for this many minutes, then the city is free. 0 = no looting option")
+            .defineInRange("lootingMinutes", 5, 0, 1440);
+
     public static final ModConfigSpec.DoubleValue SIEGE_MIN_ONLINE = BUILDER
             .comment("A siege can only be declared on a city when more than this fraction of the residents of the defending",
                     "realm (the city's kingdom, or the city alone if it is in no kingdom) are online. 0 = no requirement")

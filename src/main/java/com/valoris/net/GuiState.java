@@ -82,6 +82,8 @@ public class GuiState {
     public List<NoticeRow> notices = new ArrayList<>();
     // Row(realmName, "", "", secondsLeft, 0): truces of my realm (no war with them until the time is up)
     public List<Row> truces = new ArrayList<>();
+    // every kingdom and independent city with its statistics (the client sorts them)
+    public List<LeaderRow> leaderboard = new ArrayList<>();
 
     private static void writeStrings(FriendlyByteBuf buf, List<String> list) {
         buf.writeCollection(list, (b, s) -> b.writeUtf(s));
@@ -147,6 +149,7 @@ public class GuiState {
         buf.writeUtf(researching);
         buf.writeCollection(notices, (b, n) -> n.write(b));
         writeRows(buf, truces);
+        buf.writeCollection(leaderboard, (b, r) -> r.write(b));
     }
 
     public static GuiState read(FriendlyByteBuf buf) {
@@ -198,6 +201,7 @@ public class GuiState {
         s.researching = buf.readUtf();
         s.notices = buf.readList(NoticeRow::read);
         s.truces = readRows(buf);
+        s.leaderboard = buf.readList(LeaderRow::read);
         return s;
     }
 }

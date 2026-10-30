@@ -44,11 +44,11 @@ public final class SiegeAnnouncer {
         if (sound != null) p.playNotifySound(sound, SoundSource.MASTER, 1.0F, 1.0F);
     }
 
-    private static Component big(String text, ChatFormatting color) {
+    static Component big(String text, ChatFormatting color) {
         return Component.literal(text).withStyle(color, ChatFormatting.BOLD);
     }
 
-    private static Component small(String text) {
+    static Component small(String text) {
         return Component.literal(text).withStyle(ChatFormatting.GOLD);
     }
 
