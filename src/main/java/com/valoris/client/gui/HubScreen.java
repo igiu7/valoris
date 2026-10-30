@@ -331,12 +331,24 @@ public final class HubScreen extends ValorisFrame {
         } else {
             ruler(p, cw, s);
         }
-        if (s.founded) {
-            section(p, cw, "Survey");
-            tile(p, cw, "Map of " + s.cityName, "Walls, buildings and the city banner seen from above",
-                    ItemIcon.getItemIcon(Items.FILLED_MAP)).accent(Ui.BLUE)
-                    .click(() -> new CityMapScreen(s.cityName).openGui());
-        }
+    }
+
+    /** The city at a glance: ruler, residents, land. */
+    private void cityOverview(Panel p, int cw, GuiState s) {
+        section(p, cw, s.cityName);
+        stat(p, cw, "Ruler", s.cityRuler, Ui.TEXT);
+        stat(p, cw, "Residents", String.valueOf(s.residents), Ui.TEXT);
+        if (!s.kingdomName.isEmpty()) stat(p, cw, "Kingdom", s.kingdomName, Ui.GOLD);
+        if (s.founded) p.add(new Widgets.ProgressRow(p, cw, "Claimed chunks", s.claimed, s.claimLimit));
+    }
+
+    /** The two maps of a founded city, right below its overview. */
+    private void cityMaps(Panel p, int cw, GuiState s, boolean ruler) {
+        section(p, cw, "Maps");
+        tile(p, cw, "City map", "Walls, buildings and the banner from above", ItemIcon.getItemIcon(Items.FILLED_MAP))
+                .accent(Ui.BLUE).click(() -> new CityMapScreen(s.cityName).openGui());
+        tile(p, cw, "Land map", ruler ? "Claim and release chunks" : "The city's claimed chunks",
+                Icons.MAP).accent(ruler ? Ui.GREEN : Ui.BLUE).click(HubScreen::openClaimMap);
     }
 
     private void wanderer(Panel p, int cw, GuiState s) {
@@ -363,14 +375,8 @@ public final class HubScreen extends ValorisFrame {
     }
 
     private void resident(Panel p, int cw, GuiState s) {
-        section(p, cw, "Your city");
-        stat(p, cw, "City", s.cityName, Ui.TEXT);
-        stat(p, cw, "Ruler", s.cityRuler, Ui.TEXT);
-        stat(p, cw, "Residents", String.valueOf(s.residents), Ui.TEXT);
-        if (s.founded) {
-            p.add(new Widgets.ProgressRow(p, cw, "Claimed chunks", s.claimed, s.claimLimit));
-            tile(p, cw, "Land map", "See the city's claimed chunks", Icons.MAP).accent(Ui.BLUE).click(HubScreen::openClaimMap);
-        }
+        cityOverview(p, cw, s);
+        if (s.founded) cityMaps(p, cw, s, false);
 
         section(p, cw, "Actions");
         tile(p, cw, "Leave city", "You become a wanderer again", Icons.CANCEL).accent(Ui.RED)
@@ -379,46 +385,27 @@ public final class HubScreen extends ValorisFrame {
     }
 
     private void ruler(Panel p, int cw, GuiState s) {
-        section(p, cw, "Land");
         if (!s.founded) {
-            note(p, cw, "Your city is not founded yet. Place your City Banner (the red banner you were given) "
-                    + "to found it. Everything else unlocks afterwards.", Ui.ORANGE, Icons.INFO);
+            section(p, cw, s.cityName);
+            note(p, cw, "Not founded yet: place your City Banner to found the city.", Ui.ORANGE, Icons.INFO);
             return;
         }
-        p.add(new Widgets.ProgressRow(p, cw, "Claimed chunks", s.claimed, s.claimLimit));
-        tile(p, cw, "Manage land", "Opens the claim map: drag to claim chunks, right-drag to release them",
-                Icons.MAP).accent(Ui.GREEN).click(HubScreen::openClaimMap);
-        tile(p, cw, "Change city banner location", "Moves the banner to where you stand, inside your land", Icons.MAP)
-                .accent(Ui.BLUE)
-                .click(() -> confirm("Move the city banner?",
-                        "The banner will be placed where you are standing. You must be inside your city's land, "
-                                + "on a free spot.", Ui.BLUE,
-                        () -> cmd("valoris city banner move")));
 
-        section(p, cw, "City settings");
-        tile(p, cw, "Rename the city", "Currently " + s.cityName, Icons.NOTES).accent(Ui.BLUE)
-                .click(() -> Dialogs.prompt(this, "Rename " + s.cityName, "New city name", Ui.BLUE, "Rename",
-                        s.cityName, name -> cmd("valoris city rename " + q(name))));
-        if (s.kingdomName.isEmpty()) {
-            tile(p, cw, "Map colour", "The colour of your land on the map", Color4I.rgb(s.realmColor)).accent(Ui.BLUE)
-                    .click(() -> Dialogs.color(this, "Colour of " + s.cityName, s.realmColor,
-                            rgb -> cmd("valoris city color " + String.format("%06x", rgb))));
-        } else {
-            tile(p, cw, "Map colour", "Your city wears the colour of the Kingdom of " + s.kingdomName,
-                    Color4I.rgb(s.realmColor)).disabled();
-        }
-
+        // what needs an answer first
         if (!s.cityJoinRequests.isEmpty()) {
             section(p, cw, "Join requests");
             for (String name : s.cityJoinRequests) {
-                tile(p, cw, name, "wants to join your city", Icons.CHAT).accent(Ui.GOLD)
+                tile(p, cw, name, "wants to join", Icons.CHAT).accent(Ui.GOLD)
                         .chip("Accept", Ui.GREEN, () -> cmd("valoris city accept " + name))
                         .chip("Decline", Ui.RED, () -> cmd("valoris city decline " + name));
             }
         }
 
+        cityOverview(p, cw, s);
+        cityMaps(p, cw, s, true);
+
         section(p, cw, "Residents online");
-        if (s.onlineResidents.isEmpty()) note(p, cw, "No other residents are online.", Ui.GRAY, Icons.INFO);
+        if (s.onlineResidents.isEmpty()) note(p, cw, "Nobody else is online.", Ui.GRAY, Icons.INFO);
         for (String name : s.onlineResidents) {
             Tile t = tile(p, cw, name, "Resident", Icons.PLAYER);
             if (!s.capital) {
@@ -430,16 +417,34 @@ public final class HubScreen extends ValorisFrame {
                     () -> cmd("valoris city kick " + name)));
         }
 
-        section(p, cw, "Invite players");
-        if (s.candidates.isEmpty()) note(p, cw, "No online players without a city.", Ui.GRAY, Icons.INFO);
-        for (String name : s.candidates) {
-            tile(p, cw, name, "Online - no city", Icons.PLAYER)
-                    .chip("Invite", Ui.GREEN, () -> cmd("valoris city invite " + name));
+        if (!s.candidates.isEmpty()) {
+            section(p, cw, "Invite players");
+            for (String name : s.candidates) {
+                tile(p, cw, name, "Online, no city", Icons.PLAYER)
+                        .chip("Invite", Ui.GREEN, () -> cmd("valoris city invite " + name));
+            }
+        }
+
+        section(p, cw, "Settings");
+        tile(p, cw, "Move the city banner", "To where you stand, inside your land", ItemIcon.getItemIcon("valoris2:city_banner"))
+                .accent(Ui.BLUE)
+                .click(() -> confirm("Move the city banner?",
+                        "The banner moves to where you stand. You must be on your city's land, on a free spot.", Ui.BLUE,
+                        () -> cmd("valoris city banner move")));
+        tile(p, cw, "Rename", "Currently " + s.cityName, Icons.NOTES).accent(Ui.BLUE)
+                .click(() -> Dialogs.prompt(this, "Rename " + s.cityName, "New city name", Ui.BLUE, "Rename",
+                        s.cityName, name -> cmd("valoris city rename " + q(name))));
+        if (s.kingdomName.isEmpty()) {
+            tile(p, cw, "Map colour", "Your land's colour on the map", Color4I.rgb(s.realmColor)).accent(Ui.BLUE)
+                    .click(() -> Dialogs.color(this, "Colour of " + s.cityName, s.realmColor,
+                            rgb -> cmd("valoris city color " + String.format("%06x", rgb))));
+        } else {
+            tile(p, cw, "Map colour", "Set by the Kingdom of " + s.kingdomName, Color4I.rgb(s.realmColor)).disabled();
         }
 
         if (s.kingdomName.isEmpty()) {
             section(p, cw, "Danger zone");
-            tile(p, cw, "Disband city", "Permanently removes the city and its team", Icons.BIN).accent(Ui.RED)
+            tile(p, cw, "Disband city", "Removes the city and its team for good", Icons.BIN).accent(Ui.RED)
                     .click(() -> confirm("Disband " + s.cityName + "?", "The city, its claims and its team are removed. "
                             + "This cannot be undone.", Ui.RED, () -> cmd("valoris city disband")));
         }
@@ -451,62 +456,74 @@ public final class HubScreen extends ValorisFrame {
         boolean king = s.role.equals("KING");
 
         if (s.cityName.isEmpty()) {
-            note(p, cw, "Found or join a city first. Kingdoms are formed by city rulers.", Ui.BLUE, Icons.INFO);
+            note(p, cw, "Join or found a city first.", Ui.BLUE, Icons.INFO);
             return;
         }
 
         if (s.kingdomName.isEmpty()) {
             if (!isRuler(s)) {
-                note(p, cw, "Your city is not part of a kingdom. Only city rulers can found or join one.", Ui.BLUE, Icons.INFO);
+                note(p, cw, "Your city is in no kingdom. Only its ruler can found or join one.", Ui.BLUE, Icons.INFO);
                 return;
             }
             if (!s.founded) {
-                note(p, cw, "Found your city first by placing the City Banner.", Ui.ORANGE, Icons.INFO);
+                note(p, cw, "Found your city first: place the City Banner.", Ui.ORANGE, Icons.INFO);
                 return;
             }
-            section(p, cw, "Found a kingdom");
-            tile(p, cw, "Proclaim a kingdom", "Your city becomes its capital and you become king", Icons.STAR).accent(Ui.GOLD)
-                    .click(() -> prompt("Name your kingdom", "Kingdom name", Ui.GOLD,
-                            name -> cmd("valoris kingdom create " + q(name))));
-
+            // what needs an answer first
             if (!s.kingdomInvites.isEmpty()) {
                 section(p, cw, "Invitations");
                 for (String k : s.kingdomInvites) {
-                    tile(p, cw, k, "invites your city to join", Icons.CHAT).accent(Ui.GOLD)
+                    tile(p, cw, k, "invites your city", Icons.CHAT).accent(Ui.GOLD)
                             .chip("Accept", Ui.GREEN, () -> cmd("valoris city kingdom accept " + q(k)))
                             .chip("Decline", Ui.RED, () -> cmd("valoris city kingdom decline " + q(k)));
                 }
             }
 
-            section(p, cw, "Ask to join a kingdom");
-            if (s.kingdoms.isEmpty()) note(p, cw, "No kingdoms exist yet.", Ui.GRAY, Icons.INFO);
-            for (Row k : s.kingdoms) {
-                tile(p, cw, k.a(), "King " + k.b() + "  -  " + plural(k.n(), "city", "cities"), Icons.GLOBE)
-                        .chip("Request", Ui.BLUE, () -> cmd("valoris city kingdom join " + q(k.a())));
+            section(p, cw, "Found a kingdom");
+            tile(p, cw, "Proclaim a kingdom", "Your city becomes the capital, you the king (3+ residents)", Icons.STAR)
+                    .accent(Ui.GOLD).click(() -> prompt("Name your kingdom", "Kingdom name", Ui.GOLD,
+                            name -> cmd("valoris kingdom create " + q(name))));
+
+            if (!s.kingdoms.isEmpty()) {
+                section(p, cw, "Join a kingdom");
+                for (Row k : s.kingdoms) {
+                    tile(p, cw, k.a(), "King " + k.b() + "  -  " + plural(k.n(), "city", "cities"), Icons.GLOBE)
+                            .chip("Request", Ui.BLUE, () -> cmd("valoris city kingdom join " + q(k.a())));
+                }
             }
             return;
         }
 
-        section(p, cw, "Kingdom");
-        stat(p, cw, "Name", s.kingdomName, Ui.GOLD);
-        stat(p, cw, "King", s.king, Ui.TEXT);
-        stat(p, cw, "Cities", String.valueOf(s.myCities.size()), Ui.TEXT);
+        // what needs an answer first
         if (king && !s.conquestCity.isEmpty()) {
-            tile(p, cw, "Decide the fate of " + s.conquestCity, "You conquered this city", Icons.BARRIER)
+            section(p, cw, "Conquest");
+            tile(p, cw, "Decide the fate of " + s.conquestCity, "Appoint, subjugate, loot or release", Icons.BARRIER)
                     .accent(Ui.GOLD).badge("!", Ui.GOLD).click(() -> cmd("valoris war conquest"));
         }
+        if (king && !s.kingdomJoinRequests.isEmpty()) {
+            section(p, cw, "Join requests");
+            for (String city : s.kingdomJoinRequests) {
+                tile(p, cw, city, "asks to join", Icons.CHAT).accent(Ui.GOLD)
+                        .chip("Accept", Ui.GREEN, () -> cmd("valoris kingdom accept " + q(city)))
+                        .chip("Decline", Ui.RED, () -> cmd("valoris kingdom decline " + q(city)));
+            }
+        }
+
+        section(p, cw, "Kingdom of " + s.kingdomName);
+        stat(p, cw, "King", s.king, Ui.GOLD);
+        stat(p, cw, "Cities", String.valueOf(s.myCities.size()), Ui.TEXT);
 
         section(p, cw, "Cities");
         for (Row c : s.myCities) {
             boolean capital = c.n() == 1;
             boolean online = c.m() == 1;
             Tile t = tile(p, cw, c.a(), "Ruler " + c.b() + (capital ? "  -  capital" : ""),
-                    capital ? Icons.STAR : Icons.PLAYER).accent(capital ? Ui.GOLD : Ui.BLUE);
+                    capital ? Icons.STAR : ItemIcon.getItemIcon("valoris2:city_banner")).accent(capital ? Ui.GOLD : Ui.BLUE);
+            if (capital) t.badge("CAPITAL", Ui.GOLD);
             if (king && !capital) {
                 if (online) {
                     t.chip("Crown", Ui.GOLD, () -> confirm("Pass the crown?", c.b() + " becomes king and " + c.a()
-                            + " the new capital. Your city stops being the capital.", Ui.GOLD,
-                            () -> cmd("valoris kingdom crown " + c.b())));
+                            + " the new capital.", Ui.GOLD, () -> cmd("valoris kingdom crown " + c.b())));
                 }
                 t.chip("Expel", Ui.RED, () -> confirm("Expel " + c.a() + "?", "The city leaves the kingdom.", Ui.RED,
                         () -> cmd("valoris kingdom expel " + q(c.a()))));
@@ -514,40 +531,33 @@ public final class HubScreen extends ValorisFrame {
         }
 
         if (king) {
-            section(p, cw, "Kingdom settings");
-            tile(p, cw, "Rename the kingdom", "Currently the Kingdom of " + s.kingdomName, Icons.NOTES).accent(Ui.GOLD)
+            if (!s.kingdomCandidates.isEmpty()) {
+                section(p, cw, "Invite a city");
+                for (Row r : s.kingdomCandidates) {
+                    tile(p, cw, r.b(), "Ruler " + r.a(), Icons.ADD)
+                            .chip("Invite", Ui.GREEN, () -> cmd("valoris kingdom invite " + r.a()));
+                }
+            }
+
+            section(p, cw, "Settings");
+            tile(p, cw, "Rename", "Currently the Kingdom of " + s.kingdomName, Icons.NOTES).accent(Ui.GOLD)
                     .click(() -> Dialogs.prompt(this, "Rename the kingdom", "New kingdom name", Ui.GOLD, "Rename",
                             s.kingdomName, name -> cmd("valoris kingdom rename " + q(name))));
-            tile(p, cw, "Kingdom colour", "Every city of the kingdom wears it on the map", Color4I.rgb(s.realmColor))
+            tile(p, cw, "Map colour", "Worn by every city of the kingdom", Color4I.rgb(s.realmColor))
                     .accent(Ui.GOLD).click(() -> Dialogs.color(this, "Colour of " + s.kingdomName, s.realmColor,
                             rgb -> cmd("valoris kingdom color " + String.format("%06x", rgb))));
 
-            if (!s.kingdomJoinRequests.isEmpty()) {
-                section(p, cw, "Join requests");
-                for (String city : s.kingdomJoinRequests) {
-                    tile(p, cw, city, "asks to join your kingdom", Icons.CHAT).accent(Ui.GOLD)
-                            .chip("Accept", Ui.GREEN, () -> cmd("valoris kingdom accept " + q(city)))
-                            .chip("Decline", Ui.RED, () -> cmd("valoris kingdom decline " + q(city)));
-                }
-            }
-            section(p, cw, "Invite a city");
-            if (s.kingdomCandidates.isEmpty()) note(p, cw, "No online city rulers without a kingdom.", Ui.GRAY, Icons.INFO);
-            for (Row r : s.kingdomCandidates) {
-                tile(p, cw, r.b(), "Ruler " + r.a(), Icons.ADD)
-                        .chip("Invite", Ui.GREEN, () -> cmd("valoris kingdom invite " + r.a()));
-            }
             section(p, cw, "Danger zone");
             tile(p, cw, "Disband the kingdom", "All cities become independent", Icons.BIN).accent(Ui.RED)
                     .click(() -> confirm("Disband " + s.kingdomName + "?", "The kingdom ceases to exist. "
                             + "This cannot be undone.", Ui.RED, () -> cmd("valoris kingdom disband")));
         } else if (isRuler(s)) {
-            section(p, cw, "Rebellion");
-            tile(p, cw, "Rebel against the kingdom", "Leave, become an independent city and rise against the king", Icons.BARRIER)
+            section(p, cw, "Danger zone");
+            tile(p, cw, "Rebel", "Leave the kingdom and rise against the king", Icons.BARRIER)
                     .accent(Ui.RED)
                     .click(() -> confirm("Rebel against " + s.kingdomName + "?",
-                            "Your city leaves the kingdom and becomes an independent city. A rebellion against "
-                                    + s.kingdomName + " begins at once. If the king puts it down (takes your city back),"
-                                    + " you cannot rebel again for a while.", Ui.RED,
+                            "Your city becomes independent and a rebellion begins at once. If the king takes your city"
+                                    + " back, you cannot rebel again for a while.", Ui.RED,
                             () -> cmd("valoris city kingdom rebel")));
         }
     }
@@ -673,16 +683,17 @@ public final class HubScreen extends ValorisFrame {
         return (offensive ? "Rebellion against the " : "Rebellion of the ") + enemyTitle(s, w.c());
     }
 
+    /** One war: "Your side vs their side" with the realms of both coalitions; click for its screen and sieges. */
     private Tile warTile(Panel p, int cw, GuiState s, Row w) {
         boolean offensive = (w.n() & 1) != 0;
         boolean rebellion = (w.n() & 4) != 0;
-        String sub = "With you: " + names(warMembers(s, w.a(), "OURS")) + "  -  against: " + names(warMembers(s, w.a(), "THEIRS"));
+        String sub = names(warMembers(s, w.a(), "OURS")) + "  vs  " + names(warMembers(s, w.a(), "THEIRS"));
         return tile(p, cw, warTitle(s, w), sub, ItemIcon.getItemIcon(Items.IRON_SWORD))
-                .accent(Ui.RED).badge(rebellion ? "REBELLION" : offensive ? "OFFENSIVE" : "DEFENSIVE",
+                .accent(Ui.ORANGE).badge(rebellion ? "REBELLION" : offensive ? "ATTACKING" : "DEFENDING",
                         rebellion ? Ui.GOLD : offensive ? Ui.ORANGE : Ui.BLUE)
-                .tip("Led by: " + w.b() + " (your side), " + w.c() + " (their side)",
-                        "With you: " + names(warMembers(s, w.a(), "OURS")),
-                        "Against you: " + names(warMembers(s, w.a(), "THEIRS")));
+                .tip("Your side: " + names(warMembers(s, w.a(), "OURS")) + " (led by " + w.b() + ")",
+                        "Their side: " + names(warMembers(s, w.a(), "THEIRS")) + " (led by " + w.c() + ")",
+                        "Click for the war, its chronicle and sieges");
     }
 
     private static String capitalize(String text) {
@@ -760,15 +771,12 @@ public final class HubScreen extends ValorisFrame {
 
         if (mine != null) {
             tile(p, cw, realmTitle(mine), s.isLeader ? "You lead its diplomacy"
-                    : (s.realmIsKingdom ? "Your king leads its diplomacy" : "Your ruler leads its diplomacy"),
+                    : (s.realmIsKingdom ? "Led by your king" : "Led by your ruler"),
                     realmIcon(mine)).accent(Ui.GOLD).badge("YOUR REALM", Ui.GOLD);
         }
-        p.add(new Widgets.SummaryStrip(p, cw, new String[]{"Allies", "At war", "Neutral"},
-                new int[]{allies.size(), enemies.size(), neutral.size()},
-                new Color4I[]{Ui.GREEN, Ui.RED, Ui.GRAY}));
 
         if (!s.proposals.isEmpty()) {
-            section(p, cw, "Waiting for your answer");
+            section(p, cw, "Proposals");
             for (Row r : s.proposals) {
                 boolean peace = r.b().equals("PEACE");
                 Row from = realmRow(s, r.a());
@@ -785,22 +793,21 @@ public final class HubScreen extends ValorisFrame {
             for (Row c : s.warCalls) callToArmsTile(p, cw, s, c);
         }
 
+        // the conflicts (each with both coalitions; sieges live in its screen) - not to be confused with the
+        // list of enemy realms below
         if (!s.wars.isEmpty()) {
-            section(p, cw, "Our wars");
+            section(p, cw, "Wars (" + s.wars.size() + ")");
             for (Row w : s.wars) {
                 String id = w.a();
                 warTile(p, cw, s, w).click(() -> openWar(id));
             }
-            note(p, cw, "Sieges are planned and followed in each war's screen, on its Siege tab.", Ui.GRAY, Icons.INFO);
         }
 
-        realmSection(p, cw, s, "At war", enemies, "WAR", Ui.RED);
+        realmSection(p, cw, s, "Enemies", enemies, "ENEMY", Ui.RED);
         realmSection(p, cw, s, "Allies", allies, "ALLY", Ui.GREEN);
         realmSection(p, cw, s, "Neutral", neutral, "", Ui.GRAY);
         if (allies.isEmpty() && enemies.isEmpty() && neutral.isEmpty()) {
-            note(p, cw, "There are no other kingdoms or cities yet.", Ui.GRAY, Icons.INFO);
-        } else {
-            note(p, cw, "Click a kingdom or city for its diplomacy, its cities and sieges.", Ui.GRAY, Icons.INFO);
+            note(p, cw, "No other kingdoms or cities yet.", Ui.GRAY, Icons.INFO);
         }
     }
 
@@ -837,7 +844,6 @@ public final class HubScreen extends ValorisFrame {
 
         tile(p, cw, realmTitle(r), realmSub(r), realmIcon(r)).accent(color).badge(relationLabel(rel), color);
         stat(p, cw, isKingdom(r) ? "King" : "Ruler", r.b(), Ui.TEXT);
-        stat(p, cw, "Relation", rel == WAR ? "At war" : rel == ALLY ? "Allied" : "Neutral", color);
         Row truce = null;
         for (Row t : s.truces) if (t.a().equals(name)) truce = t;
         if (truce != null) stat(p, cw, "Truce", truceLeft(truce.n()) + " left", Ui.BLUE);
@@ -871,14 +877,14 @@ public final class HubScreen extends ValorisFrame {
             else if (inWar(s, w.a(), name, "OURS")) together.add(w);
         }
         if (!against.isEmpty()) {
-            section(p, cw, "At war with them");
+            section(p, cw, "Wars against them");
             for (Row w : against) {
                 String id = w.a();
                 warTile(p, cw, s, w).click(() -> openWar(id));
             }
         }
         if (!together.isEmpty()) {
-            section(p, cw, "Fighting at our side");
+            section(p, cw, "Wars on our side");
             for (Row w : together) {
                 String id = w.a();
                 warTile(p, cw, s, w).click(() -> openWar(id));
@@ -942,8 +948,8 @@ public final class HubScreen extends ValorisFrame {
                 }
                 default -> {
                     if (offer == null && incoming == null) {
-                        tile(p, cw, "Propose an alliance", "Allies defend each other when attacked and can be called "
-                                + "to arms", Icons.FRIENDS)
+                        tile(p, cw, "Propose an alliance", "Allies defend each other"
+, Icons.FRIENDS)
                                 .accent(Ui.GREEN).click(() -> cmd("valoris diplomacy propose alliance " + quoted));
                     }
                     if (truce != null) {
@@ -961,7 +967,7 @@ public final class HubScreen extends ValorisFrame {
         if (rel == WAR && !against.isEmpty()) {
             String warId = against.get(0).a();
             section(p, cw, "Sieges");
-            tile(p, cw, "Plan a siege", "Their cities and the sieges of this war are on the war's Siege tab",
+            tile(p, cw, "Plan a siege", "On the war's Siege tab",
                     Icons.BARRIER).accent(Ui.RED).click(() -> openWar(warId, WarScreen.View.SIEGE));
         }
 
@@ -979,7 +985,7 @@ public final class HubScreen extends ValorisFrame {
             else t.disabled();
         }
         if (!any) note(p, cw, "They have no cities.", Ui.GRAY, Icons.INFO);
-        if (!canScout) note(p, cw, "Only allies and enemies can survey these cities.", Ui.GRAY, Icons.INFO);
+        if (!canScout && any) note(p, cw, "Only allies and enemies can see their maps.", Ui.GRAY, Icons.INFO);
     }
 
     private Tile siegeTile(Panel p, int cw, GuiState s, Row r) {

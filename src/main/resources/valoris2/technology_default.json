@@ -15,7 +15,7 @@
     "  shield:<key>            Epic Knights shield type key without a material prefix (e.g. republicscutum)",
     "  shieldmaterial:<prefix> shields '<prefix>_<shield type>', e.g. shieldmaterial:steel",
     "  material:<prefix>       any tool/weapon/armor '<prefix>_...', e.g. material:steel",
-    "alwaysLocked: never craftable (unless a technology rule matches first). disabledBlocks: cannot be placed/used.",
+    "alwaysLocked: never craftable (a technology unlocking the item by name still wins; one unlocking its whole mod does not). disabledBlocks: cannot be placed/used.",
     "cookingRestricted: results that vanilla furnaces/smokers/blast furnaces (and Create fans) may not produce;",
     "  iron and steel come only from the bloomery / steel furnace. '#tag' entries are item tags.",
     "weaponBalance: damage = materials[material] + (types[type] - referenceBase) for items '<material>_<type>';",
@@ -440,18 +440,70 @@
       "researchMinutes": 420,
       "features": [
         "Create's mechanisms: shafts, cogwheels, water wheels, belts, presses, mixers, mills...",
-        "Machines that work on their own come with Automation (steel era)"
+        "Machines that work on their own come with Automation (steel era)",
+        "Redstone: torches, repeaters, comparators, pistons, observers, hoppers, dispensers, levers, buttons, pressure plates, powered rails and more"
       ],
       "unlocks": [
-        "mod:create"
+        "mod:create",
+        "item:minecraft:redstone_torch",
+        "item:minecraft:redstone_block",
+        "item:minecraft:repeater",
+        "item:minecraft:comparator",
+        "item:minecraft:piston",
+        "item:minecraft:sticky_piston",
+        "item:minecraft:observer",
+        "item:minecraft:dispenser",
+        "item:minecraft:dropper",
+        "item:minecraft:hopper",
+        "item:minecraft:crafter",
+        "item:minecraft:redstone_lamp",
+        "item:minecraft:lever",
+        "item:minecraft:daylight_detector",
+        "item:minecraft:target",
+        "item:minecraft:tripwire_hook",
+        "item:minecraft:note_block",
+        "item:minecraft:trapped_chest",
+        "item:minecraft:lightning_rod",
+        "item:minecraft:calibrated_sculk_sensor",
+        "item:minecraft:powered_rail",
+        "item:minecraft:detector_rail",
+        "item:minecraft:activator_rail",
+        "item:minecraft:stone_button",
+        "item:minecraft:polished_blackstone_button",
+        "item:minecraft:stone_pressure_plate",
+        "item:minecraft:polished_blackstone_pressure_plate",
+        "item:minecraft:light_weighted_pressure_plate",
+        "item:minecraft:heavy_weighted_pressure_plate",
+        "item:minecraft:oak_button",
+        "item:minecraft:oak_pressure_plate",
+        "item:minecraft:spruce_button",
+        "item:minecraft:spruce_pressure_plate",
+        "item:minecraft:birch_button",
+        "item:minecraft:birch_pressure_plate",
+        "item:minecraft:jungle_button",
+        "item:minecraft:jungle_pressure_plate",
+        "item:minecraft:acacia_button",
+        "item:minecraft:acacia_pressure_plate",
+        "item:minecraft:dark_oak_button",
+        "item:minecraft:dark_oak_pressure_plate",
+        "item:minecraft:mangrove_button",
+        "item:minecraft:mangrove_pressure_plate",
+        "item:minecraft:cherry_button",
+        "item:minecraft:cherry_pressure_plate",
+        "item:minecraft:bamboo_button",
+        "item:minecraft:bamboo_pressure_plate",
+        "item:minecraft:crimson_button",
+        "item:minecraft:crimson_pressure_plate",
+        "item:minecraft:warped_button",
+        "item:minecraft:warped_pressure_plate"
       ]
     },
     {
       "id": "shipbuilding",
       "name": "Shipbuilding",
       "era": "iron",
-      "icon": "create:propeller",
-      "description": "Hulls, sails and propellers: unlocks Create Aeronautics.",
+      "icon": "aeronauticsvaloris:rudder",
+      "description": "Ships driven by the wind: Create Aeronautics hulls with sails, a rudder and an anchor.",
       "x": 6,
       "y": 5,
       "requires": [
@@ -464,11 +516,14 @@
       },
       "researchMinutes": 600,
       "features": [
-        "Everything from Create Aeronautics: hulls, sails, propellers"
+        "Create Aeronautics ships (propellers are disabled)",
+        "Sails pushed by the wind: catch it from behind, fight it head-on",
+        "Rudder to steer and anchor winch to moor the ship"
       ],
       "unlocks": [
         "mod:aeronautics",
-        "mod:aeronautics_bundled"
+        "mod:aeronautics_bundled",
+        "mod:aeronauticsvaloris"
       ]
     },
     {
@@ -1339,10 +1394,21 @@
     "item:minecraft:netherite_helmet",
     "item:minecraft:netherite_chestplate",
     "item:minecraft:netherite_leggings",
-    "item:minecraft:netherite_boots"
+    "item:minecraft:netherite_boots",
+    "item:minecraft:tnt",
+    "item:aeronautics:wooden_propeller",
+    "item:aeronautics:andesite_propeller",
+    "item:aeronautics:smart_propeller",
+    "item:aeronautics:propeller_bearing",
+    "item:aeronautics:gyroscopic_propeller_bearing"
   ],
   "disabledBlocks": [
-    "tacz:gun_smith_table"
+    "tacz:gun_smith_table",
+    "aeronautics:wooden_propeller",
+    "aeronautics:andesite_propeller",
+    "aeronautics:smart_propeller",
+    "aeronautics:propeller_bearing",
+    "aeronautics:gyroscopic_propeller_bearing"
   ],
   "cookingRestricted": [
     "minecraft:iron_ingot",

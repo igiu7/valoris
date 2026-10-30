@@ -168,11 +168,11 @@ public final class MapDesign {
     // every land mass is several overlapping lobes (they melt together) plus capes; BAYS cut gulfs into the coast
     private static final Blob[] LAND = {
             // heart: a long diagonal body (south-west to north-east), an arm to the north-east, lobes south-west and south
-            new Blob(0, -300, 0, 700, 540, -35),
-            new Blob(0, -920, 400, 350, 260, -10),
-            new Blob(0, 260, -400, 400, 240, -40),
-            new Blob(0, -80, 520, 320, 230, 20),
-            new Blob(0, -850, -300, 230, 100, 30),
+            new Blob(0, -300, 0, 854, 659, -35),
+            new Blob(0, -994, 448, 427, 317, -10),
+            new Blob(0, 327, -448, 488, 293, -40),
+            new Blob(0, -54, 582, 390, 281, 20),
+            new Blob(0, -916, -336, 281, 122, 30),
             // cold: a wide band along the north coast with a tail down the west coast and a cape to the east
             new Blob(2, -1100, -1350, 500, 300, 10),
             new Blob(2, -450, -1550, 380, 200, -5),
@@ -213,7 +213,7 @@ public final class MapDesign {
     private static final double BEACH = 0.06;
 
     private static final Blob[] BAYS = {
-            new Blob(0, -560, 560, 140, 110, 0),
+            new Blob(0, -591, 627, 160, 125, 0),
             new Blob(2, -800, -1130, 160, 110, 0),
             new Blob(1, 960, 1700, 230, 260, 0),
             new Blob(12, -620, 1640, 110, 70, 0),
@@ -223,8 +223,8 @@ public final class MapDesign {
     record Chain(int mass, double[] points) {}
 
     private static final Chain[] CHAINS = {
-            new Chain(0, new double[] {-900, 420, -400, 60, 100, -250, 380, -480}),
-            new Chain(0, new double[] {-400, 60, -150, 480}),
+            new Chain(0, new double[] {-972, 470, -412, 67, 148, -280, 462, -538}),
+            new Chain(0, new double[] {-412, 67, -132, 538}),
             new Chain(1, new double[] {460, 1480, 900, 1080, 1450, 720}),
             new Chain(2, new double[] {-1580, -500, -1350, -1100, -750, -1450, -100, -1620}),
     };

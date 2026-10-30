@@ -111,10 +111,13 @@ public final class TechRules {
             if (hit != null) return Optional.of(hit);
         }
 
+        // an item named in alwaysLocked stays locked even when a technology unlocks its whole mod
+        if (neverExact.containsKey(full)) return Optional.of(NEVER);
+
         hit = mods.get(id.getNamespace());
         if (hit != null) return Optional.of(hit);
 
-        if (neverExact.containsKey(full) || neverMods.containsKey(id.getNamespace())) return Optional.of(NEVER);
+        if (neverMods.containsKey(id.getNamespace())) return Optional.of(NEVER);
         return Optional.empty();
     }
 }

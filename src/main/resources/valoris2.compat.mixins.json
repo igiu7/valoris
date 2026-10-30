@@ -7,7 +7,10 @@
   "mixins": [
     "AbstractWagonMixin",
     "LanceChargeMixin",
-    "SiegeExplosionMixin"
+    "SiegeExplosionMixin",
+    "SiegeMachineShipMixin",
+    "SiegeLadderSeatsMixin",
+    "SiegeLadderSeatSaveMixin"
   ],
   "injectors": {
     "defaultRequire": 1
