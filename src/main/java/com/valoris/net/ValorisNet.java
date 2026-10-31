@@ -68,7 +68,7 @@ public final class ValorisNet {
             registrar.playToClient(ReloadInterruptPayload.TYPE, ReloadInterruptPayload.CODEC,
                     (payload, ctx) -> ctx.enqueueWork(com.valoris.client.GunReloadClient::interrupted));
             registrar.playToClient(NameColorsPayload.TYPE, NameColorsPayload.CODEC,
-                    (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.NameColorsClient.receive(payload.colors())));
+                    (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.NameColorsClient.receive(payload.colors(), payload.realms())));
         } else {
             registrar.playToClient(ClimatePayload.TYPE, ClimatePayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(ReloadInterruptPayload.TYPE, ReloadInterruptPayload.CODEC, (payload, ctx) -> {});

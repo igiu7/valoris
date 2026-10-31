@@ -1,0 +1,14 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create:bar_of_chocolate"
+    }
+  ],
+  "results": [
+    {
+      "amount": 250,
+      "id": "create:chocolate"
+    }
+  ]
+}

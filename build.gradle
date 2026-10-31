@@ -94,7 +94,7 @@ dependencies {
     // optional compat (compat mixins apply only when the mod is installed): Trotting Wagons + its GeckoLib
     compileOnly files("libs/trotting_wagons-21.0.2.jar", "libs/geckolib-neoforge-1.21.1-4.9.3.jar",
             "libs/sable-neoforge-1.21.1-2.0.6.jar", "libs/sable-companion-common-1.21.1-1.6.0.jar",
-            "libs/tacz-neoforge-1.21.1-1.1.8-hotfix-r7.jar")
+            "libs/tacz-neoforge-1.21.1-1.1.8-hotfix-r7.jar", "libs/drinkbeer-refill-1.21.1-neoforge-1.4.2+neoforge.jar")
 
     // MP3 decoder for the custom game music (assets/valoris2/music/*.mp3):
     // packed inside the mod jar, so players need nothing extra; the second line makes it work in runClient

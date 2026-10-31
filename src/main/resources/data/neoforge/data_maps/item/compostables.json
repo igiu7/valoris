@@ -12,6 +12,15 @@
     },
     "valoris2:medicinal_root": {
       "chance": 0.3
+    },
+    "valoris2:rice_seeds": {
+      "chance": 0.3
+    },
+    "valoris2:rice": {
+      "chance": 0.65
+    },
+    "valoris2:rice_bread": {
+      "chance": 0.85
     }
   }
 }

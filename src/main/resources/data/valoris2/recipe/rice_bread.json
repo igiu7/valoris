@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "valoris2:rice"
+    }
+  },
+  "pattern": [
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "valoris2:rice_bread"
+  }
+}

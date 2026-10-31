@@ -6,7 +6,9 @@ import com.valoris.heal.HealingItem;
 import com.valoris.plant.DeadMedicinalHerbBlock;
 import com.valoris.plant.FlaxCropBlock;
 import com.valoris.plant.MedicinalHerbBushBlock;
+import com.valoris.plant.RiceCropBlock;
 
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.level.block.Blocks;
@@ -17,7 +19,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 
-/** Medicinal herb bush, flax and the healing items made from them. Registered into ModBlocks' registers. */
+/** Medicinal herb bush, flax, rice and the healing items and food made from them. Registered into ModBlocks' registers. */
 public final class ModPlants {
     private ModPlants() {}
 
@@ -44,6 +46,18 @@ public final class ModPlants {
 
     public static final DeferredItem<ItemNameBlockItem> FLAX_SEEDS = ModBlocks.ITEMS.register("flax_seeds",
             () -> new ItemNameBlockItem(FLAX_CROP.get(), new Item.Properties()));
+
+    public static final DeferredBlock<RiceCropBlock> RICE_CROP = ModBlocks.BLOCKS.register("rice",
+            () -> new RiceCropBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)));
+
+    public static final DeferredItem<Item> RICE = ModBlocks.ITEMS.register("rice", () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<ItemNameBlockItem> RICE_SEEDS = ModBlocks.ITEMS.register("rice_seeds",
+            () -> new ItemNameBlockItem(RICE_CROP.get(), new Item.Properties()));
+
+    /** Made like bread (three rice in a row) and just as filling. */
+    public static final DeferredItem<Item> RICE_BREAD = ModBlocks.ITEMS.register("rice_bread",
+            () -> new Item(new Item.Properties().food(Foods.BREAD)));
 
     public static final DeferredItem<HealingItem> LINEN_BANDAGE = ModBlocks.ITEMS.register("linen_bandage",
             () -> new HealingItem(new Item.Properties().stacksTo(16), Healing.Kind.BANDAGE));

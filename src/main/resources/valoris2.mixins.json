@@ -30,6 +30,7 @@
     "ChunkScreenTopPanelMixin",
     "WaypointManagerImplMixin",
     "FTBChunksClientMixin",
-    "TitleBackgroundMixin"
+    "TitleBackgroundMixin",
+    "PlayerTabOverlayMixin"
   ]
 }

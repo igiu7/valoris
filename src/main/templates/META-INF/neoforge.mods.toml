@@ -126,6 +126,22 @@ versionRange = "[0,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# loaded after Create, so its recipe overrides in this jar win (data/create: mixing without a blaze burner)
+[[dependencies.${mod_id}]]
+modId = "create"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# loaded after DrinkBeer Refill, so its recipe overrides in this jar win (data/drinkbeer)
+[[dependencies.${mod_id}]]
+modId = "drinkbeer"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

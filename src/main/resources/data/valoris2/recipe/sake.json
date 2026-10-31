@@ -1,0 +1,18 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "drinkbeer"
+    }
+  ],
+  "type": "drinkbeer:brewing",
+  "ingredients": [
+    {"item": "valoris2:rice"},
+    {"item": "valoris2:rice"},
+    {"item": "valoris2:rice"},
+    {"item": "minecraft:water_bucket"}
+  ],
+  "cup": {"id": "drinkbeer:empty_beer_mug", "count": 4},
+  "brewing_time": 24000,
+  "result": {"id": "valoris2:sake", "count": 4}
+}

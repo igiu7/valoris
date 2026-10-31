@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "amount=1,facing=north": {
+      "model": "valoris2:block/vodka"
+    },
+    "amount=1,facing=east": {
+      "model": "valoris2:block/vodka",
+      "y": 90
+    },
+    "amount=1,facing=south": {
+      "model": "valoris2:block/vodka",
+      "y": 180
+    },
+    "amount=1,facing=west": {
+      "model": "valoris2:block/vodka",
+      "y": 270
+    },
+    "amount=2,facing=north": {
+      "model": "valoris2:block/vodka_double"
+    },
+    "amount=2,facing=east": {
+      "model": "valoris2:block/vodka_double",
+      "y": 90
+    },
+    "amount=2,facing=south": {
+      "model": "valoris2:block/vodka_double",
+      "y": 180
+    },
+    "amount=2,facing=west": {
+      "model": "valoris2:block/vodka_double",
+      "y": 270
+    },
+    "amount=3,facing=north": {
+      "model": "valoris2:block/vodka_triple"
+    },
+    "amount=3,facing=east": {
+      "model": "valoris2:block/vodka_triple",
+      "y": 90
+    },
+    "amount=3,facing=south": {
+      "model": "valoris2:block/vodka_triple",
+      "y": 180
+    },
+    "amount=3,facing=west": {
+      "model": "valoris2:block/vodka_triple",
+      "y": 270
+    }
+  }
+}

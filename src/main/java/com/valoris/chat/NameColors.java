@@ -20,7 +20,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /**
  * Names in the realm's colour (ChatService.realmColor) in the tab list and above the head. Every few seconds the
  * colours of the online players are checked; when one changed, the tab list names are refreshed and every client
- * gets the new colours (client.NameColorsClient colours the name tags with them).
+ * gets the new colours (client.NameColorsClient colours the name tags with them) and the realm of every player
+ * (client.RealmTabList groups the tab list by it).
  */
 @EventBusSubscriber(modid = valoris2.MODID)
 public final class NameColors {
@@ -28,6 +29,7 @@ public final class NameColors {
 
     private static final int INTERVAL_TICKS = 60;
     private static Map<UUID, Integer> sent = Map.of();
+    private static Map<UUID, String> sentRealms = Map.of();
     private static int ticks;
 
     @SubscribeEvent
@@ -41,7 +43,7 @@ public final class NameColors {
 
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer p) PacketDistributor.sendToPlayer(p, new NameColorsPayload(sent));
+        if (event.getEntity() instanceof ServerPlayer p) PacketDistributor.sendToPlayer(p, new NameColorsPayload(sent, sentRealms));
         ticks = INTERVAL_TICKS; // update everybody (the new player's colour) on the next tick
     }
 
@@ -51,11 +53,13 @@ public final class NameColors {
         ticks = 0;
         MinecraftServer server = event.getServer();
         Map<UUID, Integer> now = new HashMap<>();
+        Map<UUID, String> realms = new HashMap<>();
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             int rgb = ChatService.realmColor(p);
             if (rgb >= 0) now.put(p.getUUID(), rgb);
+            com.valoris.realm.Realms.of(p).ifPresent(r -> realms.put(p.getUUID(), r.title()));
         }
-        if (now.equals(sent)) return;
+        if (now.equals(sent) && realms.equals(sentRealms)) return;
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             if (!Objects.equals(now.get(p.getUUID()), sent.get(p.getUUID()))) {
                 p.refreshTabListName();
@@ -63,6 +67,7 @@ public final class NameColors {
             }
         }
         sent = Map.copyOf(now);
-        PacketDistributor.sendToAllPlayers(new NameColorsPayload(sent));
+        sentRealms = Map.copyOf(realms);
+        PacketDistributor.sendToAllPlayers(new NameColorsPayload(sent, sentRealms));
     }
 }

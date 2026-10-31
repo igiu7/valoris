@@ -1,99 +1,389 @@
 {
   "replace": false,
   "values": [
-    {"id": "samurai_dynasty:knive_handle", "required": false},
-    {"id": "samurai_dynasty:katana_handle", "required": false},
-    {"id": "samurai_dynasty:spear_handle", "required": false},
-    {"id": "samurai_dynasty:katana", "required": false},
-    {"id": "samurai_dynasty:wakizashi", "required": false},
-    {"id": "samurai_dynasty:naginata", "required": false},
-    {"id": "samurai_dynasty:nagamaki", "required": false},
-    {"id": "samurai_dynasty:shuko", "required": false},
-    {"id": "samurai_dynasty:tetsubo", "required": false},
-    {"id": "samurai_dynasty:odachi", "required": false},
-    {"id": "samurai_dynasty:tonbukiri", "required": false},
-    {"id": "samurai_dynasty:kamayari", "required": false},
-    {"id": "samurai_dynasty:kunai", "required": false},
-    {"id": "samurai_dynasty:kama", "required": false},
-    {"id": "samurai_dynasty:sai", "required": false},
-    {"id": "samurai_dynasty:masakari", "required": false},
-    {"id": "samurai_dynasty:kabutowari", "required": false},
-    {"id": "samurai_dynasty:shuriken", "required": false},
-    {"id": "samurai_dynasty:katana_netherite", "required": false},
-    {"id": "samurai_dynasty:wakizashi_netherite", "required": false},
-    {"id": "samurai_dynasty:naginata_netherite", "required": false},
-    {"id": "samurai_dynasty:nagamaki_netherite", "required": false},
-    {"id": "samurai_dynasty:shuko_netherite", "required": false},
-    {"id": "samurai_dynasty:tetsubo_netherite", "required": false},
-    {"id": "samurai_dynasty:odachi_netherite", "required": false},
-    {"id": "samurai_dynasty:tonbukiri_netherite", "required": false},
-    {"id": "samurai_dynasty:kamayari_netherite", "required": false},
-    {"id": "samurai_dynasty:kunai_netherite", "required": false},
-    {"id": "samurai_dynasty:kama_netherite", "required": false},
-    {"id": "samurai_dynasty:sai_netherite", "required": false},
-    {"id": "samurai_dynasty:masakari_netherite", "required": false},
-    {"id": "samurai_dynasty:kabutowari_netherite", "required": false},
-    {"id": "samurai_dynasty:yumi", "required": false},
-    {"id": "samurai_dynasty:akaname_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:enenra_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:oni_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:kitsune_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:kitsune_small_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:onibi_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:jorogumo_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:komainu_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:tanuki_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:kawauso_spawn_egg", "required": false},
-    {"id": "samurai_dynasty:jade", "required": false},
-    {"id": "samurai_dynasty:steel_ingot", "required": false},
-    {"id": "samurai_dynasty:steel_nugget", "required": false},
-    {"id": "samurai_dynasty:kitsune_hide", "required": false},
-    {"id": "samurai_dynasty:kitsune_tail", "required": false},
-    {"id": "samurai_dynasty:akaname_tongue", "required": false},
-    {"id": "samurai_dynasty:spirit_flame", "required": false},
-    {"id": "samurai_dynasty:jorogumo_eye", "required": false},
-    {"id": "samurai_dynasty:oni_horn", "required": false},
-    {"id": "samurai_dynasty:cloth", "required": false},
-    {"id": "samurai_dynasty:spirit_upgrade_smithing_template", "required": false},
-    {"id": "samurai_dynasty:oni_mask", "required": false},
-    {"id": "samurai_dynasty:kitsune_mask", "required": false},
-    {"id": "samurai_dynasty:katana_oni", "required": false},
-    {"id": "samurai_dynasty:katana_kitsune", "required": false},
-    {"id": "samurai_dynasty:katana_kitsune_blue", "required": false},
-    {"id": "samurai_dynasty:katana_akaname", "required": false},
-    {"id": "samurai_dynasty:katana_jorogumo", "required": false},
-    {"id": "samurai_dynasty:chiseled_pattern_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:chiseled_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:deepslate_jade_ore", "required": false},
-    {"id": "samurai_dynasty:dragon_spirit_stone", "required": false},
-    {"id": "samurai_dynasty:jade_block", "required": false},
-    {"id": "samurai_dynasty:jade_ore", "required": false},
-    {"id": "samurai_dynasty:kawauso_statue", "required": false},
-    {"id": "samurai_dynasty:komainu_statue", "required": false},
-    {"id": "samurai_dynasty:mosaic_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:mossy_spirit_stone_brick_slab", "required": false},
-    {"id": "samurai_dynasty:mossy_spirit_stone_brick_stairs", "required": false},
-    {"id": "samurai_dynasty:mossy_spirit_stone_brick_wall", "required": false},
-    {"id": "samurai_dynasty:mossy_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:path_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:pattern_mossy_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:pattern_spirit_stone_bricks", "required": false},
-    {"id": "samurai_dynasty:polished_spirit_stone", "required": false},
-    {"id": "samurai_dynasty:polished_spirit_stone_slab", "required": false},
-    {"id": "samurai_dynasty:polished_spirit_stone_stairs", "required": false},
-    {"id": "samurai_dynasty:polished_spirit_stone_wall", "required": false},
-    {"id": "samurai_dynasty:red_maple_planks", "required": false},
-    {"id": "samurai_dynasty:spirit_stone", "required": false},
-    {"id": "samurai_dynasty:spirit_stone_base", "required": false},
-    {"id": "samurai_dynasty:spirit_stone_slab", "required": false},
-    {"id": "samurai_dynasty:spirit_stone_stairs", "required": false},
-    {"id": "samurai_dynasty:spirit_stone_wall", "required": false},
-    {"id": "samurai_dynasty:steel_block", "required": false},
-    {"id": "samurai_dynasty:stone_roof", "required": false},
-    {"id": "samurai_dynasty:stone_roof_corner", "required": false},
-    {"id": "samurai_dynasty:stone_roof_top", "required": false},
-    {"id": "samurai_dynasty:tanuki_statue", "required": false},
-    {"id": "samurai_dynasty:tanegashima", "required": false},
-    {"id": "samurai_dynasty:samurai_guide", "required": false}
+    {
+      "id": "samurai_dynasty:knive_handle",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_handle",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spear_handle",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:wakizashi",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:naginata",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:nagamaki",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:shuko",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tetsubo",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:odachi",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tonbukiri",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kamayari",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kunai",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kama",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:sai",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:masakari",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kabutowari",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:shuriken",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:wakizashi_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:naginata_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:nagamaki_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:shuko_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tetsubo_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:odachi_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tonbukiri_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kamayari_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kunai_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kama_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:sai_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:masakari_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kabutowari_netherite",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:yumi",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:akaname_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:enenra_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:oni_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kitsune_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kitsune_small_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:onibi_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:jorogumo_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:komainu_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tanuki_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kawauso_spawn_egg",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:jade",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:steel_ingot",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:steel_nugget",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kitsune_hide",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kitsune_tail",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:akaname_tongue",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_flame",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:jorogumo_eye",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:oni_horn",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:cloth",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_upgrade_smithing_template",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:oni_mask",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kitsune_mask",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_oni",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_kitsune",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_kitsune_blue",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_akaname",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:katana_jorogumo",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:chiseled_pattern_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:chiseled_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:deepslate_jade_ore",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:dragon_spirit_stone",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:jade_block",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:jade_ore",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:kawauso_statue",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:komainu_statue",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:mosaic_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:mossy_spirit_stone_brick_slab",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:mossy_spirit_stone_brick_stairs",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:mossy_spirit_stone_brick_wall",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:mossy_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:path_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:pattern_mossy_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:pattern_spirit_stone_bricks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:polished_spirit_stone",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:polished_spirit_stone_slab",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:polished_spirit_stone_stairs",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:polished_spirit_stone_wall",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:red_maple_planks",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_stone",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_stone_base",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_stone_slab",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_stone_stairs",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:spirit_stone_wall",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:steel_block",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:stone_roof",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:stone_roof_corner",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:stone_roof_top",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tanuki_statue",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:tanegashima",
+      "required": false
+    },
+    {
+      "id": "samurai_dynasty:samurai_guide",
+      "required": false
+    },
+    {
+      "id": "drinkbeer:beer_mug_haars_icey_pale_lager",
+      "required": false
+    },
+    {
+      "id": "drinkbeer:recipe_board_beer_mug_haars_icey_pale_lager",
+      "required": false
+    }
   ]
 }

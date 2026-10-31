@@ -13,42 +13,42 @@
     "removeAllRecipesFrom: like removeRecipesFrom, but keepRecipes does not apply (ingots go too);",
     "keepRecipeIds: recipes whose id starts with one of these are always kept."
   ],
-  "version": 15,
+  "version": 16,
   "armorBalance": {
     "_comment": "Every armor piece of an era gets these values, whatever mod it comes from.",
     "bronze": {
-      "helmet": 2.0,
-      "chestplate": 6.0,
-      "leggings": 4.0,
-      "boots": 2.0,
-      "toughness": 0.0,
+      "helmet": 2,
+      "chestplate": 6,
+      "leggings": 4,
+      "boots": 2,
+      "toughness": 0,
       "knockbackResistance": 0,
-      "horse": 4.0
+      "horse": 4
     },
     "iron": {
-      "helmet": 3.0,
-      "chestplate": 6.0,
-      "leggings": 5.0,
-      "boots": 2.0,
-      "toughness": 0.0,
+      "helmet": 3,
+      "chestplate": 6,
+      "leggings": 5,
+      "boots": 2,
+      "toughness": 0,
       "knockbackResistance": 0,
-      "horse": 7.0
+      "horse": 7
     },
     "steel": {
-      "helmet": 3.0,
-      "chestplate": 8.0,
-      "leggings": 6.0,
-      "boots": 3.0,
+      "helmet": 3,
+      "chestplate": 8,
+      "leggings": 6,
+      "boots": 3,
       "toughness": 1.5,
       "knockbackResistance": 0,
-      "horse": 10.0
+      "horse": 10
     },
     "gunpowder": {
-      "helmet": 4.0,
-      "chestplate": 8.0,
-      "leggings": 7.0,
-      "boots": 3.0,
-      "toughness": 2.0,
+      "helmet": 4,
+      "chestplate": 8,
+      "leggings": 7,
+      "boots": 3,
+      "toughness": 2,
       "knockbackResistance": 0.05
     },
     "_horse": "horse: armor points of horse armor (Armory Table \"horse\" tab) in that era."
@@ -16987,7 +16987,7 @@
           "count": 2
         },
         {
-          "item": "minecraft:bone",
+          "tag": "c:leathers",
           "count": 2
         }
       ]
@@ -18434,12 +18434,8 @@
       },
       "cost": [
         {
-          "item": "minecraft:bone",
-          "count": 4
-        },
-        {
           "tag": "c:leathers",
-          "count": 1
+          "count": 5
         }
       ]
     },
@@ -18495,12 +18491,8 @@
       },
       "cost": [
         {
-          "item": "minecraft:bone",
-          "count": 4
-        },
-        {
           "tag": "c:leathers",
-          "count": 1
+          "count": 5
         }
       ]
     },
@@ -18553,12 +18545,8 @@
       },
       "cost": [
         {
-          "item": "minecraft:bone",
-          "count": 4
-        },
-        {
           "tag": "c:leathers",
-          "count": 1
+          "count": 5
         }
       ]
     },
@@ -18667,12 +18655,8 @@
       },
       "cost": [
         {
-          "item": "minecraft:bone",
-          "count": 4
-        },
-        {
           "tag": "c:leathers",
-          "count": 1
+          "count": 5
         }
       ]
     },
@@ -18964,7 +18948,7 @@
       },
       "cost": [
         {
-          "item": "minecraft:bone",
+          "tag": "c:leathers",
           "count": 4
         }
       ]
@@ -20444,12 +20428,8 @@
       },
       "cost": [
         {
-          "item": "minecraft:bone",
-          "count": 4
-        },
-        {
           "tag": "c:leathers",
-          "count": 1
+          "count": 5
         }
       ]
     },

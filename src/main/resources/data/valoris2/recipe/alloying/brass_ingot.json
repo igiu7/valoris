@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "valoris2:alloying",
+  "first": [
+    { "tag": "c:ingots/copper" },
+    { "tag": "c:raw_materials/copper" }
+  ],
+  "first_count": 1,
+  "second": [
+    { "tag": "c:ingots/zinc" },
+    { "tag": "c:raw_materials/zinc" }
+  ],
+  "second_count": 1,
+  "result": {
+    "id": "create:brass_ingot",
+    "count": 2
+  },
+  "experience": 0.5,
+  "cookingtime": 300
+}
