@@ -20,6 +20,10 @@ public class GuiState {
     public int claimLimit;
 
     public String kingdomName = "";
+    public String kingdomPrefix = "Kingdom of"; // my kingdom's prefix and its ruler's title
+    public String rulerTitle = "King";
+    // Row(kingdomName, prefix, rulerTitle, 0, 0) of every kingdom, for kingdomTitle / rulerTitle
+    public List<Row> kingdomStyles = new ArrayList<>();
 
     // my realm: my kingdom, or my city when it belongs to no kingdom ("" = none). isLeader: I make its diplomacy
     public String realmName = "";
@@ -85,6 +89,23 @@ public class GuiState {
     // every kingdom and independent city with its statistics (the client sorts them)
     public List<LeaderRow> leaderboard = new ArrayList<>();
 
+    /** "Kingdom of X" with the kingdom's own prefix. */
+    public String kingdomTitle(String kingdom) {
+        for (Row r : kingdomStyles) if (r.a().equals(kingdom)) return r.b() + " " + kingdom;
+        return "Kingdom of " + kingdom;
+    }
+
+    /** What the ruler of that kingdom is called ("King"). */
+    public String rulerTitle(String kingdom) {
+        for (Row r : kingdomStyles) if (r.a().equals(kingdom)) return r.c();
+        return "King";
+    }
+
+    /** My kingdom's full name. */
+    public String myKingdomTitle() {
+        return kingdomPrefix + " " + kingdomName;
+    }
+
     private static void writeStrings(FriendlyByteBuf buf, List<String> list) {
         buf.writeCollection(list, (b, s) -> b.writeUtf(s));
     }
@@ -112,6 +133,9 @@ public class GuiState {
         buf.writeVarInt(claimed);
         buf.writeVarInt(claimLimit);
         buf.writeUtf(kingdomName);
+        buf.writeUtf(kingdomPrefix);
+        buf.writeUtf(rulerTitle);
+        writeRows(buf, kingdomStyles);
         buf.writeUtf(king);
         buf.writeVarInt(siegePrepMinutes);
         buf.writeVarInt(siegeMinutes);
@@ -164,6 +188,9 @@ public class GuiState {
         s.claimed = buf.readVarInt();
         s.claimLimit = buf.readVarInt();
         s.kingdomName = buf.readUtf();
+        s.kingdomPrefix = buf.readUtf();
+        s.rulerTitle = buf.readUtf();
+        s.kingdomStyles = readRows(buf);
         s.king = buf.readUtf();
         s.siegePrepMinutes = buf.readVarInt();
         s.siegeMinutes = buf.readVarInt();

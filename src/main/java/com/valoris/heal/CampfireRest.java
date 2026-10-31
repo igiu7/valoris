@@ -20,7 +20,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * Resting by a fire: a player with a full hunger bar near a lit campfire slowly regains health (natural regeneration
+ * Resting by a fire: a player with a full hunger bar near a lit campfire (or within 10 blocks of a bonfire) slowly regains health (natural regeneration
  * is off), also while moving around it. Leaving the fire's radius, or the hunger bar dropping, interrupts the rest.
  */
 @EventBusSubscriber(modid = valoris2.MODID)
@@ -55,7 +55,8 @@ public final class CampfireRest {
 
         boolean ok = player.isAlive() && !player.isSpectator() && player.getFoodData().getFoodLevel() >= 20
                 && player.getHealth() < player.getMaxHealth()
-                && nearLitCampfire(player.serverLevel(), player.blockPosition(), Config.CAMPFIRE_REST_RADIUS.get());
+                && (nearLitCampfire(player.serverLevel(), player.blockPosition(), Config.CAMPFIRE_REST_RADIUS.get())
+                    || BonfireBlock.near(player.serverLevel(), player.blockPosition()));
         if (!ok) {
             rest.nearSeconds = 0;
             return;

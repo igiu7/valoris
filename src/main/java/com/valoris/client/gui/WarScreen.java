@@ -93,7 +93,7 @@ public final class WarScreen extends BaseScreen {
     private static String title(String name) {
         Row r = realm(name);
         if (r == null) return name;
-        return (r.c().equals("KINGDOM") ? "Kingdom of " : "City of ") + name;
+        return r.c().equals("KINGDOM") ? state().kingdomTitle(name) : "City of " + name;
     }
 
     private static List<Row> members(String warId, String side) {
@@ -229,7 +229,7 @@ public final class WarScreen extends BaseScreen {
                 ? (offensive ? "Rebellion against the " : "Rebellion of the ") + title(war.c())
                 : "War against the " + title(war.c());
         String kind = rebellion
-                ? (offensive ? "Rebellion - we rose against our king" : "Rebellion - a city of ours rose against us")
+                ? (offensive ? "Rebellion - we rose against our " + state().rulerTitle(war.c()) : "Rebellion - a city of ours rose against us")
                 : (offensive ? "Offensive - we declared it" : "Defensive - we were attacked");
         Ui.text(g, theme, Component.literal(Ui.fit(theme, heading, w - 110))
                 .withStyle(ChatFormatting.BOLD), x + 44, y + 9, Ui.TEXT, true);
@@ -347,7 +347,7 @@ public final class WarScreen extends BaseScreen {
                     add(new Line(this, w, "  " + Character.toUpperCase(st.c().charAt(0)) + st.c().substring(1), "", Ui.MUTED, Ui.MUTED));
                 }
                 Row realm = realm(m.b());
-                if (realm != null) add(new Line(this, w, "  " + (realm.c().equals("KINGDOM") ? "King" : "Ruler"), realm.b(), Ui.MUTED, Ui.TEXT));
+                if (realm != null) add(new Line(this, w, "  " + (realm.c().equals("KINGDOM") ? state().rulerTitle(realm.a()) : "Ruler"), realm.b(), Ui.MUTED, Ui.TEXT));
                 add(new Line(this, w, "  Slain / fallen", (st == null ? 0 : st.n()) + " / " + (st == null ? 0 : st.m()), Ui.MUTED, Ui.TEXT));
                 for (Row c : citiesOf(m.b())) {
                     int flags = c.m();

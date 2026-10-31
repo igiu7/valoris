@@ -66,7 +66,7 @@ public final class HubScreen extends ValorisFrame {
     @Override
     protected String subtitle() {
         GuiState s = state();
-        return s.roleTitle + (s.kingdomName.isEmpty() ? "" : "  -  " + s.kingdomName);
+        return s.roleTitle + (s.kingdomName.isEmpty() ? "" : "  -  " + s.myKingdomTitle());
     }
 
     @Override
@@ -285,8 +285,8 @@ public final class HubScreen extends ValorisFrame {
                     + "existing city.", Ui.BLUE, Icons.INFO);
         }
         if (!s.kingdomName.isEmpty()) {
-            stat(p, cw, "Kingdom", s.kingdomName, Ui.GOLD);
-            stat(p, cw, "King", s.king, Ui.TEXT);
+            stat(p, cw, "Kingdom", s.myKingdomTitle(), Ui.GOLD);
+            stat(p, cw, s.rulerTitle, s.king, Ui.TEXT);
         }
 
         section(p, cw, "Needs your attention");
@@ -299,7 +299,7 @@ public final class HubScreen extends ValorisFrame {
         alert(p, cw, s.cityInvites.size(), "City invitations", "Cities that want you", Icons.CHAT, () -> select(Tab.CITY));
         alert(p, cw, s.cityJoinRequests.size(), "Requests to join your city", "Players waiting for an answer", Icons.CHAT, () -> select(Tab.CITY));
         alert(p, cw, s.kingdomInvites.size(), "Kingdom invitations", "Kingdoms that want your city", Icons.CHAT, () -> select(Tab.KINGDOM));
-        alert(p, cw, s.kingdomJoinRequests.size(), "Cities asking to join", "Waiting for the king", Icons.CHAT, () -> select(Tab.KINGDOM));
+        alert(p, cw, s.kingdomJoinRequests.size(), "Cities asking to join", "Waiting for the " + s.rulerTitle, Icons.CHAT, () -> select(Tab.KINGDOM));
         alert(p, cw, com.valoris.client.ClientInbox.entries().size(), "Requests waiting for you",
                 "Invitations, proposals and calls - open the requests window", ItemIcon.getItemIcon(Items.WRITABLE_BOOK),
                 () -> new InboxScreen().openGui());
@@ -338,7 +338,7 @@ public final class HubScreen extends ValorisFrame {
         section(p, cw, s.cityName);
         stat(p, cw, "Ruler", s.cityRuler, Ui.TEXT);
         stat(p, cw, "Residents", String.valueOf(s.residents), Ui.TEXT);
-        if (!s.kingdomName.isEmpty()) stat(p, cw, "Kingdom", s.kingdomName, Ui.GOLD);
+        if (!s.kingdomName.isEmpty()) stat(p, cw, "Kingdom", s.myKingdomTitle(), Ui.GOLD);
         if (s.founded) p.add(new Widgets.ProgressRow(p, cw, "Claimed chunks", s.claimed, s.claimLimit));
     }
 
@@ -439,7 +439,7 @@ public final class HubScreen extends ValorisFrame {
                     .click(() -> Dialogs.color(this, "Colour of " + s.cityName, s.realmColor,
                             rgb -> cmd("valoris city color " + String.format("%06x", rgb))));
         } else {
-            tile(p, cw, "Map colour", "Set by the Kingdom of " + s.kingdomName, Color4I.rgb(s.realmColor)).disabled();
+            tile(p, cw, "Map colour", "Set by the " + s.myKingdomTitle(), Color4I.rgb(s.realmColor)).disabled();
         }
 
         if (s.kingdomName.isEmpty()) {
@@ -473,7 +473,7 @@ public final class HubScreen extends ValorisFrame {
             if (!s.kingdomInvites.isEmpty()) {
                 section(p, cw, "Invitations");
                 for (String k : s.kingdomInvites) {
-                    tile(p, cw, k, "invites your city", Icons.CHAT).accent(Ui.GOLD)
+                    tile(p, cw, s.kingdomTitle(k), "invites your city", Icons.CHAT).accent(Ui.GOLD)
                             .chip("Accept", Ui.GREEN, () -> cmd("valoris city kingdom accept " + q(k)))
                             .chip("Decline", Ui.RED, () -> cmd("valoris city kingdom decline " + q(k)));
                 }
@@ -487,7 +487,7 @@ public final class HubScreen extends ValorisFrame {
             if (!s.kingdoms.isEmpty()) {
                 section(p, cw, "Join a kingdom");
                 for (Row k : s.kingdoms) {
-                    tile(p, cw, k.a(), "King " + k.b() + "  -  " + plural(k.n(), "city", "cities"), Icons.GLOBE)
+                    tile(p, cw, s.kingdomTitle(k.a()), s.rulerTitle(k.a()) + " " + k.b() + "  -  " + plural(k.n(), "city", "cities"), Icons.GLOBE)
                             .chip("Request", Ui.BLUE, () -> cmd("valoris city kingdom join " + q(k.a())));
                 }
             }
@@ -509,8 +509,8 @@ public final class HubScreen extends ValorisFrame {
             }
         }
 
-        section(p, cw, "Kingdom of " + s.kingdomName);
-        stat(p, cw, "King", s.king, Ui.GOLD);
+        section(p, cw, s.myKingdomTitle());
+        stat(p, cw, s.rulerTitle, s.king, Ui.GOLD);
         stat(p, cw, "Cities", String.valueOf(s.myCities.size()), Ui.TEXT);
 
         section(p, cw, "Cities");
@@ -522,7 +522,7 @@ public final class HubScreen extends ValorisFrame {
             if (capital) t.badge("CAPITAL", Ui.GOLD);
             if (king && !capital) {
                 if (online) {
-                    t.chip("Crown", Ui.GOLD, () -> confirm("Pass the crown?", c.b() + " becomes king and " + c.a()
+                    t.chip("Crown", Ui.GOLD, () -> confirm("Pass the crown?", c.b() + " becomes " + s.rulerTitle + " and " + c.a()
                             + " the new capital.", Ui.GOLD, () -> cmd("valoris kingdom crown " + c.b())));
                 }
                 t.chip("Expel", Ui.RED, () -> confirm("Expel " + c.a() + "?", "The city leaves the kingdom.", Ui.RED,
@@ -540,23 +540,31 @@ public final class HubScreen extends ValorisFrame {
             }
 
             section(p, cw, "Settings");
-            tile(p, cw, "Rename", "Currently the Kingdom of " + s.kingdomName, Icons.NOTES).accent(Ui.GOLD)
+            tile(p, cw, "Rename", "Currently the " + s.myKingdomTitle(), Icons.NOTES).accent(Ui.GOLD)
                     .click(() -> Dialogs.prompt(this, "Rename the kingdom", "New kingdom name", Ui.GOLD, "Rename",
                             s.kingdomName, name -> cmd("valoris kingdom rename " + q(name))));
+            tile(p, cw, "Prefix", "Shown before the name: " + s.kingdomPrefix + " " + s.kingdomName, Icons.NOTES)
+                    .accent(Ui.GOLD).tip("For example Empire of, Duchy of, Tsardom of")
+                    .click(() -> Dialogs.prompt(this, "Prefix of the kingdom", "e.g. Empire of", Ui.GOLD, "Change",
+                            s.kingdomPrefix, prefix -> cmd("valoris kingdom prefix " + q(prefix))));
+            tile(p, cw, "Ruler title", "You are called " + s.rulerTitle + " " + s.king, Icons.STAR)
+                    .accent(Ui.GOLD).tip("For example Emperor, Duke, Tsar")
+                    .click(() -> Dialogs.prompt(this, "Title of the ruler", "e.g. Emperor", Ui.GOLD, "Change",
+                            s.rulerTitle, title -> cmd("valoris kingdom title " + q(title))));
             tile(p, cw, "Map colour", "Worn by every city of the kingdom", Color4I.rgb(s.realmColor))
                     .accent(Ui.GOLD).click(() -> Dialogs.color(this, "Colour of " + s.kingdomName, s.realmColor,
                             rgb -> cmd("valoris kingdom color " + String.format("%06x", rgb))));
 
             section(p, cw, "Danger zone");
             tile(p, cw, "Disband the kingdom", "All cities become independent", Icons.BIN).accent(Ui.RED)
-                    .click(() -> confirm("Disband " + s.kingdomName + "?", "The kingdom ceases to exist. "
+                    .click(() -> confirm("Disband the " + s.myKingdomTitle() + "?", "The kingdom ceases to exist. "
                             + "This cannot be undone.", Ui.RED, () -> cmd("valoris kingdom disband")));
         } else if (isRuler(s)) {
             section(p, cw, "Danger zone");
-            tile(p, cw, "Rebel", "Leave the kingdom and rise against the king", Icons.BARRIER)
+            tile(p, cw, "Rebel", "Leave the kingdom and rise against the " + s.rulerTitle, Icons.BARRIER)
                     .accent(Ui.RED)
-                    .click(() -> confirm("Rebel against " + s.kingdomName + "?",
-                            "Your city becomes independent and a rebellion begins at once. If the king takes your city"
+                    .click(() -> confirm("Rebel against the " + s.myKingdomTitle() + "?",
+                            "Your city becomes independent and a rebellion begins at once. If the " + s.rulerTitle + " takes your city"
                                     + " back, you cannot rebel again for a while.", Ui.RED,
                             () -> cmd("valoris city kingdom rebel")));
         }
@@ -612,7 +620,7 @@ public final class HubScreen extends ValorisFrame {
     }
 
     private static String realmTitle(Row realm) {
-        return (isKingdom(realm) ? "Kingdom of " : "City of ") + realm.a();
+        return isKingdom(realm) ? state().kingdomTitle(realm.a()) : "City of " + realm.a();
     }
 
     private static Icon realmIcon(Row realm) {
@@ -625,7 +633,7 @@ public final class HubScreen extends ValorisFrame {
     }
 
     private static String realmSub(Row realm) {
-        return isKingdom(realm) ? "King " + realm.b() + "  -  " + plural(realm.n(), "city", "cities")
+        return isKingdom(realm) ? state().rulerTitle(realm.a()) + " " + realm.b() + "  -  " + plural(realm.n(), "city", "cities")
                 : "Ruler " + realm.b() + "  -  independent city";
     }
 
@@ -771,7 +779,7 @@ public final class HubScreen extends ValorisFrame {
 
         if (mine != null) {
             tile(p, cw, realmTitle(mine), s.isLeader ? "You lead its diplomacy"
-                    : (s.realmIsKingdom ? "Led by your king" : "Led by your ruler"),
+                    : (s.realmIsKingdom ? "Led by your " + s.rulerTitle : "Led by your ruler"),
                     realmIcon(mine)).accent(Ui.GOLD).badge("YOUR REALM", Ui.GOLD);
         }
 
@@ -843,7 +851,7 @@ public final class HubScreen extends ValorisFrame {
         Color4I color = relationColor(rel);
 
         tile(p, cw, realmTitle(r), realmSub(r), realmIcon(r)).accent(color).badge(relationLabel(rel), color);
-        stat(p, cw, isKingdom(r) ? "King" : "Ruler", r.b(), Ui.TEXT);
+        stat(p, cw, isKingdom(r) ? s.rulerTitle(r.a()) : "Ruler", r.b(), Ui.TEXT);
         Row truce = null;
         for (Row t : s.truces) if (t.a().equals(name)) truce = t;
         if (truce != null) stat(p, cw, "Truce", truceLeft(truce.n()) + " left", Ui.BLUE);
@@ -893,7 +901,7 @@ public final class HubScreen extends ValorisFrame {
 
         section(p, cw, "Diplomacy");
         if (!leader) {
-            note(p, cw, s.realmIsKingdom ? "Only your king can make decisions here."
+            note(p, cw, s.realmIsKingdom ? "Only your " + s.rulerTitle + " can make decisions here."
                     : "Only the ruler of your city can make decisions here.", Ui.GRAY, Icons.INFO);
         } else if (offer != null) {
             tile(p, cw, (offer.equals("PEACE") ? "Peace" : "Alliance") + " offered", "Waiting for their answer",

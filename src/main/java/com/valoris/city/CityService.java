@@ -381,8 +381,8 @@ public final class CityService {
             throw Errors.of("You rule a kingdom. Disband the kingdom or transfer the crown first.");
         }
         if (kingdom.isPresent()) {
-            throw Errors.of("Your city belongs to the Kingdom of " + kingdom.get().name
-                    + ". Only the king can release it, or you can rebel.");
+            throw Errors.of("Your city belongs to the " + kingdom.get().title()
+                    + ". Only the " + kingdom.get().rulerTitle + " can release it, or you can rebel.");
         }
         // neither a besieged city nor an independent city that is besieging another one can slip away
         boolean siege = data.sieges().stream().anyMatch(s -> s.isAttacking(city.teamId) || s.cityTeam.equals(city.teamId));

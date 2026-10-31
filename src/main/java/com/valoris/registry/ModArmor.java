@@ -41,8 +41,8 @@ public final class ModArmor {
         });
     }
 
-    public static final Holder<ArmorMaterial> WOLF_FUR = material("wolf_fur", 2, 6, 4, 2, ModAnimals.FUR);
-    public static final Holder<ArmorMaterial> BEAR_FUR = material("bear_fur", 3, 6, 5, 2, ModAnimals.BEAR_FUR);
+    public static final Holder<ArmorMaterial> WOLF_FUR = material("wolf_fur", 1, 5, 3, 1, ModAnimals.FUR);
+    public static final Holder<ArmorMaterial> BEAR_FUR = material("bear_fur", 2, 5, 4, 1, ModAnimals.BEAR_FUR);
 
     private static DeferredItem<ArmorItem> piece(String id, Holder<ArmorMaterial> material, ArmorItem.Type type, int durability) {
         return ModBlocks.ITEMS.register(id, () -> new ArmorItem(material, type,

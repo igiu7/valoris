@@ -39,7 +39,7 @@ displayName="${mod_name}" #mandatory
 #logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-#credits="" #optional
+credits="Japanese armor and weapons: a port of Epic Knights : Japanese Armory by chivas477 (Academic Free License 3.0)"
 
 # The authors of the mod, displayed in the mod UI (optional)
 #authors=""
@@ -116,6 +116,14 @@ modId = "architectury"
 type = "required"
 versionRange = "[13.0.0,)"
 ordering = "NONE"
+side = "BOTH"
+
+# loaded after Samurai Dynasty, so its data and lang overrides in this jar win (only its armor is kept)
+[[dependencies.${mod_id}]]
+modId = "samurai_dynasty"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
 side = "BOTH"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares

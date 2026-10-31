@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/kunai",
+  "textures": {
+    "0": "valoris2:block/japanese/steel/kunai",
+    "particle": "valoris2:item/japanese/steel/kunai"
+  }
+}

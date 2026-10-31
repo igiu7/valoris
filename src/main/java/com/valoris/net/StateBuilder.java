@@ -53,7 +53,7 @@ public final class StateBuilder {
 
         Roles.Role role = Roles.of(p);
         s.role = role.name();
-        s.roleTitle = role.title;
+        s.roleTitle = Roles.titleOf(p);
         s.claimLimit = Roles.cityOfMember(p).map(com.valoris.tech.TechService::claimLimit)
                 .orElse(Config.CITY_CLAIM_LIMIT.get());
         s.siegePrepMinutes = Config.SIEGE_PREP_MINUTES.get();
@@ -110,6 +110,8 @@ public final class StateBuilder {
 
         kingdom.ifPresent(k -> {
             s.kingdomName = k.name;
+            s.kingdomPrefix = k.prefix;
+            s.rulerTitle = k.rulerTitle;
             s.king = KingdomService.kingOf(data, k).map(id -> Msg.nameOf(server, id)).orElse("?");
             city.ifPresent(c -> s.capital = k.capital.equals(c.teamId));
             for (UUID id : k.cities) {
@@ -149,6 +151,7 @@ public final class StateBuilder {
 
         // all kingdoms with the relation to mine
         for (Kingdom k : data.kingdoms()) {
+            s.kingdomStyles.add(new Row(k.name, k.prefix, k.rulerTitle, 0, 0));
             int rel;
             if (kingdom.isPresent() && kingdom.get().id.equals(k.id)) rel = -1;
             else if (kingdom.isEmpty()) rel = 0;

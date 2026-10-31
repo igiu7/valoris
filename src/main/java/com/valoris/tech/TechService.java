@@ -132,8 +132,8 @@ public final class TechService {
         int brought = capital.techs.size() - kingdomBefore; // what the city taught the kingdom
         handOverResearch(server, data, city, capital);
         if (learned > 0) Msg.toTeam(city.teamId, Msg.text(city.name + " learned " + learned
-                + " technologies from the Kingdom of " + k.name + ".", ChatFormatting.GREEN));
-        if (brought > 0) Msg.toKingdom(k, Msg.text("The Kingdom of " + k.name + " learned " + brought
+                + " technologies from the " + k.title() + ".", ChatFormatting.GREEN));
+        if (brought > 0) Msg.toKingdom(k, Msg.text("The " + k.title() + " learned " + brought
                 + " technologies from " + city.name + ".", ChatFormatting.GREEN));
         for (City c : realmCities(data, city)) com.valoris.city.ClaimLimitHook.syncLimits(server, c);
         saveNow(server);
@@ -235,8 +235,9 @@ public final class TechService {
         if (!city.founded) throw Errors.of("Your city has not been founded yet.");
         ValorisData data = ValorisData.get(player.getServer());
         if (!Realms.isLeader(player)) {
-            throw Errors.of(data.kingdomOfCity(city.teamId).isPresent()
-                    ? "Research is managed by the king for the whole kingdom." : "Only the city ruler can manage research.");
+            throw Errors.of(data.kingdomOfCity(city.teamId)
+                    .map(k -> "Research is managed by the " + k.rulerTitle + " for the whole kingdom.")
+                    .orElse("Only the city ruler can manage research."));
         }
         Realms.requireActingLeader(player); // a fallen city awaiting its conqueror cannot research
         return holder(data, city);
@@ -348,13 +349,19 @@ public final class TechService {
 
     // ------------------------------------------------------------------ claim limit
 
-    /** Chunks the city may claim: the highest claimLimit among its technologies (Expand Domain I-IV). */
+    /** A kingdom's capital may claim this much more than an ordinary city with the same technologies. */
+    public static final double CAPITAL_CLAIM_BONUS = 1.25;
+
+    /** Chunks the city may claim: the highest claimLimit among its technologies (Expand Domain I-IV), +25% for a capital. */
     public static int claimLimit(City city) {
         int limit = com.valoris.Config.CITY_CLAIM_LIMIT.get();
         for (TechNode node : TechConfig.nodes().values()) {
             if (node.claimLimit() > limit && has(city, node.id())) limit = node.claimLimit();
         }
-        return limit;
+        MinecraftServer server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        boolean capital = server != null && ValorisData.get(server).kingdomOfCity(city.teamId)
+                .map(k -> k.capital.equals(city.teamId)).orElse(false);
+        return capital ? (int) Math.ceil(limit * CAPITAL_CLAIM_BONUS) : limit;
     }
 
     // ------------------------------------------------------------------ texts

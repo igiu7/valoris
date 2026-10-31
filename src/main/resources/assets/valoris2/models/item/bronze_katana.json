@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/katana",
+  "textures": {
+    "1": "valoris2:block/japanese/bronze/katana",
+    "particle": "valoris2:item/japanese/bronze/katana_handle"
+  }
+}

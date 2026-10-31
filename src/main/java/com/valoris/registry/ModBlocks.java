@@ -43,6 +43,19 @@ public final class ModBlocks {
     public static final DeferredItem<BlockItem> ARMORY_TABLE_ITEM = ITEMS.register("armory_table",
             () -> new BlockItem(ARMORY_TABLE.get(), new Item.Properties()));
 
+    /** Large fire two blocks tall: warms and lets players rest within 10 blocks (heal.BonfireBlock). */
+    public static final DeferredBlock<com.valoris.heal.BonfireBlock> BONFIRE = BLOCKS.register("bonfire",
+            () -> new com.valoris.heal.BonfireBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PODZOL)
+                    .strength(2.0F)
+                    .sound(SoundType.WOOD)
+                    .lightLevel(s -> 15)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)));
+
+    public static final DeferredItem<BlockItem> BONFIRE_ITEM = ITEMS.register("bonfire",
+            () -> new BlockItem(BONFIRE.get(), new Item.Properties()));
+
     private ModBlocks() {}
 
     public static void register(IEventBus modBus) {

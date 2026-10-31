@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "valoris2:armory_table"
+    "valoris2:armory_table",
+    "valoris2:bonfire"
   ]
 }

@@ -16,7 +16,8 @@
     "PartyTeamMixin",
     "SaplingBlockMixin",
     "BambooSaplingBlockMixin",
-    "PressurePlateMixin"
+    "PressurePlateMixin",
+    "MineshaftSpiderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

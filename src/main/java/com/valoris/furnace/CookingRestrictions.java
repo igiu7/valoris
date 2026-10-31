@@ -35,9 +35,14 @@ public class CookingRestrictions {
     }
 
     /** Recipes for gear of these mods are removed: it is made only at the Armory Table. */
-    private static boolean armoryRecipe(ItemStack result) {
+    private static boolean armoryRecipe(ResourceLocation recipe, ItemStack result) {
         if (result.isEmpty()) return false;
+        for (String keep : com.valoris.armory.ArmoryCatalog.keepRecipeIds()) {
+            if (recipe.toString().startsWith(keep)) return false;
+        }
         ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(result.getItem());
+        // mods whose content is removed except what the Armory makes: no recipe at all, ingots included
+        if (com.valoris.armory.ArmoryCatalog.removeAllRecipesFrom().contains(id.getNamespace())) return true;
         if (!com.valoris.armory.ArmoryCatalog.removeRecipesFrom().contains(id.getNamespace())) return false;
         for (String keep : com.valoris.armory.ArmoryCatalog.keepRecipes()) {
             if (id.getPath().contains(keep)) return false;
@@ -88,7 +93,7 @@ public class CookingRestrictions {
                 removed++;
                 continue;
             }
-            if (armoryRecipe(result)) {
+            if (armoryRecipe(holder.id(), result)) {
                 armory++;
                 continue;
             }

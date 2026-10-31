@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/wakizashi",
+  "textures": {
+    "1": "valoris2:block/japanese/steel/katana",
+    "particle": "valoris2:item/japanese/steel/katana"
+  }
+}

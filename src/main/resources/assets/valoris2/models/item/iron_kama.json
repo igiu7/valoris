@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/kama",
+  "textures": {
+    "0": "valoris2:block/japanese/kama",
+    "particle": "valoris2:item/japanese/kama"
+  }
+}

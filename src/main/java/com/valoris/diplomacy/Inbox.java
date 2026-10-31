@@ -54,7 +54,7 @@ public final class Inbox {
         // a city invites me (I have no city yet)
         for (Request r : city.isPresent() ? List.<Request>of() : Requests.listTo(server, Type.CITY_INVITE, p.getUUID())) {
             data.byTeam(r.from()).filter(c -> c.founded).ifPresent(c -> {
-                String realm = data.kingdomOfCity(c.teamId).map(k -> "part of the Kingdom of " + k.name).orElse("an independent city");
+                String realm = data.kingdomOfCity(c.teamId).map(k -> "part of the " + k.title()).orElse("an independent city");
                 out.add(new Entry("ci:" + c.teamId, "city", "Invitation to " + c.name,
                         Msg.nameOf(server, c.ruler) + " invites you to live in " + c.name + " (" + realm + "). As a resident "
                                 + "you may build on its land, and your skills help the city discover new technologies.",
@@ -77,11 +77,11 @@ public final class Inbox {
                     data.kingdomById(r.from()).ifPresent(k -> {
                         String king = KingdomService.kingOf(data, k).map(id -> Msg.nameOf(server, id)).orElse("?");
                         boolean atWar = data.relationsOf(c.teamId).containsValue(com.valoris.data.Relation.WAR);
-                        out.add(new Entry("ki:" + k.id, "kingdom", "The Kingdom of " + k.name + " invites " + c.name,
-                                "King " + king + " invites your city into the Kingdom of " + k.name + " (" + k.cities.size()
-                                        + " cities). The king then leads your diplomacy and wars, your city wears the "
+                        out.add(new Entry("ki:" + k.id, "kingdom", "The " + k.title() + " invites " + c.name,
+                                k.rulerTitle + " " + king + " invites your city into the " + k.title() + " (" + k.cities.size()
+                                        + " cities). The " + k.rulerTitle + " then leads your diplomacy and wars, your city wears the "
                                         + "kingdom's colour, your own alliances end, and you can leave only by rebellion "
-                                        + "or the king's decision." + (atWar ? " Your city is at war: make peace before joining." : ""),
+                                        + "or the " + k.rulerTitle + "'s decision." + (atWar ? " Your city is at war: make peace before joining." : ""),
                                 "Join the kingdom", "valoris city kingdom accept " + Msg.q(k.name),
                                 "Decline", "valoris city kingdom decline " + Msg.q(k.name), seconds(server, r)));
                     });
@@ -96,7 +96,7 @@ public final class Inbox {
                         data.byTeam(r.from()).ifPresent(c -> out.add(new Entry("kj:" + c.teamId, "kingdom",
                                 c.name + " asks to join your kingdom",
                                 "The city of " + c.name + " (ruler " + Msg.nameOf(server, c.ruler) + ") wants to become part "
-                                        + "of the Kingdom of " + k.name + ". It would wear your colour and you would lead its "
+                                        + "of the " + k.title() + ". It would wear your colour and you would lead its "
                                         + "diplomacy and wars.",
                                 "Accept", "valoris kingdom accept " + Msg.q(c.name),
                                 "Decline", "valoris kingdom decline " + Msg.q(c.name), seconds(server, r))));

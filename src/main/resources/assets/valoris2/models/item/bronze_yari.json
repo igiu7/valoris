@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/yari",
+  "textures": {
+    "0": "valoris2:block/japanese/bronze/yari",
+    "particle": "valoris2:item/japanese/bronze/naginata"
+  }
+}

@@ -31,12 +31,14 @@ public class valoris2 {
         com.valoris.registry.ModPlants.init();      // herbs, flax and healing items join ModBlocks' registers
         com.valoris.registry.ModAnimals.init();     // fur
         com.valoris.registry.ModArmor.register(modEventBus); // wolf and bear fur armor
+        com.valoris.registry.JapaneseArmory.register(modEventBus); // samurai armor, katanas... (Japanese Armory port)
         com.valoris.registry.ModOres.init();        // overworld quartz ore
         com.valoris.registry.ModTools.init();       // steel tools
         ModBlocks.register(modEventBus);
         com.valoris.registry.ModEntities.register(modEventBus); // bear
         com.valoris.worldgen.ModWorldgen.register(modEventBus); // Valoris map world type
         com.valoris.registry.ModTabs.register(modEventBus);
+        com.valoris.rules.NoExperienceBottles.register(modEventBus); // loot modifier removing bottles o' enchanting
         if (FMLEnvironment.dist.isClient()) com.valoris.client.FtbSidebar.init();
     }
 

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SL"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "L": {
+      "item": "valoris2:japanese_leather_strip"
+    }
+  },
+  "result": {
+    "id": "valoris2:japanese_hilt",
+    "count": 1
+  }
+}

@@ -30,6 +30,8 @@ public final class ArmoryCatalog {
     private static Map<String, String> eraNames = Map.of();
     private static List<String> removeRecipesFrom = List.of();
     private static List<String> keepRecipes = List.of();
+    private static List<String> removeAllRecipesFrom = List.of();
+    private static List<String> keepRecipeIds = List.of();
     private static Map<String, double[]> armorBalance = Map.of();
 
     private ArmoryCatalog() {}
@@ -39,6 +41,8 @@ public final class ArmoryCatalog {
     public static Map<String, String> eraNames() { return eraNames; }
     public static List<String> removeRecipesFrom() { return removeRecipesFrom; }
     public static List<String> keepRecipes() { return keepRecipes; }
+    public static List<String> removeAllRecipesFrom() { return removeAllRecipesFrom; }
+    public static List<String> keepRecipeIds() { return keepRecipeIds; }
 
     public static Map<String, double[]> armorBalance() { return armorBalance; }
 
@@ -85,6 +89,10 @@ public final class ArmoryCatalog {
             if (root.has("removeRecipesFrom")) root.getAsJsonArray("removeRecipesFrom").forEach(e -> remove.add(e.getAsString()));
             List<String> keep = new ArrayList<>();
             if (root.has("keepRecipes")) root.getAsJsonArray("keepRecipes").forEach(e -> keep.add(e.getAsString()));
+            List<String> removeAll = new ArrayList<>();
+            if (root.has("removeAllRecipesFrom")) root.getAsJsonArray("removeAllRecipesFrom").forEach(e -> removeAll.add(e.getAsString()));
+            List<String> keepIds = new ArrayList<>();
+            if (root.has("keepRecipeIds")) root.getAsJsonArray("keepRecipeIds").forEach(e -> keepIds.add(e.getAsString()));
 
             Map<String, double[]> armor = new LinkedHashMap<>();
             if (root.has("armorBalance")) {
@@ -103,6 +111,8 @@ public final class ArmoryCatalog {
             eraNames = eras;
             removeRecipesFrom = remove;
             keepRecipes = keep;
+            removeAllRecipesFrom = removeAll;
+            keepRecipeIds = keepIds;
             valoris2.LOGGER.info("Armory: {} entries loaded, {} skipped (item not found)", list.size(), missing);
             return null;
         } catch (IOException | RuntimeException e) {

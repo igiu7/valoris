@@ -32,7 +32,10 @@ public final class Realms {
         public boolean isKingdom() { return kingdom != null; }
 
         /** "Kingdom of X" or "City of X". */
-        public String title() { return (isKingdom() ? "Kingdom of " : "City of ") + name; }
+        public String title() { return isKingdom() ? kingdom.title() : "City of " + name; }
+
+        /** What the realm's leader is called: the kingdom's ruler title ("King"), or "Ruler" for a city. */
+        public String leaderTitle() { return isKingdom() ? kingdom.rulerTitle : "Ruler"; }
     }
 
     private static Realm of(Kingdom k) { return new Realm(k.id, k.name, k, null); }
@@ -90,7 +93,7 @@ public final class Realms {
         if (!city.founded) throw Errors.of("Your city has not been founded yet.");
         Realm realm = ofCity(data, city).orElseThrow(() -> Errors.of("Your city has not been founded yet."));
         if (!leaderOf(data, realm).map(id -> id.equals(player.getUUID())).orElse(false)) {
-            throw Errors.of(realm.isKingdom() ? "Only the king can do that." : "Only the city ruler can do that.");
+            throw Errors.of(realm.isKingdom() ? "Only the " + realm.leaderTitle() + " can do that." : "Only the city ruler can do that.");
         }
         return realm;
     }
@@ -135,7 +138,7 @@ public final class Realms {
         k.color = Heraldry.teamColor(r.city().teamId);
         data.addKingdom(k);
         data.replaceRealm(r.city().teamId, k.id);
-        Msg.broadcast(server, Msg.text("The city of " + r.name() + " has grown into the Kingdom of " + name + "!",
+        Msg.broadcast(server, Msg.text("The city of " + r.name() + " has grown into the " + k.title() + "!",
                 ChatFormatting.GOLD));
         return k;
     }

@@ -64,8 +64,8 @@ public final class KingdomService {
         for (var t : data.trucesOf(city.teamId).entrySet()) {
             if (data.relation(k.id, t.getKey()).filter(r -> r == Relation.WAR).isPresent()) {
                 throw Errors.of(city.name + " has a truce with the " + com.valoris.realm.Realms.title(data, t.getKey(), "?")
-                        + " (" + com.valoris.diplomacy.WarService.truceLeft(t.getValue()) + " left), which the Kingdom of "
-                        + k.name + " is at war with.");
+                        + " (" + com.valoris.diplomacy.WarService.truceLeft(t.getValue()) + " left), which the "
+                        + k.title() + " is at war with.");
             }
         }
     }
@@ -121,7 +121,8 @@ public final class KingdomService {
         // the independent city's treaties, wars and sieges are now the kingdom's
         data.replaceRealm(city.teamId, k.id);
         k.color = Heraldry.teamColor(city.teamId);
-        Msg.broadcast(server, Msg.text("The Kingdom of " + name + " has been proclaimed by "
+        com.valoris.city.ClaimLimitHook.syncLimits(server, city); // capital: larger claim limit
+        Msg.broadcast(server, Msg.text("The " + k.title() + " has been proclaimed by "
                 + player.getGameProfile().getName() + "!", ChatFormatting.GOLD));
     }
 
@@ -138,8 +139,8 @@ public final class KingdomService {
 
         Requests.add(server, Type.KINGDOM_INVITE, k.id, city.teamId, null);
         Msg.ok(king, "Invitation sent to " + city.name + ".");
-        target.sendSystemMessage(Msg.text("King " + king.getGameProfile().getName() + " invites "
-                + city.name + " to join the Kingdom of " + k.name + " ", ChatFormatting.GOLD)
+        target.sendSystemMessage(Msg.text(k.rulerTitle + " " + king.getGameProfile().getName() + " invites "
+                + city.name + " to join the " + k.title() + " ", ChatFormatting.GOLD)
                 .append(Msg.button("[Accept]", ChatFormatting.GREEN, "/valoris city kingdom accept " + Msg.q(k.name)))
                 .append(Component.literal(" "))
                 .append(Msg.button("[Decline]", ChatFormatting.RED, "/valoris city kingdom decline " + Msg.q(k.name))));
@@ -184,7 +185,7 @@ public final class KingdomService {
         checkCanJoin(data, city, k);
 
         Requests.add(server, Type.KINGDOM_JOIN, city.teamId, k.id, null);
-        Msg.ok(ruler, "Your request was sent to the king of " + k.name + ".");
+        Msg.ok(ruler, "Your request was sent to the ruler of the " + k.title() + ".");
         kingOf(data, k).ifPresent(id -> Msg.toPlayer(server, id,
                 Msg.text("The city of " + city.name + " asks to join your kingdom ", ChatFormatting.GOLD)
                         .append(Msg.button("[Accept]", ChatFormatting.GREEN, "/valoris kingdom accept " + Msg.q(city.name)))
@@ -214,7 +215,7 @@ public final class KingdomService {
         City city = data.cityByName(cityName).orElseThrow(() -> Errors.of("No such city."));
         Requests.find(server, Type.KINGDOM_JOIN, city.teamId, k.id).ifPresent(Requests::remove);
         Msg.ok(king, "Request declined.");
-        Msg.toPlayer(server, city.ruler, Msg.text("The Kingdom of " + k.name + " declined your request.", ChatFormatting.RED));
+        Msg.toPlayer(server, city.ruler, Msg.text("The " + k.title() + " declined your request.", ChatFormatting.RED));
     }
 
     private static void addCity(MinecraftServer server, ValorisData data, Kingdom k, City city) {
@@ -224,7 +225,7 @@ public final class KingdomService {
         onCityRejoined(server, k, city);
         Heraldry.applyKingdomColor(server, k, city.teamId);
         data.touch();
-        Msg.toKingdom(k, Msg.text("The city of " + city.name + " has joined the Kingdom of " + k.name + "!", ChatFormatting.GREEN));
+        Msg.toKingdom(k, Msg.text("The city of " + city.name + " has joined the " + k.title() + "!", ChatFormatting.GREEN));
         com.valoris.tech.TechService.onCityJoined(server, data, k, city);
     }
 
@@ -255,15 +256,15 @@ public final class KingdomService {
         Requests.removeWhere(r -> r.from().equals(city.teamId) || r.to().equals(city.teamId));
         data.touch();
 
-        Msg.broadcast(server, Msg.text("REBELLION! The city of " + city.name + " has risen against the Kingdom of "
-                + old.name + " and declared its independence.", ChatFormatting.DARK_RED));
+        Msg.broadcast(server, Msg.text("REBELLION! The city of " + city.name + " has risen against the "
+                + old.title() + " and declared its independence.", ChatFormatting.DARK_RED));
         // the rebels attack: the old kingdom's allies come to its defence
         var rebelRealm = com.valoris.realm.Realms.byId(data, city.teamId);
         var oldRealm = com.valoris.realm.Realms.byId(data, old.id);
         if (rebelRealm.isPresent() && oldRealm.isPresent()) {
             ValorisData.War war = com.valoris.diplomacy.WarService.declare(server, data, rebelRealm.get(), oldRealm.get());
             war.rebellion = true;
-            war.log("The city of " + city.name + " rebelled against the Kingdom of " + old.name + ".");
+            war.log("The city of " + city.name + " rebelled against the " + old.title() + ".");
             data.touch();
         }
     }
@@ -289,7 +290,7 @@ public final class KingdomService {
                 .orElseThrow(() -> Errors.of("That city is not in your kingdom."));
         if (city.teamId.equals(k.capital)) throw Errors.of("You cannot expel your own capital.");
         if (SiegeService.isUnderSiege(data, city.teamId)) throw Errors.of("That city is under siege.");
-        Msg.toKingdom(k, Msg.text("The city of " + city.name + " was expelled from the Kingdom of " + k.name + ".", ChatFormatting.RED));
+        Msg.toKingdom(k, Msg.text("The city of " + city.name + " was expelled from the " + k.title() + ".", ChatFormatting.RED));
         k.cities.remove(city.teamId);
         data.copyTruces(k.id, city.teamId); // no expelling a city to attack a realm the kingdom has a truce with
         data.touch();
@@ -308,8 +309,10 @@ public final class KingdomService {
         data.byTeam(oldCapital).ifPresent(old -> com.valoris.tech.TechService.moveResearch(data, old, city));
         k.capital = city.teamId;
         data.touch();
+        data.byTeam(oldCapital).ifPresent(old -> com.valoris.city.ClaimLimitHook.syncLimits(king.getServer(), old));
+        com.valoris.city.ClaimLimitHook.syncLimits(king.getServer(), city);
         Msg.toKingdom(k, Msg.text(target.getGameProfile().getName() + " of " + city.name
-                + " is now the king of " + k.name + ". The capital moves to " + city.name + ".", ChatFormatting.GOLD));
+                + " is now the " + k.rulerTitle + " of the " + k.title() + ". The capital moves to " + city.name + ".", ChatFormatting.GOLD));
     }
 
     public static void disband(ServerPlayer king) throws CommandSyntaxException {
@@ -321,25 +324,28 @@ public final class KingdomService {
         boolean siege = data.sieges().stream().anyMatch(s -> s.isAttacking(k.id) || s.defenderKingdom.equals(k.id));
         if (siege) throw Errors.of("Your kingdom is involved in a siege.");
         if (com.valoris.war.Looting.involves(k.id)) throw Errors.of("Your kingdom is looting a city. Wait until the looting time is over.");
-        Msg.broadcast(server, Msg.text("The Kingdom of " + k.name + " has been dissolved by its king.", ChatFormatting.GOLD));
+        Msg.broadcast(server, Msg.text("The " + k.title() + " has been dissolved by its " + k.rulerTitle + ".", ChatFormatting.GOLD));
         dissolve(ValorisData.get(server), k);
     }
 
     /** Removes the kingdom and all its relations. */
     public static void dissolve(ValorisData data, Kingdom k) {
-        Msg.toKingdom(k, Msg.text("The Kingdom of " + k.name + " no longer exists.", ChatFormatting.RED));
+        Msg.toKingdom(k, Msg.text("The " + k.title() + " no longer exists.", ChatFormatting.RED));
         // its cities become free, and each keeps the kingdom's truces
         for (UUID city : k.cities) data.copyTruces(k.id, city);
         com.valoris.data.DataVault.archiveKingdom(k, data);
         data.removeKingdom(k.id);
+        // the former capital loses its larger claim limit
+        MinecraftServer server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server != null) data.byTeam(k.capital).ifPresent(c -> com.valoris.city.ClaimLimitHook.syncLimits(server, c));
         Requests.removeWhere(r -> r.from().equals(k.id) || r.to().equals(k.id));
     }
 
     /** A city vanished (team deleted). Capital lost = kingdom falls; otherwise just drop the city. */
     public static void detachCity(MinecraftServer server, ValorisData data, Kingdom k, City city) {
         if (k.capital.equals(city.teamId)) {
-            Msg.broadcast(server, Msg.text("The capital " + city.name + " has fallen; the Kingdom of "
-                    + k.name + " is no more.", ChatFormatting.DARK_RED));
+            Msg.broadcast(server, Msg.text("The capital " + city.name + " has fallen; the "
+                    + k.title() + " is no more.", ChatFormatting.DARK_RED));
             dissolve(data, k);
         } else {
             k.cities.remove(city.teamId);
@@ -354,7 +360,7 @@ public final class KingdomService {
         MinecraftServer server = player.getServer();
         ValorisData data = ValorisData.get(server);
         String king = kingOf(data, k).map(id -> Msg.nameOf(server, id)).orElse("unknown");
-        StringBuilder sb = new StringBuilder("Kingdom: " + k.name + "\nKing: " + king + "\nCities (" + k.cities.size() + "):");
+        StringBuilder sb = new StringBuilder(k.title() + "\n" + k.rulerTitle + ": " + king + "\nCities (" + k.cities.size() + "):");
         for (UUID id : k.cities) {
             data.byTeam(id).ifPresent(c -> sb.append("\n - ").append(c.name)
                     .append(id.equals(k.capital) ? " (capital)" : "")

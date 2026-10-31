@@ -27,6 +27,12 @@ final class KingdomCommands {
                 .then(Commands.literal("rename")
                         .then(CommandUtil.nameArg("name").executes(c -> CommandUtil.withName(c, "name",
                                 com.valoris.realm.Heraldry::renameKingdom))))
+                .then(Commands.literal("prefix")
+                        .then(CommandUtil.nameArg("prefix").executes(c -> CommandUtil.withName(c, "prefix",
+                                com.valoris.realm.Heraldry::kingdomPrefix))))
+                .then(Commands.literal("title")
+                        .then(CommandUtil.nameArg("title").executes(c -> CommandUtil.withName(c, "title",
+                                com.valoris.realm.Heraldry::rulerTitle))))
                 .then(Commands.literal("color")
                         .then(Commands.argument("rgb", com.mojang.brigadier.arguments.StringArgumentType.word())
                                 .executes(c -> CommandUtil.withName(c, "rgb", com.valoris.realm.Heraldry::kingdomColor))))

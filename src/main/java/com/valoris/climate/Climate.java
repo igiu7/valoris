@@ -50,7 +50,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * lasts climate.minutes); when one is empty the player takes damage. Shown by client.ClimateHud where the air
  * bubbles are.
  * Cold: every piece of fur armor slows it down; a full set of fur armor (wolf and bear pieces mix) or a heat source
- * nearby (fire, campfire, lava, magma, a lit furnace... - not torches, lanterns or candles) warms the player up fast.
+ * nearby (fire, campfire, lava, magma, a lit furnace... - not torches, lanterns or candles; a bonfire within 10 blocks) warms the player up fast.
  * Heat: every piece of metal armor (not bronze) makes it run down faster, fur armor twice as fast; under a roof it
  * slowly refills whatever the armor, a bottle of water refills it at once.
  * Outside those biomes both refill. The meters are kept in the player's data as what is missing (0 = full) and
@@ -143,7 +143,8 @@ public final class Climate {
                 else if (k == METAL) metal++;
             }
             if (zone == COLD) {
-                if (fur == 4 || nearHeat(player.serverLevel(), player.blockPosition(), Config.CLIMATE_HEAT_SOURCE_RADIUS.get())) {
+                if (fur == 4 || nearHeat(player.serverLevel(), player.blockPosition(), Config.CLIMATE_HEAT_SOURCE_RADIUS.get())
+                        || com.valoris.heal.BonfireBlock.near(player.serverLevel(), player.blockPosition())) {
                     cold -= perSecond(Config.CLIMATE_FAST_REFILL_SECONDS.get());
                 } else {
                     cold += base * Math.max(0.0, 1.0 - fur * Config.CLIMATE_FUR_SLOWDOWN.get());
@@ -179,7 +180,9 @@ public final class Climate {
         else data.putDouble(COLD_KEY, cold);
         if (heat <= 0) data.remove(HEAT_KEY);
         else data.putDouble(HEAT_KEY, heat);
-        PacketDistributor.sendToPlayer(player, new ClimatePayload(MAX - (int) Math.ceil(cold), MAX - (int) Math.ceil(heat), zone));
+        BlockPos pos = player.blockPosition();
+        int tier = com.valoris.farming.SoilQuality.tier(player.level(), pos.getX(), pos.getZ(), player.level().getBiome(pos));
+        PacketDistributor.sendToPlayer(player, new ClimatePayload(MAX - (int) Math.ceil(cold), MAX - (int) Math.ceil(heat), zone, tier));
     }
 
     /** A bottle of water cools the player down at once. */

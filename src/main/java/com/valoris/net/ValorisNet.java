@@ -61,9 +61,18 @@ public final class ValorisNet {
             registrar.playToClient(CombatTagPayload.TYPE, CombatTagPayload.CODEC,
                     (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.CombatClient.receive(payload.remainingMillis())));
             registrar.playToClient(ClimatePayload.TYPE, ClimatePayload.CODEC,
-                    (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.ClimateHud.receive(payload)));
+                    (payload, ctx) -> ctx.enqueueWork(() -> {
+                        com.valoris.client.ClimateHud.receive(payload);
+                        com.valoris.client.TierBar.receive(payload.tier());
+                    }));
+            registrar.playToClient(ReloadInterruptPayload.TYPE, ReloadInterruptPayload.CODEC,
+                    (payload, ctx) -> ctx.enqueueWork(com.valoris.client.GunReloadClient::interrupted));
+            registrar.playToClient(NameColorsPayload.TYPE, NameColorsPayload.CODEC,
+                    (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.NameColorsClient.receive(payload.colors())));
         } else {
             registrar.playToClient(ClimatePayload.TYPE, ClimatePayload.CODEC, (payload, ctx) -> {});
+            registrar.playToClient(ReloadInterruptPayload.TYPE, ReloadInterruptPayload.CODEC, (payload, ctx) -> {});
+            registrar.playToClient(NameColorsPayload.TYPE, NameColorsPayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(AnimalInfoPayload.TYPE, AnimalInfoPayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(RespawnOptionsPayload.TYPE, RespawnOptionsPayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(RespawnGoPayload.TYPE, RespawnGoPayload.CODEC, (payload, ctx) -> {});

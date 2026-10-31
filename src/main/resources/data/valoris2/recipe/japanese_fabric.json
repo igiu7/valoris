@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "id": "valoris2:japanese_fabric",
+    "count": 1
+  }
+}

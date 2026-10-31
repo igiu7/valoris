@@ -82,8 +82,9 @@ public final class Heraldry {
         int rgb = parseColor(raw);
         City city = CityService.requireRuler(ruler);
         ValorisData data = ValorisData.get(ruler.getServer());
-        if (data.kingdomOfCity(city.teamId).isPresent()) {
-            throw Errors.of("Your city wears the colour of its kingdom. The king chooses it.");
+        var own = data.kingdomOfCity(city.teamId);
+        if (own.isPresent()) {
+            throw Errors.of("Your city wears the colour of its kingdom. The " + own.get().rulerTitle + " chooses it.");
         }
         setTeamColor(ruler.getServer(), city.teamId, rgb);
         Msg.ok(ruler, "The colour of " + city.name + " has been changed.");
@@ -97,7 +98,7 @@ public final class Heraldry {
         k.color = rgb;
         data.touch();
         for (UUID city : k.cities) setTeamColor(king.getServer(), city, rgb);
-        Msg.toKingdom(k, Msg.text("The Kingdom of " + k.name + " has a new colour.", ChatFormatting.GOLD));
+        Msg.toKingdom(k, Msg.text("The " + k.title() + " has a new colour.", ChatFormatting.GOLD));
     }
 
     // ------------------------------------------------------------------ names
@@ -136,7 +137,7 @@ public final class Heraldry {
         if (data.cityByName(name).filter(c -> data.kingdomOfCity(c.teamId).isEmpty()).isPresent()) {
             throw Errors.of("An independent city already uses that name.");
         }
-        String old = k.name;
+        String old = k.title();
         k.name = name;
         for (Siege s : data.sieges()) {
             if (s.attackerKingdom.equals(k.id)) s.attackerName = name;
@@ -144,6 +145,28 @@ public final class Heraldry {
         }
         for (Conquest c : data.conquests()) if (c.attackerKingdom.equals(k.id)) c.attackerName = name;
         data.touch();
-        Msg.broadcast(server, Msg.text("The Kingdom of " + old + " is now the Kingdom of " + name + ".", ChatFormatting.GOLD));
+        Msg.broadcast(server, Msg.text("The " + old + " is now the " + k.title() + ".", ChatFormatting.GOLD));
+    }
+
+    /** The king changes what stands before the kingdom's name ("Kingdom of" Avalon -> "Empire of" Avalon). */
+    public static void kingdomPrefix(ServerPlayer king, String raw) throws CommandSyntaxException {
+        String prefix = Names.checkTitle(raw);
+        Kingdom k = KingdomService.requireKing(king);
+        if (k.prefix.equals(prefix)) throw Errors.of("Your kingdom already uses that prefix.");
+        String old = k.title();
+        k.prefix = prefix;
+        ValorisData.get(king.getServer()).touch();
+        Msg.broadcast(king.getServer(), Msg.text("The " + old + " is now the " + k.title() + ".", ChatFormatting.GOLD));
+    }
+
+    /** The king changes his own title ("King" -> "Emperor"); it passes on with the crown. */
+    public static void rulerTitle(ServerPlayer king, String raw) throws CommandSyntaxException {
+        String title = Names.checkTitle(raw);
+        Kingdom k = KingdomService.requireKing(king);
+        if (k.rulerTitle.equals(title)) throw Errors.of("You already bear that title.");
+        k.rulerTitle = title;
+        ValorisData.get(king.getServer()).touch();
+        Msg.broadcast(king.getServer(), Msg.text(king.getGameProfile().getName() + " is now the " + title
+                + " of the " + k.title() + ".", ChatFormatting.GOLD));
     }
 }

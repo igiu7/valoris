@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/shuriken",
+  "textures": {
+    "0": "valoris2:block/japanese/shuriken",
+    "particle": "valoris2:item/japanese/shuriken"
+  }
+}

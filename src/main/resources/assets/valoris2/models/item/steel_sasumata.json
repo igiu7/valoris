@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/sasumata",
+  "textures": {
+    "0": "valoris2:block/japanese/steel/sasumata",
+    "particle": "valoris2:item/japanese/steel/sasumata"
+  }
+}

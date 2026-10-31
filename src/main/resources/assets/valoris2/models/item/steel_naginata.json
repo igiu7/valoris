@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/naginata",
+  "textures": {
+    "0": "valoris2:block/japanese/steel/naginata",
+    "particle": "valoris2:item/japanese/steel/naginata"
+  }
+}

@@ -198,8 +198,8 @@ public final class ConquestService {
         requireKingdomWithRoom(atk);
         Kingdom joined = annex(server, data, c, city, atk);
         String ruler = Msg.nameOf(server, city.ruler);
-        Msg.toPlayer(server, city.ruler, Msg.text("Your city of " + city.name + " was forced to submit to the Kingdom of "
-                + joined.name + ". You go on ruling it as one of its cities.", ChatFormatting.GOLD));
+        Msg.toPlayer(server, city.ruler, Msg.text("Your city of " + city.name + " was forced to submit to the "
+                + joined.title() + ". You go on ruling it as one of its cities.", ChatFormatting.GOLD));
         Msg.ok(king, city.name + " now belongs to your kingdom; " + ruler + " goes on ruling it.");
     }
 
@@ -281,7 +281,7 @@ public final class ConquestService {
         Realm atk = Realms.byId(data, c.attackerKingdom).orElseThrow(() -> Errors.of("They no longer exist."));
         requireKingdomWithRoom(atk);
         Kingdom joined = annex(server, data, c, city, atk);
-        Msg.ok(ruler, "Your city joined the Kingdom of " + joined.name + ".");
+        Msg.ok(ruler, "Your city joined the " + joined.title() + ".");
     }
 
     public static void decline(ServerPlayer ruler) throws CommandSyntaxException {
@@ -307,7 +307,7 @@ public final class ConquestService {
         KingdomService.onCityRejoined(server, k, city); // a rebel city taken back: its rebellion is put down
         com.valoris.realm.Heraldry.applyKingdomColor(server, k, city.teamId);
         data.touch();
-        Msg.toKingdom(k, Msg.text("The conquered city of " + city.name + " has joined the Kingdom of " + k.name + "!",
+        Msg.toKingdom(k, Msg.text("The conquered city of " + city.name + " has joined the " + k.title() + "!",
                 ChatFormatting.GREEN));
         com.valoris.tech.TechService.onCityJoined(server, data, k, city);
         return k;

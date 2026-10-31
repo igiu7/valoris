@@ -1,0 +1,12 @@
+The Japanese armor and weapons of Valoris (registry/JapaneseArmory.java, client/JapaneseArmorModels.java and the
+textures and models under textures/item/japanese, textures/block/japanese, models/item/japanese and
+textures/models/armor/japanese_*) are a port to Minecraft 1.21.1 of
+
+    Epic Knights : Japanese Armory 1.6.2 by chivas477
+    https://legacy.curseforge.com/minecraft/mc-mods/epic-knights-japanese-armory
+
+licensed under the Academic Free License v3.0 (https://opensource.org/license/afl-3-0-php).
+
+Changes: rewritten for NeoForge 1.21.1, items moved to the valoris2 namespace (some renamed: kitsune_mask,
+oni_mask, iron_jutte, iron_sasumata, wooden_*, japanese_*), made at the Armory Table instead of crafting recipes,
+armor and damage balanced by era, cloth pieces turned into decorations.

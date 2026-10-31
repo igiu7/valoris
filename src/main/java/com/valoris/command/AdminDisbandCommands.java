@@ -80,9 +80,9 @@ public final class AdminDisbandCommands {
         ValorisData data = ValorisData.get(server);
         String name = StringArgumentType.getString(c, "name");
         Kingdom k = data.kingdomByName(name).orElseThrow(() -> Errors.of("No such kingdom: " + name));
-        leaveWars(server, data, k.id, "The Kingdom of " + k.name + " was dissolved by an administrator.");
-        String kingdomName = k.name;
-        Msg.broadcast(server, Msg.text("The Kingdom of " + kingdomName + " was dissolved by an administrator.", ChatFormatting.GOLD));
+        leaveWars(server, data, k.id, "The " + k.title() + " was dissolved by an administrator.");
+        String kingdomName = k.name, kingdomTitle = k.title();
+        Msg.broadcast(server, Msg.text("The " + kingdomTitle + " was dissolved by an administrator.", ChatFormatting.GOLD));
         KingdomService.dissolve(data, k);
         c.getSource().sendSuccess(() -> Component.literal("Kingdom " + kingdomName + " dissolved; its cities are free.")
                 .withStyle(ChatFormatting.GREEN), true);

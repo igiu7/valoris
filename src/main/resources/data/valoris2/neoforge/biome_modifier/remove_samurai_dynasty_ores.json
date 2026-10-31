@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "samurai_dynasty"
+    }
+  ],
+  "type": "neoforge:remove_features",
+  "biomes": {
+    "type": "neoforge:any"
+  },
+  "features": [
+    "samurai_dynasty:jade_ore_placed",
+    "samurai_dynasty:spirit_stone_placed"
+  ],
+  "steps": "underground_ores"
+}

@@ -311,19 +311,58 @@ public final class RespawnService {
         Area a = area(level.getServer());
         RandomSource rnd = level.random;
         WorldBorder border = level.getWorldBorder();
-        for (int attempt = 0; attempt < 12; attempt++) {
+        int loaded = 0;
+        for (int attempt = 0; attempt < 200 && loaded < 24; attempt++) {
             int x = Mth.floor(a.x() + (rnd.nextDouble() * 2 - 1) * a.radius());
             int z = Mth.floor(a.z() + (rnd.nextDouble() * 2 - 1) * a.radius());
             if (!border.isWithinBounds(x, z)) continue;
-            level.getChunk(x >> 4, z >> 4); // loads or generates the chunk
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos p = new BlockPos(x, y, z);
-            if (!standable(level, p)) continue;
-            if (claimedAt(level, p)) continue; // not inside cities
-            return p;
+            // cheap checks first: nobody's land (nor right next to it), not open water
+            if (claimedNear(level, x, z)) continue;
+            if (wet(level, x, z)) continue;
+            BlockPos p = surface(level, x, z);
+            loaded++;
+            if (p != null) return p;
         }
+        // nothing found at random: the nearest unclaimed dry land around the world spawn
         BlockPos spawn = level.getSharedSpawnPos();
+        search:
+        for (int r = 0; r <= 64; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != r) continue;
+                    int x = spawn.getX() + dx * 16, z = spawn.getZ() + dz * 16;
+                    if (!border.isWithinBounds(x, z) || claimedNear(level, x, z) || wet(level, x, z)) continue;
+                    BlockPos p = surface(level, x, z);
+                    if (p != null) return p;
+                    if (++loaded > 64) break search; // give up rather than generate half the world
+                }
+            }
+        }
         return new BlockPos(spawn.getX(), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawn.getX(), spawn.getZ()), spawn.getZ());
+    }
+
+    /** A standable spot on the surface at x, z (loads or generates the chunk), or null. */
+    private static BlockPos surface(ServerLevel level, int x, int z) {
+        level.getChunk(x >> 4, z >> 4);
+        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        BlockPos p = new BlockPos(x, y, z);
+        return standable(level, p) ? p : null;
+    }
+
+    /** Ocean or river biome there (asked from the generator, no chunk is loaded). */
+    private static boolean wet(ServerLevel level, int x, int z) {
+        var biome = level.getUncachedNoiseBiome(x >> 2, 64 >> 2, z >> 2);
+        return biome.is(net.minecraft.tags.BiomeTags.IS_OCEAN) || biome.is(net.minecraft.tags.BiomeTags.IS_RIVER);
+    }
+
+    /** The chunk at x, z or one of the 8 around it is claimed: no waking up inside (or at the edge of) a city. */
+    private static boolean claimedNear(ServerLevel level, int x, int z) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (claimedAt(level, new BlockPos(x + dx * 16, 64, z + dz * 16))) return true;
+            }
+        }
+        return false;
     }
 
     private static boolean claimedAt(ServerLevel level, BlockPos p) {

@@ -118,7 +118,18 @@ public final class ChatCommands {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onChat(ServerChatEvent event) {
         if (event.isCanceled()) return;
+        event.getPlayer().refreshDisplayName(); // the realm (and so the colour, see onNameFormat) may have changed
         if (ChatService.routeChannel(event.getPlayer(), event.getRawText())) event.setCanceled(true);
+    }
+
+    /** The name in chat (and other messages) wears the colour of the player's kingdom or independent city. */
+    @SubscribeEvent
+    public static void onNameFormat(PlayerEvent.NameFormat event) {
+        if (!(event.getEntity() instanceof ServerPlayer p) || p.getServer() == null) return;
+        int rgb = ChatService.realmColor(p);
+        if (rgb < 0) return;
+        event.setDisplayname(event.getDisplayname().copy()
+                .withStyle(s -> s.withColor(net.minecraft.network.chat.TextColor.fromRgb(rgb))));
     }
 
     @SubscribeEvent

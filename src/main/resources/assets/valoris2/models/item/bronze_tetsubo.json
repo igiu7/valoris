@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/tetsubo",
+  "textures": {
+    "0": "valoris2:block/japanese/bronze/tetsubo",
+    "particle": "valoris2:item/japanese/bronze/tetsubo"
+  }
+}

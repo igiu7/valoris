@@ -10,6 +10,7 @@ public final class Compat {
 
     public static final boolean SABLE = ModList.get().isLoaded("sable");
     public static final boolean SIEGE_MACHINES = ModList.get().isLoaded("siegemachines");
+    public static final boolean TACZ = ModList.get().isLoaded("tacz");
 
     /** A Siege Machines machine (not its seats): every entity of that mod that can be ridden. */
     public static boolean isSiegeMachine(Entity e) {

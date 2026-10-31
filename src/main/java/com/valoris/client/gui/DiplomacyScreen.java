@@ -120,7 +120,7 @@ public class DiplomacyScreen extends ValorisScreen {
                 }
                 default -> {}
             }
-            Component label = Component.literal(name + " (king " + k.b() + ") - " + relationLabel(rel));
+            Component label = Component.literal(s.kingdomTitle(name) + " (" + s.rulerTitle(name) + " " + k.b() + ") - " + relationLabel(rel));
             panel.add(button(panel, label, relationIcon(rel), () -> openContextMenu(items)));
         }
         if (!any) panel.add(infoRow(panel, "There are no other kingdoms yet."));

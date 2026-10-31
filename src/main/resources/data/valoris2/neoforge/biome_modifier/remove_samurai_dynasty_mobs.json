@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "samurai_dynasty"
+    }
+  ],
+  "type": "neoforge:remove_spawns",
+  "biomes": {
+    "type": "neoforge:any"
+  },
+  "entity_types": [
+    "samurai_dynasty:akaname",
+    "samurai_dynasty:enenra",
+    "samurai_dynasty:fujin",
+    "samurai_dynasty:jorogumo",
+    "samurai_dynasty:kawauso",
+    "samurai_dynasty:kitsune",
+    "samurai_dynasty:komainu",
+    "samurai_dynasty:oni",
+    "samurai_dynasty:onibi",
+    "samurai_dynasty:raijin",
+    "samurai_dynasty:tanuki",
+    "samurai_dynasty:twotailed"
+  ]
+}

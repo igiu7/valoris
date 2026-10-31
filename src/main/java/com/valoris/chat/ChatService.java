@@ -53,12 +53,28 @@ public final class ChatService {
         if (mute.isPresent()) throw Errors.of(ModerationService.mutedMessage(mute.get()).getString());
     }
 
+    /** RGB of the player's realm: the kingdom's colour, or the city's colour when it is in no kingdom; -1 = neither. */
+    public static int realmColor(ServerPlayer p) {
+        Optional<City> city = Roles.cityOfMember(p);
+        if (city.isEmpty()) return -1;
+        return ValorisData.get(p.getServer()).kingdomOfCity(city.get().teamId)
+                .map(com.valoris.realm.Heraldry::kingdomColor)
+                .orElseGet(() -> com.valoris.realm.Heraldry.teamColor(city.get().teamId));
+    }
+
     /** A player's name; clicking it starts a private message to them. */
     private static MutableComponent name(ServerPlayer p, ChatFormatting color) {
         String n = p.getGameProfile().getName();
         return Component.literal(n).withStyle(Style.EMPTY.withColor(color)
                 .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + n + " "))
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Message " + n))));
+    }
+
+    /** The name in the colour of the player's realm (white without one). */
+    private static MutableComponent realmName(ServerPlayer p) {
+        int rgb = realmColor(p);
+        MutableComponent n = name(p, ChatFormatting.WHITE);
+        return rgb < 0 ? n : n.withStyle(s -> s.withColor(net.minecraft.network.chat.TextColor.fromRgb(rgb)));
     }
 
     private static void spy(MinecraftServer server, ServerPlayer from, String to, String message) {
@@ -120,7 +136,7 @@ public final class ChatService {
         checkMute(from);
         City city = requireCity(from);
         Msg.toTeam(city.teamId, Component.literal("[" + city.name + "] ").withStyle(ChatFormatting.GREEN)
-                .append(name(from, ChatFormatting.WHITE))
+                .append(realmName(from))
                 .append(Component.literal(": " + message).withStyle(ChatFormatting.GREEN)));
         valoris2.LOGGER.info("[City {}] {}: {}", city.name, from.getGameProfile().getName(), message);
     }
@@ -130,7 +146,7 @@ public final class ChatService {
         Kingdom k = requireKingdom(from);
         String city = Roles.cityOfMember(from).map(c -> c.name).orElse("?");
         Msg.toKingdom(k, Component.literal("[" + k.name + "] ").withStyle(ChatFormatting.GOLD)
-                .append(name(from, ChatFormatting.WHITE))
+                .append(realmName(from))
                 .append(Component.literal(" (" + city + ")").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(": " + message).withStyle(ChatFormatting.GOLD)));
         valoris2.LOGGER.info("[Kingdom {}] {}: {}", k.name, from.getGameProfile().getName(), message);
@@ -173,7 +189,7 @@ public final class ChatService {
         ValorisData data = ValorisData.get(from.getServer());
         City city = data.cityByName(cityName).filter(c -> c.founded).orElseThrow(() -> Errors.of("No such city."));
         Component line = Component.literal("[").withStyle(ChatFormatting.DARK_GREEN)
-                .append(name(from, ChatFormatting.WHITE))
+                .append(realmName(from))
                 .append(Component.literal(" -> City of " + city.name + "] ").withStyle(ChatFormatting.DARK_GREEN))
                 .append(Component.literal(message).withStyle(ChatFormatting.WHITE));
         Msg.toTeam(city.teamId, line);
@@ -186,12 +202,12 @@ public final class ChatService {
         ValorisData data = ValorisData.get(from.getServer());
         Kingdom k = data.kingdomByName(kingdomName).orElseThrow(() -> Errors.of("No such kingdom."));
         Component line = Component.literal("[").withStyle(ChatFormatting.DARK_AQUA)
-                .append(name(from, ChatFormatting.WHITE))
-                .append(Component.literal(" -> Kingdom of " + k.name + "] ").withStyle(ChatFormatting.DARK_AQUA))
+                .append(realmName(from))
+                .append(Component.literal(" -> " + k.title() + "] ").withStyle(ChatFormatting.DARK_AQUA))
                 .append(Component.literal(message).withStyle(ChatFormatting.WHITE));
         Msg.toKingdom(k, line);
         if (!Roles.kingdomOf(from).map(x -> x.id.equals(k.id)).orElse(false)) from.sendSystemMessage(line);
-        spy(from.getServer(), from, "Kingdom of " + k.name, message);
+        spy(from.getServer(), from, k.title(), message);
     }
 
     // ------------------------------------------------------------------ staff

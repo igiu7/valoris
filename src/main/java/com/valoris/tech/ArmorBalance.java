@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -68,6 +69,12 @@ public final class ArmorBalance {
         return -1;
     }
 
+    private static boolean fur(ItemStack stack) {
+        if (!(stack.getItem() instanceof ArmorItem armor)) return false;
+        ArmorMaterial m = armor.getMaterial().value();
+        return m == com.valoris.registry.ModArmor.WOLF_FUR.value() || m == com.valoris.registry.ModArmor.BEAR_FUR.value();
+    }
+
     /** Replaces the armor attributes of era armor. Returns true if the item was era armor. */
     public static boolean apply(ItemAttributeModifierEvent event) {
         ItemStack stack = event.getItemStack();
@@ -80,6 +87,7 @@ public final class ArmorBalance {
                 || e.attribute().equals(Attributes.KNOCKBACK_RESISTANCE));
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(valoris2.MODID, "era_armor_" + NAMES[slot]);
         double points = v.length > VALUE[slot] ? v[VALUE[slot]] : 0;
+        if (fur(stack)) points = Math.max(0, points - 1); // fur armor: one point less than the metal of its era
         if (points > 0) event.addModifier(Attributes.ARMOR,
                 new AttributeModifier(id, points, AttributeModifier.Operation.ADD_VALUE), group);
         if (v[4] > 0) event.addModifier(Attributes.ARMOR_TOUGHNESS,

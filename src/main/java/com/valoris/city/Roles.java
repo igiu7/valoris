@@ -23,6 +23,13 @@ public final class Roles {
 
     private Roles() {}
 
+    /** The player's title as shown to people: a king is called by his kingdom's ruler title ("King", "Emperor"...). */
+    public static String titleOf(ServerPlayer player) {
+        Role role = of(player);
+        if (role != Role.KING) return role.title;
+        return kingdomOf(player).map(k -> k.rulerTitle).orElse(role.title);
+    }
+
     /** The city whose FTB team the player currently belongs to (as resident or ruler). */
     public static Optional<City> cityOfMember(ServerPlayer player) {
         ValorisData data = ValorisData.get(player.getServer());

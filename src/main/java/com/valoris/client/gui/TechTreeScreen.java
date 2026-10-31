@@ -652,7 +652,7 @@ public final class TechTreeScreen extends BaseScreen {
                 case TechRow.RESEARCHING -> s.canResearch
                         ? new Object[]{armed() ? "Click again to cancel" : "Cancel research", Ui.RED, true}
                         : new Object[]{"Researching...", Ui.BLUE, false};
-                case TechRow.AVAILABLE -> !s.canResearch ? new Object[]{"Only the king (or a free city's ruler) can research", Ui.GRAY, false}
+                case TechRow.AVAILABLE -> !s.canResearch ? new Object[]{(s.kingdomName.isEmpty() ? "Only the city ruler" : "Only the " + s.rulerTitle) + " can research", Ui.GRAY, false}
                         : !s.researching.isEmpty() ? new Object[]{"Another research is running", Ui.GRAY, false}
                         : new Object[]{"Research  (" + duration(selected.researchSeconds()) + ")", Ui.GREEN, true};
                 case TechRow.NEEDS_SKILLS -> new Object[]{"Skills too low", Ui.GRAY, false};

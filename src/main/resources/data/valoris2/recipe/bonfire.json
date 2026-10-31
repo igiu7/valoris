@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FSF",
+    "SCS",
+    "FSF"
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:campfire"
+    },
+    "S": {
+      "item": "minecraft:cobblestone"
+    },
+    "C": {
+      "item": "minecraft:coal_block"
+    }
+  },
+  "result": {
+    "id": "valoris2:bonfire",
+    "count": 1
+  }
+}

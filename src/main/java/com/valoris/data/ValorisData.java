@@ -60,12 +60,21 @@ public class ValorisData extends SavedData {
         public UUID capital;                                   // city team id; its ruler is the king
         public final Set<UUID> cities = new LinkedHashSet<>(); // city team ids (includes capital)
         public int color = -1;                                 // RGB of every city on the map (-1 = not chosen yet)
+        public String prefix = DEFAULT_PREFIX;                 // shown before the name: "Kingdom of" X
+        public String rulerTitle = DEFAULT_RULER_TITLE;        // what its ruler is called: "King" Y
+
+        public static final String DEFAULT_PREFIX = "Kingdom of", DEFAULT_RULER_TITLE = "King";
 
         public Kingdom(UUID id, String name, UUID capital) {
             this.id = id;
             this.name = name;
             this.capital = capital;
             this.cities.add(capital);
+        }
+
+        /** The full name, e.g. "Kingdom of Avalon". */
+        public String title() {
+            return prefix + " " + name;
         }
     }
 
@@ -510,6 +519,8 @@ public class ValorisData extends SavedData {
         t.putString("name", k.name);
         t.putUUID("capital", k.capital);
         t.putInt("color", k.color);
+        t.putString("prefix", k.prefix);
+        t.putString("rulerTitle", k.rulerTitle);
         ListTag members = new ListTag();
         for (UUID u : k.cities) members.add(StringTag.valueOf(u.toString()));
         t.put("cities", members);
@@ -521,6 +532,8 @@ public class ValorisData extends SavedData {
         ListTag members = t.getList("cities", Tag.TAG_STRING);
         for (int i = 0; i < members.size(); i++) k.cities.add(UUID.fromString(members.getString(i)));
         k.color = t.contains("color") ? t.getInt("color") : -1;
+        if (t.contains("prefix")) k.prefix = t.getString("prefix");
+        if (t.contains("rulerTitle")) k.rulerTitle = t.getString("rulerTitle");
         return k;
     }
 

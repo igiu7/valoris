@@ -17,10 +17,9 @@ final class ResidentCommands {
     static LiteralArgumentBuilder<CommandSourceStack> build() {
         return Commands.literal("resident")
                 .then(Commands.literal("info").executes(c -> CommandUtil.run(c, p -> {
-                    Roles.Role role = Roles.of(p);
                     String city = Roles.cityOfMember(p).map(x -> x.name).orElse("none");
-                    String kingdom = Roles.kingdomOf(p).map(k -> k.name).orElse("none");
-                    Msg.info(p, "Role: " + role.title + "\nCity: " + city + "\nKingdom: " + kingdom);
+                    String kingdom = Roles.kingdomOf(p).map(k -> k.title()).orElse("none");
+                    Msg.info(p, "Role: " + Roles.titleOf(p) + "\nCity: " + city + "\nKingdom: " + kingdom);
                 })))
                 .then(Commands.literal("cities").executes(c -> CommandUtil.run(c, p -> {
                     ValorisData data = ValorisData.get(p.getServer());

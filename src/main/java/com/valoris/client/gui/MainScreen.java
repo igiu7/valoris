@@ -44,7 +44,7 @@ public class MainScreen extends ValorisScreen {
             panel.add(infoRow(panel, "You do not belong to any city."));
         }
         if (!s.kingdomName.isEmpty()) {
-            panel.add(infoRow(panel, "Kingdom: " + s.kingdomName + " - king " + s.king));
+            panel.add(infoRow(panel, "Kingdom: " + s.myKingdomTitle() + " - " + s.rulerTitle + " " + s.king));
         }
 
         // ---- actions by role ----
@@ -173,7 +173,7 @@ public class MainScreen extends ValorisScreen {
                     () -> new PickScreen("Join a kingdom", "No kingdoms exist yet.", () -> {
                         List<PickScreen.Entry> list = new ArrayList<>();
                         for (Row k : ClientState.get().kingdoms) {
-                            list.add(PickScreen.Entry.command(k.a() + " (king " + k.b() + ", " + k.n() + " cities)", Icons.GLOBE,
+                            list.add(PickScreen.Entry.command(ClientState.get().kingdomTitle(k.a()) + " (" + ClientState.get().rulerTitle(k.a()) + " " + k.b() + ", " + k.n() + " cities)", Icons.GLOBE,
                                     "valoris city kingdom join " + ClientActions.q(k.a()), true));
                         }
                         return list;
@@ -195,9 +195,9 @@ public class MainScreen extends ValorisScreen {
             panel.add(button(panel, "Kingdom cities", Icons.INFO, () -> openKingdomCities()));
             if (!s.capital) {
                 panel.add(button(panel, "Rebel against the kingdom...", Icons.BARRIER, () -> confirm(
-                        Component.literal("Rebel against the Kingdom of " + s.kingdomName + "?"),
+                        Component.literal("Rebel against the " + s.myKingdomTitle() + "?"),
                         Component.literal("Your city leaves the kingdom and becomes an independent city. A rebellion against "
-                                + s.kingdomName + " begins at once. If the king puts it down, you cannot rebel again for a while."),
+                                + "the " + s.myKingdomTitle() + " begins at once. If the " + s.rulerTitle + " puts it down, you cannot rebel again for a while."),
                         () -> ClientActions.command("valoris city kingdom rebel"))));
             }
         }
@@ -258,7 +258,7 @@ public class MainScreen extends ValorisScreen {
                     for (Row c : ClientState.get().myCities) {
                         if (c.n() == 1 || c.m() == 0) continue; // not the capital itself; ruler must be online
                         list.add(PickScreen.Entry.confirmed(c.b() + " of " + c.a(), Icons.STAR,
-                                "Make " + c.b() + " the king? Your city stops being the capital.",
+                                "Make " + c.b() + " the " + ClientState.get().rulerTitle + "? Your city stops being the capital.",
                                 "valoris kingdom crown " + c.b()));
                     }
                     return list;
@@ -268,7 +268,7 @@ public class MainScreen extends ValorisScreen {
         panel.add(button(panel, proposals, Icons.GLOBE, () -> new DiplomacyScreen().openGui()));
 
         panel.add(button(panel, "Disband the kingdom", Icons.BIN, () -> confirm(
-                Component.literal("Disband the Kingdom of " + s.kingdomName + "?"), Component.literal("This cannot be undone."),
+                Component.literal("Disband the " + s.myKingdomTitle() + "?"), Component.literal("This cannot be undone."),
                 () -> ClientActions.command("valoris kingdom disband"))));
     }
 
@@ -298,7 +298,7 @@ public class MainScreen extends ValorisScreen {
         panel.add(button(panel, "Browse kingdoms", Icons.GLOBE, () -> new PickScreen("Kingdoms", "No kingdoms yet.", () -> {
             List<PickScreen.Entry> list = new ArrayList<>();
             for (Row k : ClientState.get().kingdoms) {
-                list.add(PickScreen.Entry.readOnly(k.a() + " (king " + k.b() + ", " + k.n() + " cities)", Icons.GLOBE));
+                list.add(PickScreen.Entry.readOnly(ClientState.get().kingdomTitle(k.a()) + " (" + ClientState.get().rulerTitle(k.a()) + " " + k.b() + ", " + k.n() + " cities)", Icons.GLOBE));
             }
             return list;
         }).withSearch().openGui()));

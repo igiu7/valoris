@@ -117,7 +117,7 @@ final class TechCommands {
         ValorisData data = ValorisData.get(player.getServer());
         City city = TechService.holder(data, member);
         int[] levels = TechService.cityLevels(player.getServer(), city);
-        Msg.info(player, "Technologies of the " + data.kingdomOfCity(member.teamId).map(k -> "Kingdom of " + k.name)
+        Msg.info(player, "Technologies of the " + data.kingdomOfCity(member.teamId).map(k -> k.title())
                 .orElse("City of " + member.name) + ":");
         for (TechNode node : TechConfig.nodes().values()) {
             TechService.Status st = TechService.status(city, node, levels);

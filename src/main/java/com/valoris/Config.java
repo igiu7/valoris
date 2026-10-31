@@ -360,9 +360,15 @@ public class Config {
             .defineInRange("climate.outsideRefillSeconds", 30.0, 1.0, 100000.0);
 
     public static final ModConfigSpec.DoubleValue LANCE_CHARGE_BONUS = BUILDER
-            .comment("Lances: a full mounted charge adds this many times the lance's era damage on top of the hit",
-                    "(1.0 = a full charge doubles it), so later-era lances hit proportionally harder")
-            .defineInRange("lances.chargeBonus", 1.0, 0.0, 10.0);
+            .comment("Lances of the steel age (steel, diamond, netherite): a full mounted charge adds this many times the lance's",
+                    "era damage on top of the hit (1.0 = a full charge doubles it). 0.95: 4 hearts through full steel armor")
+            .defineInRange("lances.chargeBonus", 0.95, 0.0, 10.0);
+    public static final ModConfigSpec.DoubleValue LANCE_CHARGE_BONUS_IRON = BUILDER
+            .comment("The same for iron age lances (iron, silver). 0.31: 4 hearts through full iron armor")
+            .defineInRange("lances.chargeBonusIron", 0.31, 0.0, 10.0);
+    public static final ModConfigSpec.DoubleValue LANCE_CHARGE_BONUS_BRONZE = BUILDER
+            .comment("The same for bronze age lances (bronze, copper, tin, gold, wood, stone). 0.5: 4 hearts through full bronze armor")
+            .defineInRange("lances.chargeBonusBronze", 0.5, 0.0, 10.0);
     public static final ModConfigSpec.DoubleValue LANCE_FULL_CHARGE = BUILDER
             .comment("Lances: charge impulse (3 x mass of rider and horse x speed, as Epic Knights counts it) that gives the",
                     "full bonus; slower charges give a part of it. About 5 is a galloping horse")

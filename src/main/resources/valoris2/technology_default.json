@@ -23,7 +23,7 @@
     "version: when the built-in file has a higher version, this file is replaced (old copy kept as .bak).",
     "  Axes ('<material>_axe', type \"axe\") deal less than the weapons of their material."
   ],
-  "version": 5,
+  "version": 6,
   "eraNames": {
     "bronze": "Bronze Age",
     "iron": "Iron Age",
@@ -1580,7 +1580,19 @@
       "bardiche": 7.4,
       "rogatina": 3.0,
       "wingedrogatina": 3.1,
-      "axe": 1.5
+      "axe": 1.5,
+      "katana": 4.0,
+      "wakizashi": 3.3,
+      "kunai": 2.2,
+      "kama": 2.5,
+      "sai": 2.5,
+      "jutte": 2.8,
+      "shuriken": 2.0,
+      "naginata": 3.3,
+      "yari": 3.0,
+      "sasumata": 3.1,
+      "tetsubo": 5.0,
+      "tonfa": 3.0
     }
   }
 }

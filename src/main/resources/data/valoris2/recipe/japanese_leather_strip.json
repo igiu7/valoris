@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LL"
+  ],
+  "key": {
+    "L": {
+      "tag": "c:leathers"
+    }
+  },
+  "result": {
+    "id": "valoris2:japanese_leather_strip",
+    "count": 1
+  }
+}

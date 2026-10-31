@@ -132,9 +132,9 @@ public final class MapDesign {
     public static final int HEART = 0, WARM = 1, COLD = 2;
 
     private static final Mass[] MASSES = {
-            new Mass(Profile.HEART, 160),   // 0 heart continent, in the middle
-            new Mass(Profile.WARM, 120),    // 1 south-east continent
-            new Mass(Profile.COLD, 140),    // 2 north and north-west continent
+            new Mass(Profile.HEART, 150),   // 0 heart continent, in the middle
+            new Mass(Profile.WARM, 140),    // 1 south-east continent
+            new Mass(Profile.COLD, 165),    // 2 north and north-west continent
             // the north-east archipelago
             new Mass(Profile.ICE, 0),       // 3
             new Mass(Profile.ICE, 0),       // 4
@@ -219,14 +219,26 @@ public final class MapDesign {
             new Blob(12, -620, 1640, 110, 70, 0),
     };
 
-    /** Mountain ranges: polylines along which a continuous crest runs (see ranges()). */
-    record Chain(int mass, double[] points) {}
+    /**
+     * Mountain ranges: the axis of a range (a polyline), how far its mountains reach to each side of it (half
+     * width, blocks) and how tall it grows compared to its land mass's tallest (see ranges()).
+     */
+    record Chain(int mass, double halfWidth, double scale, double[] points) {}
 
     private static final Chain[] CHAINS = {
-            new Chain(0, new double[] {-972, 470, -412, 67, 148, -280, 462, -538}),
-            new Chain(0, new double[] {-412, 67, -132, 538}),
-            new Chain(1, new double[] {460, 1480, 900, 1080, 1450, 720}),
-            new Chain(2, new double[] {-1580, -500, -1350, -1100, -750, -1450, -100, -1620}),
+            // heart: the great diagonal spine with a southern branch, and lower highlands in the north-west
+            new Chain(0, 230, 1.0, new double[] {-1050, 520, -412, 67, 148, -280, 520, -580}),
+            new Chain(0, 160, 0.75, new double[] {-412, 67, -180, 330, -110, 600}),
+            new Chain(0, 150, 0.65, new double[] {-1100, 0, -880, -280, -620, -400}),
+            // warm: the long range across its middle, a coastal range in the east, hills in the south-west
+            new Chain(1, 240, 1.0, new double[] {420, 1500, 900, 1080, 1450, 720}),
+            new Chain(1, 160, 0.9, new double[] {1450, 720, 1520, 1000, 1420, 1380}),
+            new Chain(1, 130, 0.6, new double[] {560, 1250, 700, 1520, 820, 1640}),
+            // cold: the backbone along its west coast and north, a second range near the north coast,
+            // and a spur into its east cape
+            new Chain(2, 250, 1.0, new double[] {-1600, -380, -1400, -1050, -800, -1380, -150, -1560}),
+            new Chain(2, 150, 0.8, new double[] {-1250, -1400, -900, -1580, -450, -1620}),
+            new Chain(2, 140, 0.6, new double[] {-150, -1560, 250, -1680}),
     };
 
     // ------------------------------------------------------------------ mountains
@@ -240,20 +252,42 @@ public final class MapDesign {
     }
 
     /**
-     * Mountain ranges: one continuous crest along every chain. Along the crest the height rises to sharp summits
-     * and drops to saddles (never below half), with an occasional deeper pass; the free ends of a chain taper off.
-     * Across the crest the slope is steep and concave, and the foot is narrow: 1/2.3 of the local crest height to
-     * each side. Returns {height above the land, how close to the crest 0..1}.
+     * Ridged noise 0..1: sharp crests where the noise crosses zero, branching into spurs at smaller sizes (each
+     * octave counts more where the larger ones already make a ridge, so the small ridges hang off the big ones
+     * like spurs off a main crest, with valleys between them).
+     */
+    private static double ridged(double x, double z) {
+        double sum = 0, norm = 0, amp = 1, weight = 1, f = 1.0 / 170;
+        for (int i = 0; i < 5; i++) {
+            double n = 1 - Math.abs(RIDGE.noise(x * f + i * 19.1, z * f - i * 23.7));
+            n *= n;
+            n *= weight;
+            weight = clamp(n * 1.6, 0, 1);
+            sum += n * amp;
+            norm += amp;
+            amp *= 0.5;
+            f *= 2.05;
+        }
+        return sum / norm;
+    }
+
+    /**
+     * Mountain ranges: a wide band of mountains along every chain, not a single wall. Across the band the
+     * mountains rise from foothills at its edges to the highest crests near its axis; inside it ridged noise
+     * makes branching ridges, spurs and valleys between them (so a range has several crests side by side and
+     * ways through it). Along the chain the height swells and drops (massifs and lower passes), the width
+     * changes, and the free ends taper off. Foothills reach half a width further out.
+     * Returns {height above the land, how mountainous 0..1}.
      */
     private static double[] ranges(double wx, double wz, int mass) {
         double tallest = MASSES[mass].peak;
         if (tallest <= 0) return new double[] {0, 0};
-        // spurs and gullies: the slopes are not smooth
-        double jag = 9 * DETAIL.fbm(wx, wz, 32, 2);
-        double best = 0, crestness = 0;
+        double best = 0;
+        double ridges = -1;
         for (int ci = 0; ci < CHAINS.length; ci++) {
-            if (CHAINS[ci].mass != mass) continue;
-            double[] p = CHAINS[ci].points;
+            Chain c = CHAINS[ci];
+            if (c.mass != mass) continue;
+            double[] p = c.points;
             double d = Double.MAX_VALUE, along = 0, run = 0;
             for (int i = 0; i + 3 < p.length; i += 2) {
                 double ax = p[i], az = p[i + 1], vx = p[i + 2] - ax, vz = p[i + 3] - az;
@@ -263,20 +297,26 @@ public final class MapDesign {
                 if (dd < d) { d = dd; along = run + t * len; }
                 run += len;
             }
-            if (d > tallest) continue; // too far from this chain to matter
-            double summits = Math.pow(1 - Math.abs(RIDGE.noise(along / 70.0, ci * 7.31)), 2.5);
-            double pass = clamp(0.85 + 0.7 * RANGE.noise(along / 280.0, ci * 3.17), 0.5, 1);
-            double ends = smooth(0, 160, along) * smooth(0, 160, run - along);
-            double crest = tallest * (0.5 + 0.5 * summits) * pass * ends;
-            if (crest < 2) continue;
-            double halfWidth = crest / 2.3;
-            double dj = d + jag;
-            if (dj >= halfWidth) continue;
-            double k = 1 - Math.max(0, dj) / halfWidth;
-            best = Math.max(best, crest * Math.pow(k, 1.25));
-            crestness = Math.max(crestness, k);
+            double width = c.halfWidth * (0.8 + 0.35 * RANGE.noise(along / 400.0, ci * 5.3 + 0.5));
+            if (d > width * 1.5) continue; // beyond the foothills
+            // the free ends taper off over a range's width, so a range does not end in a wall
+            double ends = smooth(0, width * 1.2, along) * smooth(0, width * 1.2, run - along);
+            // massifs and passes along the range
+            double swell = clamp(0.75 + 0.55 * RANGE.noise(along / 300.0, ci * 3.17), 0.35, 1.1);
+            double top = tallest * c.scale * swell * ends;
+            if (top < 2) continue;
+            // across the band: 1 on the axis, 0 at its edge; the edge itself is ragged
+            double k = clamp(1 - (d + 0.25 * width * DETAIL.fbm(wx, wz, 90, 2)) / width, 0, 1);
+            if (ridges < 0) ridges = ridged(wx, wz);
+            // a massive core near the axis and branching ridges over the whole band, with deep valleys between
+            double core = k * k;
+            double body = Math.pow(k, 0.6) * Math.min(1, 1.5 * Math.pow(ridges, 1.7));
+            double rise = top * (0.3 * core + 0.7 * body);
+            // foothills: rolling hills from the edge of the band half a width further out
+            double foot = smooth(0, 1, 1 - d / (width * 1.5)) * Math.min(1, top / 60) * (14 + 10 * ridges);
+            best = Math.max(best, Math.max(rise, foot));
         }
-        return new double[] {best, crestness};
+        return new double[] {best, clamp(best / 70, 0, 1)};
     }
 
     // ------------------------------------------------------------------ one column
@@ -364,9 +404,10 @@ public final class MapDesign {
             // beaches: a low strip along the coast (except under mountains, which end in cliffs)
             if (land < BEACH && mountain < 0.15) h = Math.min(h, 63.6 + 60 * land);
 
-            // rivers: winding lines where the noise crosses zero, not through high mountains
+            // rivers: winding lines where the noise crosses zero, not through high mountains; they cut through the
+            // beach down to the sea (their mouths)
             double rn = Math.abs(RIVER.fbm(x, z, 900, 4));
-            double strength = (1 - smooth(0.0, 0.028, rn)) * (1 - smooth(0.15, 0.4, mountain)) * smooth(0.03, 0.1, land);
+            double strength = (1 - smooth(0.0, 0.028, rn)) * (1 - smooth(0.15, 0.4, mountain));
             if (strength > 0) {
                 h = lerp(strength, h, 58);
                 river = strength > 0.55 && h < SEA_LEVEL;
@@ -421,6 +462,15 @@ public final class MapDesign {
         Profile p = MASSES[s.continent].profile;
         boolean snowy = p == Profile.ICE || (p == Profile.COLD && lat < SNOW_LINE);
 
+        // the shallow water along the coast belongs to the shore, not the ocean: the game takes biomes from a grid of
+        // 4 blocks (blurred a little), so dry blocks at the water's edge may get the biome of a point just out in
+        // the water - with an ocean biome they would get grass
+        if (s.land < 0 && !s.river && (s.land > -SHORE_WATER || (s.land > -0.4 && nearDry(x, z)))) {
+            if (p == Profile.SWAMP) return regionBiome(p, x, z, lat, m, h);
+            if (s.mountain >= 0.15 || nearCliff(x, z)) return "stony_shore";
+            int t = Math.max(p.minTier, Math.min(p.maxTier, biomeTier(regionBiome(p, x, z, lat, m, h))));
+            return snowy ? "snowy_beach" : "valoris2:beach_t" + t;
+        }
         if (h < SEA_LEVEL && !s.river && s.land < 0) {
             boolean deep = h < 44;
             if (lat < -0.75) return deep ? "deep_frozen_ocean" : "frozen_ocean"; // pack ice only in the far north
@@ -440,9 +490,43 @@ public final class MapDesign {
             if (h <= SEA_LEVEL + 6) return snowy ? "snowy_beach" : "valoris2:beach_t" + tier;
         }
         // snowy peaks on every mountain, of the region's tier
-        if (h >= 150) return snowy ? (h >= 205 ? "frozen_peaks" : "snowy_slopes") : "valoris2:jagged_peaks_t" + tier;
+        if (h >= 160) return snowy ? (h >= 205 ? "frozen_peaks" : "snowy_slopes") : "valoris2:jagged_peaks_t" + tier;
         if (h >= 118 && snowy) return "grove";
+        // upper mountain slopes: meadows on the heart, windswept land elsewhere
+        if (h >= 122 && s.mountain > 0.3) {
+            switch (p) {
+                case HEART -> { return m > 0.35 ? "cherry_grove" : "meadow"; }
+                case WARM -> { return lat < 0.55 ? "windswept_forest" : "savanna_plateau"; }
+                case COLD -> { return m > 0.1 ? "windswept_forest" : "windswept_hills"; }
+                default -> { }
+            }
+        }
         return region;
+    }
+
+    /** How far out (in units of the land field, about 25-40 blocks) the water along a coast has the shore's biome. */
+    private static final double SHORE_WATER = 0.07;
+
+    private static final int[][] AROUND = {
+            {4, 0}, {-4, 0}, {0, 4}, {0, -4}, {8, 0}, {-8, 0}, {0, 8}, {0, -8},
+            {6, 6}, {6, -6}, {-6, 6}, {-6, -6}, {10, 4}, {10, -4}, {-10, 4}, {-10, -4},
+            {4, 10}, {-4, 10}, {4, -10}, {-4, -10},
+    };
+
+    /** Dry land within about 10 blocks (steep coasts, where the sea gets deep right at the water's edge). */
+    private static boolean nearDry(int x, int z) {
+        for (int[] d : AROUND) {
+            if (height(x + d[0], z + d[1]) >= SEA_LEVEL) return true;
+        }
+        return false;
+    }
+
+    /** Mountains drop into the sea close by (the shore is a cliff, not a beach). */
+    private static boolean nearCliff(int x, int z) {
+        for (int[] d : new int[][] {{12, 0}, {-12, 0}, {0, 12}, {0, -12}}) {
+            if (sample(x + d[0], z + d[1]).mountain >= 0.15) return true;
+        }
+        return false;
     }
 
     /** What grows on this land mass at this place, leaving out beaches, rivers and peaks. */

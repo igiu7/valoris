@@ -9,9 +9,11 @@
     "armorBalance: armor points per slot, toughness and knockback resistance (0-1) of every armor piece per era.",
     "version: when the built-in file has a higher version, this file is replaced (old copy kept as .bak).",
     "Costs grow with the era (metal x1 bronze, x1.5 iron, x2 steel, x2.5 gunpowder); every piece of",
-    "armor also needs wolf fur (valoris2:fur): 1 bronze, 2 iron, 3 steel. Steel armor also needs 1 bear fur (valoris2:bear_fur)."
+    "armor also needs wolf fur (valoris2:fur): 1 bronze, 2 iron, 3 steel. Steel armor also needs 1 bear fur (valoris2:bear_fur).",
+    "removeAllRecipesFrom: like removeRecipesFrom, but keepRecipes does not apply (ingots go too);",
+    "keepRecipeIds: recipes whose id starts with one of these are always kept."
   ],
-  "version": 11,
+  "version": 15,
   "armorBalance": {
     "_comment": "Every armor piece of an era gets these values, whatever mod it comes from.",
     "bronze": {
@@ -72,6 +74,12 @@
     "raw_",
     "_ore",
     "mixture"
+  ],
+  "removeAllRecipesFrom": [
+    "samurai_dynasty"
+  ],
+  "keepRecipeIds": [
+    "samurai_dynasty:dyed_armor/"
   ],
   "entries": [
     {
@@ -20806,6 +20814,2103 @@
         {
           "item": "minecraft:feather",
           "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_katana",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_katana"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_katana",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_katana"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_katana",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_katana"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 6
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_wakizashi",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_wakizashi"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_wakizashi",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_wakizashi"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_wakizashi",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_wakizashi"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 4
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_kunai",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_kunai"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 1
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_kunai",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_kunai"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_kunai",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_kunai"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_kama",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_kama"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 1
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_kama",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_kama"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_kama",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_kama"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_sai",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_sai"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 1
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_sai",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_sai"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_sai",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_sai"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_jutte",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_jutte"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 1
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_jutte",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_jutte"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_jutte",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_jutte"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_shuriken",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_shuriken"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_shuriken",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_shuriken"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_shuriken",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_shuriken"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_naginata",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_naginata"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 3
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_naginata",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_naginata"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_naginata",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_naginata"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 6
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_yari",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_yari"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 2
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_yari",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_yari"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 3
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_yari",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_yari"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 4
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_hilt",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_sasumata",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_sasumata"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 3
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_sasumata",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_sasumata"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_sasumata",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_sasumata"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 6
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_tetsubo",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:bronze_tetsubo"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 3
+        },
+        {
+          "tag": "minecraft:planks",
+          "count": 2
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_tetsubo",
+      "category": "weapons",
+      "era": "iron",
+      "tech": "iron_weapons",
+      "result": {
+        "id": "valoris2:iron_tetsubo"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "tag": "minecraft:planks",
+          "count": 2
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_tetsubo",
+      "category": "weapons",
+      "era": "steel",
+      "tech": "steel_weapons",
+      "result": {
+        "id": "valoris2:steel_tetsubo"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 6
+        },
+        {
+          "tag": "minecraft:planks",
+          "count": 2
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_wooden_katana",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:wooden_katana"
+      },
+      "cost": [
+        {
+          "tag": "minecraft:planks",
+          "count": 2
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_wooden_naginata",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:wooden_naginata"
+      },
+      "cost": [
+        {
+          "tag": "minecraft:planks",
+          "count": 3
+        },
+        {
+          "item": "minecraft:stick",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_wooden_tonfa",
+      "category": "weapons",
+      "era": "bronze",
+      "tech": "bronze_weapons",
+      "result": {
+        "id": "valoris2:wooden_tonfa"
+      },
+      "cost": [
+        {
+          "item": "minecraft:stick",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_samurai_helmet",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "valoris2:bronze_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 5
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_samurai_chestplate",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "valoris2:bronze_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_samurai_leggings",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "valoris2:bronze_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 7
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_bronze_samurai_boots",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "valoris2:bronze_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 4
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_samurai_helmet",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:iron_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_samurai_chestplate",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:iron_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 12
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_samurai_leggings",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:iron_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 11
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_iron_samurai_boots",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:iron_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 6
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_samurai_helmet",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "valoris2:steel_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 10
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_samurai_chestplate",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "valoris2:steel_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 16
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_samurai_leggings",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "valoris2:steel_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 14
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_steel_samurai_boots",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "valoris2:steel_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_samurai_oni_helmet",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "valoris2:samurai_oni_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 10
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "minecraft:coal",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "japanese_shinobi_helmet",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:shinobi_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_shinobi_chestplate",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:shinobi_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 9
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 5
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_shinobi_leggings",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:shinobi_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 8
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 4
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_shinobi_boots",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:shinobi_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_oni_mask",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:oni_mask"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_hannya_mask",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:hannya_mask"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "minecraft:coal",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_hyottoko_mask",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:hyottoko_mask"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "minecraft:clay_ball",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_tengu_mask",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:tengu_mask"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "minecraft:feather",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "japanese_kitsune_mask",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "valoris2:kitsune_mask"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 5
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_light_samurai_helmet",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "samurai_dynasty:light_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 5
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_light_samurai_chestplate",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "samurai_dynasty:light_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_light_samurai_leggings",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "samurai_dynasty:light_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 7
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_light_samurai_boots",
+      "category": "armor",
+      "era": "bronze",
+      "tech": "bronze_armor",
+      "result": {
+        "id": "samurai_dynasty:light_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/bronze",
+          "count": 4
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_samurai_helmet",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_samurai_chestplate",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 12
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_samurai_leggings",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 11
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_samurai_boots",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 6
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_ninja_helmet",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_ninja_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 6
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_ninja_chestplate",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_ninja_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 9
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 5
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_ninja_boots",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_ninja_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 6
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_ninja_leggings",
+      "category": "armor",
+      "era": "iron",
+      "tech": "iron_armor",
+      "result": {
+        "id": "samurai_dynasty:ninja_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/iron",
+          "count": 6
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 5
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_samurai_helmet",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 10
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 1
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_samurai_chestplate",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 16
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 1
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_samurai_leggings",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 14
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 1
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_samurai_boots",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 2
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 1
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_master_samurai_helmet",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:master_samurai_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 10
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_master_samurai_chestplate",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:master_samurai_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 16
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_master_samurai_leggings",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:master_samurai_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 14
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_master_samurai_boots",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:master_samurai_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_helmet",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 10
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_chestplate",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 16
+        },
+        {
+          "tag": "c:leathers",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_leggings",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_leggings"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 14
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_steel_boots",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:steel_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 8
+        },
+        {
+          "tag": "c:leathers",
+          "count": 2
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_ninja_helmet",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_ninja_helmet"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 8
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_ninja_chestplate",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_ninja_chestplate"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 12
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 5
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_netherite_ninja_boots",
+      "category": "armor",
+      "era": "steel",
+      "tech": "steel_armor",
+      "result": {
+        "id": "samurai_dynasty:netherite_ninja_boots"
+      },
+      "cost": [
+        {
+          "tag": "c:ingots/steel",
+          "count": 8
+        },
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 3
+        },
+        {
+          "item": "valoris2:fur",
+          "count": 3
+        },
+        {
+          "item": "valoris2:bear_fur",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_kimono",
+      "category": "decorations",
+      "era": "bronze",
+      "tech": "bronze_age",
+      "result": {
+        "id": "samurai_dynasty:kimono"
+      },
+      "cost": [
+        {
+          "item": "valoris2:japanese_fabric",
+          "count": 7
+        },
+        {
+          "tag": "c:leathers",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "samurai_dynasty_straw_hat",
+      "category": "decorations",
+      "era": "bronze",
+      "tech": "bronze_age",
+      "result": {
+        "id": "samurai_dynasty:straw_hat"
+      },
+      "cost": [
+        {
+          "item": "minecraft:wheat",
+          "count": 6
         },
         {
           "tag": "c:leathers",

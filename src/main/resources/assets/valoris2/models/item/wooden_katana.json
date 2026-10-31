@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/woodkatana",
+  "textures": {
+    "1": "valoris2:block/japanese/yari",
+    "particle": "valoris2:item/japanese/naginata"
+  }
+}

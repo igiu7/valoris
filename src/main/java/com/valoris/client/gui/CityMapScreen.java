@@ -216,7 +216,7 @@ public final class CityMapScreen extends BaseScreen {
         String realm = HubScreen.realmOfCity(c);
         if (realm.equals(s.realmName)) return "This is your own city";
         if (!atWarWith(realm)) return "You are not at war with them";
-        if (!s.isLeader) return s.realmIsKingdom ? "Only your king can besiege" : "Only your ruler can besiege";
+        if (!s.isLeader) return s.realmIsKingdom ? "Only your " + s.rulerTitle + " can besiege" : "Only your ruler can besiege";
         for (Row r : s.sieges) {
             if (!r.a().equals(s.realmName)) continue;
             return r.b().equalsIgnoreCase(cityName) ? "You are already besieging it" : "You are besieging another city";
@@ -286,7 +286,7 @@ public final class CityMapScreen extends BaseScreen {
         ItemIcon.getItemIcon(Items.FILLED_MAP).draw(g, x + 14, y + 11, 16, 16);
         Ui.text(g, theme, Component.literal(cityName).withStyle(ChatFormatting.BOLD), x + 44, y + 9, Ui.TEXT, true);
         Row c = cityRow();
-        String sub = c == null ? "City survey" : (c.c().isEmpty() ? "Independent city" : "Kingdom of " + c.c())
+        String sub = c == null ? "City survey" : (c.c().isEmpty() ? "Independent city" : ClientState.get().kingdomTitle(c.c()))
                 + "  -  ruler " + c.b();
         Ui.text(g, theme, Ui.fit(theme, sub, w - 120), x + 44, y + 21, Ui.MUTED, false);
         drawSide(g, theme, x + sideX(), y + mapY(), SIDE, mapH());

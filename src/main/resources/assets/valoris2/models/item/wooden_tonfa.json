@@ -1,0 +1,7 @@
+{
+  "parent": "valoris2:item/japanese/tonfa",
+  "textures": {
+    "1": "valoris2:block/japanese/wooden_tonfa",
+    "particle": "valoris2:item/japanese/wooden_tonfa"
+  }
+}
