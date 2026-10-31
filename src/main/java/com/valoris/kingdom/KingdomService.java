@@ -94,8 +94,12 @@ public final class KingdomService {
 
     // ------------------------------------------------------------ creation
 
-    /** A kingdom is founded by a city of at least minResidentsForKingdom residents (the ruler included). */
-    public static void checkEnoughResidents(City city) throws CommandSyntaxException {
+    /**
+     * A kingdom is founded by a city of at least minResidentsForKingdom residents (the ruler included), unless its
+     * ruler was allowed by an operator (/valoris admin kingdomfounder).
+     */
+    public static void checkEnoughResidents(ValorisData data, City city) throws CommandSyntaxException {
+        if (data.kingdomFounders.containsKey(city.ruler)) return;
         int needed = Config.MIN_RESIDENTS_FOR_KINGDOM.get();
         int residents = dev.ftb.mods.ftbteams.api.FTBTeamsAPI.api().getManager().getTeamByID(city.teamId)
                 .map(t -> t.getMembers().size()).orElse(0);
@@ -112,7 +116,7 @@ public final class KingdomService {
         ValorisData data = ValorisData.get(server);
         if (data.kingdomOfCity(city.teamId).isPresent()) throw Errors.of("Your city already belongs to a kingdom.");
         com.valoris.war.ConquestService.checkNotConquered(data, city);
-        checkEnoughResidents(city);
+        checkEnoughResidents(data, city);
         if (data.kingdomByName(name).isPresent()) throw Errors.of("A kingdom with that name already exists.");
         checkNameFree(data, name, city);
 

@@ -227,6 +227,8 @@ public class ValorisData extends SavedData {
     public int techTreeVersion;
     /** Eras the admins opened for research (the first era is always open), see /valoris tech era. */
     public final Set<String> openEras = new LinkedHashSet<>();
+    /** Players who may found a kingdom without minResidentsForKingdom residents (uuid -> name), see /valoris admin kingdomfounder. */
+    public final Map<UUID, String> kingdomFounders = new java.util.LinkedHashMap<>();
 
     public static ValorisData get(MinecraftServer server) {
         return server.overworld().getDataStorage()
@@ -666,6 +668,9 @@ public class ValorisData extends SavedData {
         ListTag eras = new ListTag();
         for (String e : openEras) eras.add(StringTag.valueOf(e));
         tag.put("openEras", eras);
+        CompoundTag founders = new CompoundTag();
+        kingdomFounders.forEach((id, name) -> founders.putString(id.toString(), name));
+        tag.put("kingdomFounders", founders);
         return tag;
     }
 
@@ -774,6 +779,13 @@ public class ValorisData extends SavedData {
         for (String k : truceTag.getAllKeys()) data.truces.put(k, truceTag.getLong(k));
         ListTag eras = tag.getList("openEras", Tag.TAG_STRING);
         for (int i = 0; i < eras.size(); i++) data.openEras.add(eras.getString(i));
+        CompoundTag founders = tag.getCompound("kingdomFounders");
+        for (String k : founders.getAllKeys()) {
+            try {
+                data.kingdomFounders.put(UUID.fromString(k), founders.getString(k));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
         return data;
     }
 }
