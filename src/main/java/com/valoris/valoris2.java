@@ -34,6 +34,7 @@ public class valoris2 {
         com.valoris.registry.JapaneseArmory.register(modEventBus); // samurai armor, katanas... (Japanese Armory port)
         com.valoris.registry.ModOres.init();        // overworld quartz ore
         com.valoris.registry.ModTools.init();       // steel tools
+        com.valoris.bucket.BronzeBuckets.init();     // bronze buckets
         if (net.neoforged.fml.ModList.get().isLoaded("drinkbeer")) com.valoris.compat.DrinkBeerDrinks.init(); // sake, vodka
         ModBlocks.register(modEventBus);
         com.valoris.registry.ModEntities.register(modEventBus); // bear

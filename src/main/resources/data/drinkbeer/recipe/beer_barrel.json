@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XY ",
+    "   ",
+    "   "
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:barrel"
+    },
+    "Y": {
+      "tag": "c:ingots/bronze"
+    }
+  },
+  "result": {
+    "id": "drinkbeer:beer_barrel",
+    "count": 1
+  }
+}

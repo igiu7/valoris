@@ -8,6 +8,7 @@
     "AbstractWagonMixin",
     "LanceChargeMixin",
     "DrinkBeerGiftMixin",
+    "BeerBarrelBucketMixin",
     "SiegeExplosionMixin",
     "SiegeMachineShipMixin",
     "SiegeLadderSeatsMixin",
