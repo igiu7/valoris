@@ -169,10 +169,21 @@ public final class SoilQuality {
             return;
         }
         if (exempt(state)) return;
-        double speed = speed(event.getLevel(), event.getPos(), state);
+        double speed = speed(event.getLevel(), event.getPos(), state) * techBonus(event.getLevel(), event.getPos());
         if (speed >= 1.0) return;
         if (speed <= 0.0 || event.getLevel().getRandom().nextDouble() >= speed) {
             event.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
+        }
+    }
+
+    /** Crop Rotation: plants on the land of a city that knows it grow faster (1.0 = no bonus). */
+    public static double techBonus(LevelAccessor level, BlockPos pos) {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel l)) return 1.0;
+        try {
+            return com.valoris.war.SiegeEvents.cityAt(com.valoris.data.ValorisData.get(l.getServer()), l, pos)
+                    .map(c -> 1.0 + com.valoris.tech.TechService.cropGrowthPercent(c) / 100.0).orElse(1.0);
+        } catch (Throwable t) {
+            return 1.0;
         }
     }
 
@@ -186,7 +197,7 @@ public final class SoilQuality {
         if (!Config.SOIL_QUALITY_ENABLED.get() || event.getLevel().isClientSide()) return;
         if (!(event.getItemStack().getItem() instanceof HoeItem)) return;
         int t = tier(event.getLevel(), event.getPos().getX(), event.getPos().getZ(), event.getLevel().getBiome(event.getPos()));
-        int pct = (int) Math.round(speed(t) * 100.0);
+        int pct = (int) Math.round(Math.min(1.0, speed(t) * techBonus(event.getLevel(), event.getPos())) * 100.0);
         boolean wild = Config.CROPS_NEED_CLAIM.get() && !claimed(event.getLevel(), event.getPos());
         event.getEntity().displayClientMessage(Component.literal("Soil: Tier " + t + " - " + NAMES[t]
                 + (wild ? " - unclaimed land: field crops will not grow here"

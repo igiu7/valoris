@@ -138,8 +138,8 @@ public final class Realms {
         k.color = Heraldry.teamColor(r.city().teamId);
         data.addKingdom(k);
         data.replaceRealm(r.city().teamId, k.id);
-        Msg.broadcast(server, Msg.text("The city of " + r.name() + " has grown into the " + k.title() + "!",
-                ChatFormatting.GOLD));
+        Msg.news(server, "👑", "The city of " + r.name() + " has grown into the " + k.title() + "!",
+                ChatFormatting.GOLD);
         return k;
     }
 }

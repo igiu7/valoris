@@ -24,8 +24,8 @@ import net.minecraft.server.level.ServerPlayer;
 /**
  * Wars between coalitions.
  * - The realm that declares a war leads the attackers, the realm attacked leads the defenders.
- * - Allies of the attacked realm join its defence automatically (also allies it makes later during the war).
- * - Allies are called to an offensive (or any war of ours) with a call to arms they accept or refuse.
+ * - Allies join no war by themselves, not even a defence: the attacked realm (like an attacker) calls them to arms,
+ *   and they accept or refuse. When a realm is attacked its allies are told and its leader gets a call button for each.
  * - A realm never joins a side while it is allied with someone on the other side.
  * - Peace between the two leaders ends the whole war; peace between a leader and a member of the other side is a
  *   separate peace: that member leaves the war.
@@ -58,6 +58,9 @@ public final class WarService {
         for (UUID enemy : w.opposite(side)) {
             if (allied(data, realm, enemy)) return "it is allied with the " + title(data, w, enemy);
         }
+        for (UUID friend : w.side(side)) { // no fighting side by side with a realm it is at war with elsewhere
+            if (!data.warsBetween(realm, friend).isEmpty()) return "it is at war with the " + title(data, w, friend);
+        }
         // no joining a war against the realm it has a truce with, when that realm leads the other side
         // (the one that declared the war, or the one it was declared on); other members of that side do not count
         List<UUID> enemies = w.opposite(side);
@@ -85,7 +88,13 @@ public final class WarService {
     // ------------------------------------------------------------------ declaring and joining
 
     public static War declare(MinecraftServer server, ValorisData data, Realm attacker, Realm defender) {
+        return declare(server, data, attacker, defender, false);
+    }
+
+    /** rebellion: a city rising against its kingdom (already announced as such: no "WAR!" news on Discord). */
+    public static War declare(MinecraftServer server, ValorisData data, Realm attacker, Realm defender, boolean rebellion) {
         War w = new War(UUID.randomUUID());
+        w.rebellion = rebellion;
         w.attackers.add(attacker.id());
         w.defenders.add(defender.id());
         w.names.put(attacker.id(), attacker.name());
@@ -100,27 +109,45 @@ public final class WarService {
         data.addWar(w);
         Requests.removeWhere(x -> x.type() == Type.DIPLOMACY && ((x.from().equals(attacker.id()) && x.to().equals(defender.id()))
                 || (x.from().equals(defender.id()) && x.to().equals(attacker.id()))));
-        Msg.broadcast(server, Msg.text("WAR! The " + attacker.title() + " declared war on the " + defender.title() + "!",
-                ChatFormatting.DARK_RED));
+        String warText = "WAR! The " + attacker.title() + " declared war on the " + defender.title() + "!";
+        if (rebellion) Msg.broadcast(server, Msg.text(warText, ChatFormatting.DARK_RED));
+        else Msg.news(server, "⚔️", warText, ChatFormatting.DARK_RED);
+        // both realms also see it in the middle of the screen
+        for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+            UUID realm = Realms.of(p).map(Realm::id).orElse(null);
+            if (attacker.id().equals(realm)) {
+                com.valoris.war.SiegeAnnouncer.title(p, Component.literal("WAR!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+                        Component.literal("You declared war on the " + defender.title()).withStyle(ChatFormatting.GOLD),
+                        net.minecraft.sounds.SoundEvents.RAID_HORN.value());
+            } else if (defender.id().equals(realm)) {
+                com.valoris.war.SiegeAnnouncer.title(p, Component.literal("WAR!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+                        Component.literal("The " + attacker.title() + " declared war on you").withStyle(ChatFormatting.GOLD),
+                        net.minecraft.sounds.SoundEvents.RAID_HORN.value());
+            }
+        }
         defendAllies(server, data, w, defender);
         return w;
     }
 
-    /** The allies of an attacked realm come to its defence. */
+    /** The allies of an attacked realm hear of it; its leader may call them to arms (they join only if they accept). */
     private static void defendAllies(MinecraftServer server, ValorisData data, War w, Realm attacked) {
         int side = w.sideOf(attacked.id());
+        UUID enemyLeader = w.opposite(side).get(0);
+        String enemy = title(data, w, enemyLeader);
+        String enemyArg = Msg.q(Realms.byId(data, enemyLeader).map(Realm::name).orElse(w.names.getOrDefault(enemyLeader, enemy)));
+        net.minecraft.network.chat.MutableComponent calls = Msg.text("You were attacked. Call your allies to arms:", ChatFormatting.GOLD);
+        boolean any = false;
         for (Map.Entry<UUID, Relation> e : data.relationsOf(attacked.id()).entrySet()) {
             if (e.getValue() != Relation.ALLIANCE) continue;
             Optional<Realm> ally = Realms.byId(data, e.getKey());
-            if (ally.isEmpty()) continue;
-            String problem = joinProblem(data, w, ally.get().id(), side);
-            if (problem == null) {
-                join(server, data, w, ally.get(), side, "to defend its ally, the " + attacked.title());
-            } else if (w.sideOf(ally.get().id()) == 0) {
-                Realms.message(ally.get(), Msg.text("Your ally, the " + attacked.title() + ", was attacked, but you stay "
-                        + "out of that war: " + problem + ".", ChatFormatting.YELLOW));
-            }
+            if (ally.isEmpty() || joinProblem(data, w, ally.get().id(), side) != null) continue;
+            Realms.message(ally.get(), Msg.text("Your ally, the " + attacked.title() + ", was attacked by the " + enemy
+                    + ". You join its defence only if it calls you to arms.", ChatFormatting.YELLOW));
+            calls.append(Component.literal(" ")).append(Msg.button("[Call the " + ally.get().title() + "]", ChatFormatting.GREEN,
+                    "/valoris diplomacy call " + Msg.q(ally.get().name()) + " " + enemyArg));
+            any = true;
         }
+        if (any) Realms.toLeader(server, data, attacked, calls);
     }
 
     public static void join(MinecraftServer server, ValorisData data, War w, Realm realm, int side, String why) {
@@ -136,23 +163,15 @@ public final class WarService {
         }
         UUID leader = w.side(side).get(0);
         UUID enemyLeader = w.opposite(side).get(0);
-        Msg.broadcast(server, Msg.text("The " + realm.title() + " joins the war against the " + title(data, w, enemyLeader)
-                + " " + why + ".", ChatFormatting.RED));
+        Msg.news(server, "⚔️", "The " + realm.title() + " joins the war against the " + title(data, w, enemyLeader)
+                + " " + why + ".", ChatFormatting.RED);
         Realms.message(realm, Msg.text("You are now at war with: " + sideTitles(data, w, side == 1 ? 2 : 1)
                 + ". Your army takes part in every siege of the " + title(data, w, leader) + "'s side in this war.",
                 ChatFormatting.GOLD));
     }
 
-    /** Two realms became allies: each joins the wars in which the other was attacked. */
+    /** Two realms became allies: neither joins the other's wars by itself (only by a call to arms). */
     public static void allianceFormed(MinecraftServer server, ValorisData data, Realm a, Realm b) {
-        for (War w : List.copyOf(data.wars())) {
-            if (!w.defenders.isEmpty() && w.defenders.get(0).equals(a.id()) && joinProblem(data, w, b.id(), 2) == null) {
-                join(server, data, w, b, 2, "to defend its new ally, the " + a.title());
-            }
-            if (!w.defenders.isEmpty() && w.defenders.get(0).equals(b.id()) && joinProblem(data, w, a.id(), 2) == null) {
-                join(server, data, w, a, 2, "to defend its new ally, the " + b.title());
-            }
-        }
     }
 
     // ------------------------------------------------------------------ calls to arms
@@ -198,6 +217,7 @@ public final class WarService {
         Requests.Request r = Requests.find(server, Type.WAR_CALL, caller.id(), own.id(), w.id)
                 .orElseThrow(() -> Errors.of("You have no (valid) call to arms for that war."));
         Requests.remove(r);
+        if (accept && !allied(data, own.id(), caller.id())) throw Errors.of("You are no longer allied with the " + caller.title() + ".");
         if (!accept) {
             Msg.ok(leader, "You refused the call to arms.");
             Realms.toLeader(server, data, caller, Msg.text("The " + own.title() + " refused to join your war.", ChatFormatting.RED));
@@ -250,23 +270,90 @@ public final class WarService {
         boolean wasLeader = w.isLeader(realm);
         int side = w.sideOf(realm);
         if (side != 0 && w.side(side).size() == 1) { // the last of its side: the war is over
-            end(server, data, w);
+            boolean peace = why.equals("made a separate peace");
+            end(server, data, w, peace ? 0 : side, "the " + name + " " + why);
             return;
         }
         w.remove(realm);
         w.log("The " + name + " " + why + " and left the war.");
         data.touch();
-        Msg.broadcast(server, Msg.text("The " + name + " " + why + " and leaves the war.", ChatFormatting.YELLOW));
+        Msg.news(server, "🏳️", "The " + name + " " + why + " and leaves the war.", ChatFormatting.YELLOW);
         if (wasLeader && side != 0 && !w.side(side).isEmpty()) {
             Msg.broadcast(server, Msg.text("The " + title(data, w, w.side(side).get(0)) + " now leads its side of the war.",
                     ChatFormatting.GOLD));
         }
     }
 
+    /** Peace was made. */
     public static void end(MinecraftServer server, ValorisData data, War w) {
+        end(server, data, w, 0, null);
+    }
+
+    /**
+     * The war is over. lostSide: the side that has no realm left in it (1 attackers, 2 defenders), which lost;
+     * 0 = peace was made, and the side that did better wins (cities taken, then sieges repelled, then kills).
+     */
+    private static void end(MinecraftServer server, ValorisData data, War w, int lostSide, String how) {
         data.removeWar(w.id);
         Requests.removeWhere(x -> x.type() == Type.WAR_CALL && w.id.equals(x.ref()));
-        Msg.broadcast(server, Msg.text("PEACE! The war between " + (w.attackers.isEmpty() ? "?" : sideTitles(data, w, 1))
-                + " and " + (w.defenders.isEmpty() ? "?" : sideTitles(data, w, 2)) + " is over.", ChatFormatting.GREEN));
+        String atk = w.attackers.isEmpty() ? "?" : sideTitles(data, w, 1);
+        String def = w.defenders.isEmpty() ? "?" : sideTitles(data, w, 2);
+        int winner = lostSide != 0 ? 3 - lostSide : betterSide(w);
+        String result = winner == 0 ? "It ended in a draw." : "The " + (winner == 1 ? atk : def) + " won"
+                + (how != null ? " (" + how + ")." : ".");
+        if (!w.rebellion) {
+            Msg.news(server, "🕊️", "PEACE! The war between " + atk + " and " + def + " is over. " + result,
+                    ChatFormatting.GREEN);
+        } else { // the rebel city leads the attackers, the kingdom it rose against the defenders
+            String rebel = w.attackers.isEmpty() ? atk : title(data, w, w.attackers.get(0));
+            String kingdom = w.defenders.isEmpty() ? def : title(data, w, w.defenders.get(0));
+            if (winner == 1) {
+                Msg.news(server, "🏴", "The rebellion succeeded: the " + rebel + " has won its independence from the "
+                        + kingdom + "!", ChatFormatting.GOLD);
+            } else if (winner == 2) {
+                Msg.news(server, "⚔️", "The rebellion failed: the " + kingdom + " crushed the uprising of the "
+                        + rebel + ".", ChatFormatting.GOLD);
+            } else {
+                Msg.news(server, "🤝", "The rebellion of the " + rebel + " against the " + kingdom
+                        + " ended without a winner; the city stays free.", ChatFormatting.GOLD);
+            }
+        }
+        com.valoris.discord.DiscordLink.announceRaw(summary(data, w, atk, def, winner, how));
+    }
+
+    private static int betterSide(War w) {
+        int[][] keys = {w.citiesTaken, w.siegesRepelled, w.sideKills};
+        for (int[] k : keys) {
+            if (k[1] != k[2]) return k[1] > k[2] ? 1 : 2;
+        }
+        return 0;
+    }
+
+    /** The end of the war for the Discord news channel: result, length and the numbers of both sides and every realm. */
+    private static String summary(ValorisData data, War w, String atk, String def, int winner, String how) {
+        java.util.function.Function<String, String> p = com.valoris.discord.DiscordLink::plain;
+        long minutes = Math.max(0, (System.currentTimeMillis() - w.started) / 60_000L);
+        String length = minutes >= 1440 ? (minutes / 1440) + " d " + (minutes % 1440 / 60) + " h"
+                : minutes >= 60 ? (minutes / 60) + " h " + (minutes % 60) + " min" : minutes + " min";
+        StringBuilder sb = new StringBuilder();
+        sb.append("📊 **").append(w.rebellion ? "The rebellion is over" : "The war is over").append(": ")
+                .append(p.apply(atk)).append(" vs ").append(p.apply(def)).append("**\n");
+        sb.append("Result: **").append(winner == 0 ? "draw" : p.apply(winner == 1 ? atk : def) + " won").append("**");
+        if (how != null && winner != 0) sb.append(" (").append(p.apply(how)).append(")");
+        sb.append("\nLasted: ").append(length).append("\n\n");
+        String[] sideName = {"", "Attackers", "Defenders"};
+        for (int side = 1; side <= 2; side++) {
+            sb.append("**").append(sideName[side]).append("**: ").append(p.apply(side == 1 ? atk : def)).append("\n")
+                    .append("Kills ").append(w.sideKills[side]).append(" · cities taken ").append(w.citiesTaken[side])
+                    .append(" · sieges repelled ").append(w.siegesRepelled[side]).append("\n\n");
+        }
+        if (!w.realmStats.isEmpty()) {
+            sb.append("**Realms** (kills / deaths)\n");
+            for (Map.Entry<UUID, int[]> e : w.realmStats.entrySet()) {
+                sb.append("• ").append(p.apply(title(data, w, e.getKey()))).append(": ")
+                        .append(e.getValue()[0]).append(" / ").append(e.getValue()[1]).append("\n");
+            }
+        }
+        return sb.length() > 1900 ? sb.substring(0, 1900) + "…" : sb.toString();
     }
 }

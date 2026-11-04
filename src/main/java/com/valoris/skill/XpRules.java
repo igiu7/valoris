@@ -42,7 +42,8 @@ import net.neoforged.neoforge.common.Tags;
 
 /**
  * How much base XP each action is worth (before the per-skill config multipliers).
- * Tuned for about 4,000 XP per hour of focused work (see SkillCurve: level 30 = ~96,000 XP, about two weeks).
+ * Tuned for about 2,500-4,000 XP per hour of focused work (see SkillCurve: level 25 = ~96,000 XP, about two weeks).
+ * Animal farms and the frequent wolf packs are worth less, so no profession levels up by itself.
  */
 public final class XpRules {
     private XpRules() {}
@@ -254,7 +255,9 @@ public final class XpRules {
     }
 
     public static final double SWEET_BERRY_HARVEST = 6;
-    public static final double BREEDING = 20;
+    /** Per baby; at most BREEDING_PER_HOUR from breeding per player and hour (a big pen is not a free level). */
+    public static final double BREEDING = 10;
+    public static final double BREEDING_PER_HOUR = 200;
 
     /** XP for picking a bush by hand (sweet berries, medicinal herbs), 0 if it is not ready. */
     public static double picked(BlockState state) {
@@ -269,12 +272,12 @@ public final class XpRules {
 
     // ------------------------------------------------------------------ hunter
 
-    // a whole pack (6-8 wolves) is worth about 240-320 XP. The leader is worth no more: when it dies another wolf
-    // of the pack takes the lead, so a bonus for leaders could be earned again and again on one pack
-    public static final double WOLF = 40;
+    // a whole pack (6-8 wolves) is worth about 180-240 XP; packs come often. The leader is worth no more: when it
+    // dies another wolf of the pack takes the lead, so a bonus for leaders could be earned again and again on one pack
+    public static final double WOLF = 30;
     public static final double WOLF_LEADER = WOLF;
-    /** A lone bear: 60 health and a heavy blow. */
-    public static final double BEAR = 150;
+    /** A lone bear: 100 health and a very heavy blow. */
+    public static final double BEAR = 250;
 
     // fishing (FishingRules): a fish, treasure (name tag, saddle, nautilus shell...), junk
     public static final double FISH = 12;
@@ -289,8 +292,9 @@ public final class XpRules {
     public static double hunter(LivingEntity victim) {
         if (victim.isBaby()) return 0;
         if (victim instanceof OwnableEntity owned && owned.getOwnerUUID() != null) return 0; // someone's pet or horse
+        if (com.valoris.mobs.Breeding.bred(victim)) return 0; // slaughtering a farm animal is not hunting
         if (victim instanceof Wolf wolf) return WolfPacks.isLeader(wolf) ? WOLF_LEADER : WOLF;
-        if (victim instanceof com.valoris.mobs.Bear) return BEAR;
+        if (victim instanceof com.valoris.mobs.Bear || victim instanceof net.minecraft.world.entity.animal.PolarBear) return BEAR;
         if (victim instanceof net.minecraft.world.entity.animal.AbstractFish) return 1;
         if (victim instanceof EnderDragon) return 1500;
         if (victim instanceof WitherBoss) return 1200;

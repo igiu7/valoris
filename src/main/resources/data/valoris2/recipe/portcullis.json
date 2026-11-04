@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": {
+      "tag": "c:ingots/bronze"
+    }
+  },
+  "pattern": [
+    "B B",
+    "BBB",
+    "B B"
+  ],
+  "result": {
+    "count": 6,
+    "id": "valoris2:portcullis"
+  }
+}

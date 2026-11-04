@@ -56,6 +56,33 @@ public final class ModBlocks {
     public static final DeferredItem<BlockItem> BONFIRE_ITEM = ITEMS.register("bonfire",
             () -> new BlockItem(BONFIRE.get(), new Item.Properties()));
 
+    /** Castle gate: a dark iron grid (made of bronze ingots); connected blocks open and close together (gate.Gates). */
+    public static final DeferredBlock<com.valoris.gate.PortcullisBlock> PORTCULLIS = BLOCKS.register("portcullis",
+            () -> new com.valoris.gate.PortcullisBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(5.0F, 1200.0F)
+                    .sound(SoundType.METAL)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noOcclusion()));
+
+    public static final DeferredItem<BlockItem> PORTCULLIS_ITEM = ITEMS.register("portcullis",
+            () -> new BlockItem(PORTCULLIS.get(), new Item.Properties()));
+
+    /** A treaty being written (treaty.TreatyItem); saved it becomes a Treaty, which the two parties sign. */
+    public static final DeferredItem<com.valoris.treaty.TreatyItem> TREATY_AND_QUILL = ITEMS.register("treaty_and_quill",
+            () -> new com.valoris.treaty.TreatyItem(true, new Item.Properties().stacksTo(1)));
+
+    public static final DeferredItem<com.valoris.treaty.TreatyItem> TREATY = ITEMS.register("treaty",
+            () -> new com.valoris.treaty.TreatyItem(false, new Item.Properties().stacksTo(1)));
+
+    /** A burning arrow for bows and crossbows (archery.FireArrowItem). */
+    public static final DeferredItem<com.valoris.archery.FireArrowItem> FIRE_ARROW = ITEMS.register("fire_arrow",
+            () -> new com.valoris.archery.FireArrowItem(new Item.Properties()));
+
+    /** A clay pot of burning pitch, thrown a few blocks; it sets the ground on fire (archery.FirePotItem). */
+    public static final DeferredItem<com.valoris.archery.FirePotItem> FIRE_POT = ITEMS.register("fire_pot",
+            () -> new com.valoris.archery.FirePotItem(new Item.Properties().stacksTo(16)));
+
     private ModBlocks() {}
 
     public static void register(IEventBus modBus) {

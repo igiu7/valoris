@@ -6,7 +6,12 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "valoris2:flax_seeds"
+          "name": "valoris2:portcullis"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
         }
       ]
     }

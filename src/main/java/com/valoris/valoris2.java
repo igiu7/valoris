@@ -35,6 +35,7 @@ public class valoris2 {
         com.valoris.registry.ModOres.init();        // overworld quartz ore
         com.valoris.registry.ModTools.init();       // steel tools
         com.valoris.bucket.BronzeBuckets.init();     // bronze buckets
+        com.valoris.treaty.TreatyData.register(modEventBus); // the treaty item component
         if (net.neoforged.fml.ModList.get().isLoaded("drinkbeer")) com.valoris.compat.DrinkBeerDrinks.init(); // sake, vodka
         ModBlocks.register(modEventBus);
         com.valoris.registry.ModEntities.register(modEventBus); // bear

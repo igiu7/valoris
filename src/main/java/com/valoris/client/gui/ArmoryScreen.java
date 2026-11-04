@@ -364,6 +364,35 @@ public final class ArmoryScreen extends BaseScreen {
         return my - y + 4;
     }
 
+    /** item class -> its Epic Knights weapon type field (null: none), read once */
+    private static final java.util.Map<Class<?>, java.lang.reflect.Field> WEAPON_TYPE = new java.util.HashMap<>();
+
+    /**
+     * Armor piercing (percent) of an Epic Knights weapon (MedievalWeaponItem and the addons' weapons: its WeaponType),
+     * 0 for anything else or when the mod switches it off. Read by reflection: Epic Knights is not needed to build.
+     */
+    private static int armorPiercing(ItemStack stack) {
+        Object item = stack.getItem();
+        java.lang.reflect.Field field = WEAPON_TYPE.computeIfAbsent(item.getClass(), c -> {
+            for (Class<?> k = c; k != null; k = k.getSuperclass()) {
+                if (!k.getName().equals("com.magistuarmory.item.MedievalWeaponItem")) continue;
+                try {
+                    return k.getField("type");
+                } catch (ReflectiveOperationException e) {
+                    return null;
+                }
+            }
+            return null;
+        });
+        if (field == null) return 0;
+        try {
+            Object type = field.get(item);
+            return type == null ? 0 : (int) type.getClass().getMethod("getArmorPiercing").invoke(type);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return 0;
+        }
+    }
+
     /** Damage, attack speed, reach, armor... read from the item's attributes (era balance included). */
     private static List<String[]> stats(ItemStack stack) {
         List<String[]> out = new ArrayList<>();
@@ -383,6 +412,10 @@ public final class ArmoryScreen extends BaseScreen {
         if (weapon) out.add(new String[]{"Attack damage", fmt(1 + damage)});
         if (hasSpeed) out.add(new String[]{"Attack speed", fmt(4 + speed)});
         if (reach != 0) out.add(new String[]{"Reach", (reach > 0 ? "+" : "") + fmt(reach)});
+        int piercing = armorPiercing(stack);
+        if (piercing != 0) out.add(new String[]{"Armor piercing", piercing + "%"});
+        double lance = com.valoris.compat.Lances.armorPiercing(stack);
+        if (lance > 0) out.add(new String[]{"Armor piercing", Math.round(lance * 100) + "% (mounted)"});
         if (isArmor) {
             out.add(new String[]{"Armor", fmt(armor)});
             if (toughness > 0) out.add(new String[]{"Toughness", fmt(toughness)});

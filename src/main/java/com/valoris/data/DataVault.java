@@ -66,8 +66,9 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  *   kingdoms, technologies, wars, truces, sieges, conquests...), the moderation data, every player's skills and the
  *   FTB Teams / FTB Chunks data - as .dat for restoring and .snbt to read; the last backups.keep are kept;
  * - archive/: a record of every city and kingdom that is removed, with its technologies and residents;
- * - skills.json: every player's skill XP, kept up to date; a player whose own data comes back lower (lost or reset)
- *   gets it back when they join.
+ * - <world>/valoris_data/skills.json (in the world folder, so a new world starts everyone from scratch): every
+ *   player's skill XP, kept up to date; a player whose own data comes back lower (lost or reset) gets it back when
+ *   they join.
  * City membership is mirrored in the city record too: a resident the FTB team lost is put back when they join.
  */
 @EventBusSubscriber(modid = valoris2.MODID)
@@ -85,6 +86,8 @@ public final class DataVault {
     private static final Map<UUID, String> NAMES = new HashMap<>();
     private static final Set<UUID> ORPHANS_REPORTED = new HashSet<>();
     private static long lastBackup;
+    /** The world folder of the running server (skills.json lives in it). */
+    private static Path worldDir;
 
     private DataVault() {}
 
@@ -94,7 +97,9 @@ public final class DataVault {
 
     private static Path backups() { return dir().resolve("backups"); }
     private static Path archive() { return dir().resolve("archive"); }
-    private static Path skillsFile() { return dir().resolve("skills.json"); }
+    private static Path skillsFile() {
+        return (worldDir != null ? worldDir.resolve("valoris_data") : dir()).resolve("skills.json");
+    }
 
     private static synchronized String stamp() {
         return STAMP.format(new Date());
@@ -434,6 +439,7 @@ public final class DataVault {
             });
         }
         ORPHANS_REPORTED.clear();
+        worldDir = event.getServer().getWorldPath(LevelResource.ROOT);
         loadSkills();
         syncMembers(event.getServer());
         lastBackup = System.currentTimeMillis();

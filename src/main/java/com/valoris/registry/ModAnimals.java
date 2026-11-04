@@ -17,9 +17,9 @@ public final class ModAnimals {
     }
 
     // one piece of meat from every wolf and every horse (cooked if the animal was burning); cook in a furnace,
-    // smoker or on a campfire. Values like vanilla: wolf as mutton, horse as beef.
-    public static final DeferredItem<Item> RAW_WOLF_MEAT = food("raw_wolf_meat", 2, 0.3F);
-    public static final DeferredItem<Item> COOKED_WOLF_MEAT = food("cooked_wolf_meat", 6, 0.8F);
+    // smoker or on a campfire. Horse as beef; wolf meat is lean and fills little (wolf packs are common).
+    public static final DeferredItem<Item> RAW_WOLF_MEAT = food("raw_wolf_meat", 1, 0.1F);
+    public static final DeferredItem<Item> COOKED_WOLF_MEAT = food("cooked_wolf_meat", 3, 0.2F);
     public static final DeferredItem<Item> RAW_HORSE_MEAT = food("raw_horse_meat", 3, 0.3F);
     public static final DeferredItem<Item> COOKED_HORSE_MEAT = food("cooked_horse_meat", 8, 0.8F);
 

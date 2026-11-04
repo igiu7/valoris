@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "key": {
+    "A": {
+      "item": "minecraft:arrow"
+    },
+    "C": {
+      "tag": "minecraft:coals"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "ACA",
+    "AAA"
+  ],
+  "result": {
+    "count": 8,
+    "id": "valoris2:fire_arrow"
+  }
+}

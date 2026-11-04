@@ -384,6 +384,198 @@
     {
       "id": "drinkbeer:recipe_board_beer_mug_haars_icey_pale_lager",
       "required": false
+    },
+    {
+      "id": "cuffed:warning_tape",
+      "required": false
+    },
+    {
+      "id": "cuffed:search_lens",
+      "required": false
+    },
+    {
+      "id": "cuffed:creative_restraint_cutter",
+      "required": false
+    },
+    {
+      "id": "cuffed:creative_key",
+      "required": false
+    },
+    {
+      "id": "cuffed:creative_bind_breaker",
+      "required": false
+    },
+    {
+      "id": "cuffed:key",
+      "required": false
+    },
+    {
+      "id": "cuffed:key_ring",
+      "required": false
+    },
+    {
+      "id": "cuffed:key_mold",
+      "required": false
+    },
+    {
+      "id": "cuffed:baked_key_mold",
+      "required": false
+    },
+    {
+      "id": "cuffed:shackles_key",
+      "required": false
+    },
+    {
+      "id": "cuffed:shackles",
+      "required": false
+    },
+    {
+      "id": "cuffed:fuzzy_handcuffs",
+      "required": false
+    },
+    {
+      "id": "cuffed:legcuffs",
+      "required": false
+    },
+    {
+      "id": "cuffed:leg_shackles",
+      "required": false
+    },
+    {
+      "id": "cuffed:weighted_anchor",
+      "required": false
+    },
+    {
+      "id": "cuffed:information_booklet",
+      "required": false
+    },
+    {
+      "id": "cuffed:possessions_box",
+      "required": false
+    },
+    {
+      "id": "cuffed:padlock",
+      "required": false
+    },
+    {
+      "id": "cuffed:lockpick",
+      "required": false
+    },
+    {
+      "id": "cuffed:prisoner_tag",
+      "required": false
+    },
+    {
+      "id": "cuffed:fork",
+      "required": false
+    },
+    {
+      "id": "cuffed:spoon",
+      "required": false
+    },
+    {
+      "id": "cuffed:knife",
+      "required": false
+    },
+    {
+      "id": "cuffed:duck_tape",
+      "required": false
+    },
+    {
+      "id": "cuffed:bandage",
+      "required": false
+    },
+    {
+      "id": "cuffed:cell_door",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_bars",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_bars_gap",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_smooth_stone",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_stone",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_stone_slab",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_stone_stairs",
+      "required": false
+    },
+    {
+      "id": "cuffed:chiseled_reinforced_stone",
+      "required": false
+    },
+    {
+      "id": "cuffed:reinforced_lamp",
+      "required": false
+    },
+    {
+      "id": "cuffed:pillory",
+      "required": false
+    },
+    {
+      "id": "cuffed:guillotine",
+      "required": false
+    },
+    {
+      "id": "cuffed:safe",
+      "required": false
+    },
+    {
+      "id": "cuffed:bunk",
+      "required": false
+    },
+    {
+      "id": "cuffed:tray",
+      "required": false
+    },
+    {
+      "id": "cuffed:poster",
+      "required": false
+    },
+    {
+      "id": "create:track",
+      "required": false
+    },
+    {
+      "id": "create:incomplete_track",
+      "required": false
+    },
+    {
+      "id": "create:track_station",
+      "required": false
+    },
+    {
+      "id": "create:track_signal",
+      "required": false
+    },
+    {
+      "id": "create:track_observer",
+      "required": false
+    },
+    {
+      "id": "create:controls",
+      "required": false
+    },
+    {
+      "id": "create:schedule",
+      "required": false
+    },
+    {
+      "id": "create:controller_rail",
+      "required": false
     }
   ]
 }

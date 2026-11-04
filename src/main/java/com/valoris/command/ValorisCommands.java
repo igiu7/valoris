@@ -30,6 +30,7 @@ public class ValorisCommands {
                 .then(CityCommands.build())
                 .then(KingdomCommands.build())
                 .then(DiplomacyCommands.build())
+                .then(CoupCommands.build())
                 .then(WarCommands.build())
                 .then(SkillCommands.build())
                 .then(TechCommands.build()));

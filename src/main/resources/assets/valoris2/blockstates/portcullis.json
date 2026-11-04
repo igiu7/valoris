@@ -1,0 +1,228 @@
+{
+  "variants": {
+    "axis=x,bottom=false,shift=0": {
+      "model": "valoris2:block/portcullis"
+    },
+    "axis=z,bottom=false,shift=0": {
+      "model": "valoris2:block/portcullis",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=1": {
+      "model": "valoris2:block/portcullis_shift1"
+    },
+    "axis=z,bottom=false,shift=1": {
+      "model": "valoris2:block/portcullis_shift1",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=2": {
+      "model": "valoris2:block/portcullis_shift2"
+    },
+    "axis=z,bottom=false,shift=2": {
+      "model": "valoris2:block/portcullis_shift2",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=3": {
+      "model": "valoris2:block/portcullis_shift3"
+    },
+    "axis=z,bottom=false,shift=3": {
+      "model": "valoris2:block/portcullis_shift3",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=4": {
+      "model": "valoris2:block/portcullis_shift4"
+    },
+    "axis=z,bottom=false,shift=4": {
+      "model": "valoris2:block/portcullis_shift4",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=5": {
+      "model": "valoris2:block/portcullis_shift5"
+    },
+    "axis=z,bottom=false,shift=5": {
+      "model": "valoris2:block/portcullis_shift5",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=6": {
+      "model": "valoris2:block/portcullis_shift6"
+    },
+    "axis=z,bottom=false,shift=6": {
+      "model": "valoris2:block/portcullis_shift6",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=7": {
+      "model": "valoris2:block/portcullis_shift7"
+    },
+    "axis=z,bottom=false,shift=7": {
+      "model": "valoris2:block/portcullis_shift7",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=8": {
+      "model": "valoris2:block/portcullis_shift8"
+    },
+    "axis=z,bottom=false,shift=8": {
+      "model": "valoris2:block/portcullis_shift8",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=9": {
+      "model": "valoris2:block/portcullis_shift9"
+    },
+    "axis=z,bottom=false,shift=9": {
+      "model": "valoris2:block/portcullis_shift9",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=10": {
+      "model": "valoris2:block/portcullis_shift10"
+    },
+    "axis=z,bottom=false,shift=10": {
+      "model": "valoris2:block/portcullis_shift10",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=11": {
+      "model": "valoris2:block/portcullis_shift11"
+    },
+    "axis=z,bottom=false,shift=11": {
+      "model": "valoris2:block/portcullis_shift11",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=12": {
+      "model": "valoris2:block/portcullis_shift12"
+    },
+    "axis=z,bottom=false,shift=12": {
+      "model": "valoris2:block/portcullis_shift12",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=13": {
+      "model": "valoris2:block/portcullis_shift13"
+    },
+    "axis=z,bottom=false,shift=13": {
+      "model": "valoris2:block/portcullis_shift13",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=14": {
+      "model": "valoris2:block/portcullis_shift14"
+    },
+    "axis=z,bottom=false,shift=14": {
+      "model": "valoris2:block/portcullis_shift14",
+      "y": 90
+    },
+    "axis=x,bottom=false,shift=15": {
+      "model": "valoris2:block/portcullis_shift15"
+    },
+    "axis=z,bottom=false,shift=15": {
+      "model": "valoris2:block/portcullis_shift15",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=0": {
+      "model": "valoris2:block/portcullis_bottom"
+    },
+    "axis=z,bottom=true,shift=0": {
+      "model": "valoris2:block/portcullis_bottom",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=1": {
+      "model": "valoris2:block/portcullis_bottom_shift1"
+    },
+    "axis=z,bottom=true,shift=1": {
+      "model": "valoris2:block/portcullis_bottom_shift1",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=2": {
+      "model": "valoris2:block/portcullis_bottom_shift2"
+    },
+    "axis=z,bottom=true,shift=2": {
+      "model": "valoris2:block/portcullis_bottom_shift2",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=3": {
+      "model": "valoris2:block/portcullis_bottom_shift3"
+    },
+    "axis=z,bottom=true,shift=3": {
+      "model": "valoris2:block/portcullis_bottom_shift3",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=4": {
+      "model": "valoris2:block/portcullis_bottom_shift4"
+    },
+    "axis=z,bottom=true,shift=4": {
+      "model": "valoris2:block/portcullis_bottom_shift4",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=5": {
+      "model": "valoris2:block/portcullis_bottom_shift5"
+    },
+    "axis=z,bottom=true,shift=5": {
+      "model": "valoris2:block/portcullis_bottom_shift5",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=6": {
+      "model": "valoris2:block/portcullis_bottom_shift6"
+    },
+    "axis=z,bottom=true,shift=6": {
+      "model": "valoris2:block/portcullis_bottom_shift6",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=7": {
+      "model": "valoris2:block/portcullis_bottom_shift7"
+    },
+    "axis=z,bottom=true,shift=7": {
+      "model": "valoris2:block/portcullis_bottom_shift7",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=8": {
+      "model": "valoris2:block/portcullis_bottom_shift8"
+    },
+    "axis=z,bottom=true,shift=8": {
+      "model": "valoris2:block/portcullis_bottom_shift8",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=9": {
+      "model": "valoris2:block/portcullis_bottom_shift9"
+    },
+    "axis=z,bottom=true,shift=9": {
+      "model": "valoris2:block/portcullis_bottom_shift9",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=10": {
+      "model": "valoris2:block/portcullis_bottom_shift10"
+    },
+    "axis=z,bottom=true,shift=10": {
+      "model": "valoris2:block/portcullis_bottom_shift10",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=11": {
+      "model": "valoris2:block/portcullis_bottom_shift11"
+    },
+    "axis=z,bottom=true,shift=11": {
+      "model": "valoris2:block/portcullis_bottom_shift11",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=12": {
+      "model": "valoris2:block/portcullis_bottom_shift12"
+    },
+    "axis=z,bottom=true,shift=12": {
+      "model": "valoris2:block/portcullis_bottom_shift12",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=13": {
+      "model": "valoris2:block/portcullis_bottom_shift13"
+    },
+    "axis=z,bottom=true,shift=13": {
+      "model": "valoris2:block/portcullis_bottom_shift13",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=14": {
+      "model": "valoris2:block/portcullis_bottom_shift14"
+    },
+    "axis=z,bottom=true,shift=14": {
+      "model": "valoris2:block/portcullis_bottom_shift14",
+      "y": 90
+    },
+    "axis=x,bottom=true,shift=15": {
+      "model": "valoris2:block/portcullis_bottom_shift15"
+    },
+    "axis=z,bottom=true,shift=15": {
+      "model": "valoris2:block/portcullis_bottom_shift15",
+      "y": 90
+    }
+  }
+}

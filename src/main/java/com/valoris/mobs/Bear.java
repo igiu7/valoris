@@ -46,8 +46,8 @@ public class Bear extends PathfinderMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
-                .add(Attributes.ATTACK_DAMAGE, 10.0)
+                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.ATTACK_DAMAGE, 14.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.27)
                 .add(Attributes.FOLLOW_RANGE, 10.0)
@@ -118,6 +118,12 @@ public class Bear extends PathfinderMob {
     /** 0..1 through the roar, 0 when not roaring. */
     public float roarProgress(float partialTick) {
         return roarTicks <= 0 ? 0 : Mth.clamp(1.0F - (roarTicks - partialTick) / ROAR_TICKS, 0, 1);
+    }
+
+    /** Stays when nobody is near, like animals and polar bears. */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
     }
 
     // ------------------------------------------------------------------ sounds

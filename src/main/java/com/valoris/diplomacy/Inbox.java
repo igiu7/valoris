@@ -143,8 +143,8 @@ public final class Inbox {
         String decline = "valoris diplomacy decline " + Msg.q(from.name());
         if (r.proposal() == Proposal.ALLIANCE) {
             return new Entry("da:" + from.id(), "alliance", "The " + from.title() + " proposes an alliance",
-                    "Allies come to each other's defence automatically when one of them is attacked, can call each other "
-                            + "to arms in their wars and can survey each other's cities. Allies cannot fight each other.",
+                    "Allies can call each other to arms in their wars, attacking or defending (a call is accepted or "
+                            + "refused), and can survey each other's cities. Allies cannot fight each other.",
                     "Accept the alliance", accept, "Decline", decline, seconds);
         }
         boolean wholeWar = data.warsBetween(own.id(), from.id()).stream()

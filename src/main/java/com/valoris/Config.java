@@ -8,7 +8,7 @@ public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     public static final ModConfigSpec.IntValue CITY_CLAIM_LIMIT = BUILDER
-            .comment("Chunks a city may claim without any Expand Domain technology (Expand Domain I-IV raise it to 49/64/81/128;",
+            .comment("Chunks a city may claim without any Expand Domain technology (Expand Domain I-IV raise it to 64/81/100/128;",
                     "Expand Domain I is known from the start)")
             .defineInRange("cityClaimLimit", 25, 1, 1000);
 
@@ -26,11 +26,11 @@ public class Config {
 
     public static final ModConfigSpec.IntValue SIEGE_PREP_MINUTES = BUILDER
             .comment("Minutes between announcing a siege and its start")
-            .defineInRange("siegePrepMinutes", 15, 1, 1440);
+            .defineInRange("siegePrepTimeMinutes", 10, 1, 1440);
 
     public static final ModConfigSpec.IntValue SIEGE_DURATION_MINUTES = BUILDER
             .comment("How long a siege lasts. If the city banner survives this long, the defenders win")
-            .defineInRange("siegeDurationMinutes", 45, 1, 1440);
+            .defineInRange("siegeLengthMinutes", 30, 1, 1440);
 
     public static final ModConfigSpec.IntValue TRUCE_HOURS = BUILDER
             .comment("After peace, realms that fought each other may not go to war with each other again for this many hours:",
@@ -41,6 +41,13 @@ public class Config {
             .comment("During an active siege the attackers destroy the city banner by hitting it (left click) this many times",
                     "(hits of every attacker count together)")
             .defineInRange("siegeBannerHits", 10, 1, 1000);
+    public static final ModConfigSpec.IntValue GATE_HITS = BUILDER
+            .comment("Portcullis gates: hits of siege machines (catapult, trebuchet, mortar, culverin, battering ram; not the",
+                    "ballista) that destroy a whole gate. Players cannot mine a gate during an active siege")
+            .defineInRange("gateHits", 6, 1, 1000);
+    public static final ModConfigSpec.IntValue GATE_AUTO_CLOSE_SECONDS = BUILDER
+            .comment("Portcullis gates close by themselves this many seconds after they were opened (0 = never)")
+            .defineInRange("gateAutoCloseSeconds", 15, 0, 3600);
 
     public static final ModConfigSpec.IntValue SIEGE_COOLDOWN_MINUTES = BUILDER
             .comment("After a city survives a siege it cannot be besieged again for this long")
@@ -50,6 +57,9 @@ public class Config {
             .comment("During an active siege both sides may place blocks in the besieged city, one block every this many",
                     "seconds per player (bystanders cannot build there at all). 0 = no limit")
             .defineInRange("siegeBlockPlaceSeconds", 10, 0, 3600);
+    public static final ModConfigSpec.IntValue SIEGE_PLACE_SECONDS_DEFENDERS = BUILDER
+            .comment("The same for the defenders of the besieged city (siegeBlockPlaceSeconds is then for the attackers)")
+            .defineInRange("siegeBlockPlaceSecondsDefenders", 5, 0, 3600);
 
     public static final ModConfigSpec.IntValue LOOTING_MINUTES = BUILDER
             .comment("Looting time, one of the choices after a won siege: the winning side may do anything on the fallen city's land (break,",
@@ -161,10 +171,10 @@ public class Config {
             .defineInRange("mobs.bearChance", 0.05, 0.0, 1.0);
     public static final ModConfigSpec.DoubleValue BEAR_HEALTH = BUILDER
             .comment("Bear health (a player has 20)")
-            .defineInRange("mobs.bearHealth", 60.0, 1.0, 1024.0);
+            .defineInRange("mobs.bearMaxHealth", 100.0, 1.0, 1024.0);
     public static final ModConfigSpec.DoubleValue BEAR_DAMAGE = BUILDER
             .comment("Bear attack damage (a wolf deals 4)")
-            .defineInRange("mobs.bearDamage", 10.0, 0.0, 200.0);
+            .defineInRange("mobs.bearAttackDamage", 14.0, 0.0, 200.0);
     public static final ModConfigSpec.DoubleValue BEAR_DETECTION = BUILDER
             .comment("How far a bear notices players and keeps chasing them (blocks); a wolf sees 48")
             .defineInRange("mobs.bearDetection", 10.0, 2.0, 64.0);
@@ -247,9 +257,9 @@ public class Config {
     public static final ModConfigSpec.BooleanValue BLOCK_OBSIDIAN = BUILDER
             .comment("Obsidian drops nothing when broken, cannot be picked up and cannot be placed (except in creative)")
             .define("rules.blockObsidian", true);
-    public static final ModConfigSpec.BooleanValue BLOCK_LAVA_BUCKET = BUILDER
-            .comment("Lava cannot be picked up with a bucket (except in creative)")
-            .define("rules.blockLavaBucket", true);
+    public static final ModConfigSpec.BooleanValue NO_LAVA_POURING = BUILDER
+            .comment("Lava can be picked up with a bucket, but not poured out into the world (a cauldron still works; except in creative)")
+            .define("rules.noLavaPouring", true);
     public static final ModConfigSpec.BooleanValue CAMPFIRE_REST_ENABLED = BUILDER
             .comment("Being near a lit campfire with a full hunger bar (also while moving) slowly heals")
             .define("healing.campfireRest", true);
@@ -265,7 +275,11 @@ public class Config {
 
     public static final ModConfigSpec.IntValue BREEDING_COOLDOWN_MINUTES = BUILDER
             .comment("After breeding, an animal cannot breed again for this many minutes (server time)")
-            .defineInRange("mobs.breedingCooldownMinutes", 120, 0, 100000);
+            .defineInRange("mobs.breedCooldownMinutes", 240, 0, 100000);
+    public static final ModConfigSpec.IntValue BABY_GROW_MINUTES = BUILDER
+            .comment("A bred baby animal grows up after this many minutes (server time, also while its chunk is unloaded;",
+                    "vanilla 20). Feeding it does not speed this up")
+            .defineInRange("mobs.babyGrowMinutes", 120, 1, 100000);
 
     public static final ModConfigSpec.BooleanValue BAN_BONE_MEAL = BUILDER
             .comment("Bone meal does nothing, cannot be crafted, picked up or kept in survival")
@@ -299,7 +313,7 @@ public class Config {
             .defineInRange("respawn.bannerCooldownSeconds", 20, 0, 3600);
     public static final ModConfigSpec.IntValue RESPAWN_SIEGE_COOLDOWN = BUILDER
             .comment("Seconds after death before the player can respawn at the banner of a city under siege")
-            .defineInRange("respawn.besiegedBannerCooldownSeconds", 180, 0, 3600);
+            .defineInRange("respawn.besiegedCityCooldownSeconds", 45, 0, 3600);
 
     public static final ModConfigSpec.BooleanValue ANTI_LOGOUT_ENABLED = BUILDER
             .comment("Anti-logout: a player who takes damage cannot log out for a while (the Disconnect button is greyed out)")
@@ -373,11 +387,116 @@ public class Config {
             .comment("Lances: charge impulse (3 x mass of rider and horse x speed, as Epic Knights counts it) that gives the",
                     "full bonus; slower charges give a part of it. About 5 is a galloping horse")
             .defineInRange("lances.fullChargeImpulse", 5.0, 0.1, 100.0);
+    public static final ModConfigSpec.DoubleValue LANCE_PIERCING_BRONZE = BUILDER
+            .comment("Lances, hits from horseback: share of the victim's armor protection that a bronze age lance ignores (0.1 = 10%)")
+            .defineInRange("lances.armorPiercingBronze", 0.1, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue LANCE_PIERCING_IRON = BUILDER
+            .comment("The same for iron age lances")
+            .defineInRange("lances.armorPiercingIron", 0.2, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue LANCE_PIERCING_STEEL = BUILDER
+            .comment("The same for steel age lances")
+            .defineInRange("lances.armorPiercingSteel", 0.3, 0.0, 1.0);
 
     public static final ModConfigSpec.DoubleValue PATH_SPEED_BONUS = BUILDER
             .comment("Roads: players, horses (donkeys, mules, camels) and Trotting Wagons on dirt paths move this much faster",
                     "(0.3 = +30%). 0 = no bonus")
             .defineInRange("roads.dirtPathSpeedBonus", 0.3, 0.0, 5.0);
+
+    public static final ModConfigSpec.IntValue FIRE_ARROW_MACHINE_SECONDS = BUILDER
+            .comment("Fire arrows: a siege machine hit by one burns this many seconds (plain burning things: 5)")
+            .defineInRange("fireArrows.machineBurnSeconds", 8, 0, 600);
+    public static final ModConfigSpec.DoubleValue FIRE_ARROW_MACHINE_BURN = BUILDER
+            .comment("Fire arrows: fire hurts siege machines this many times more (on top of Siege Machines' own",
+                    "fireDamageMultiplier). 2 with its 3: 6 durability a second, about 48 per fire arrow against 3 of a plain arrow")
+            .defineInRange("fireArrows.machineBurnMultiplier", 2.0, 0.0, 100.0);
+    public static final ModConfigSpec.DoubleValue FIRE_ARROW_PLAYER_DAMAGE = BUILDER
+            .comment("Fire arrows: share of the arrow's hit damage a player takes (0.5 = half; the burning afterwards is not changed)")
+            .defineInRange("fireArrows.playerDamageMultiplier", 0.5, 0.0, 10.0);
+
+    public static final ModConfigSpec.IntValue COUP_MINUTES = BUILDER
+            .comment("Coup d'etat: the ruler wins if the leader of the coup has not killed him in this many minutes")
+            .defineInRange("coup.durationMinutes", 10, 1, 1440);
+    public static final ModConfigSpec.IntValue COUP_CHOICE_SECONDS = BUILDER
+            .comment("Coup d'etat: seconds the people of the realm have to choose a side (the fight starts after them)")
+            .defineInRange("coup.choiceSeconds", 20, 5, 300);
+    public static final ModConfigSpec.IntValue COUP_RETURN_SECONDS = BUILDER
+            .comment("Coup d'etat: the ruler or the leader of the coup who leaves the city loses unless back within this many seconds")
+            .defineInRange("coup.returnSeconds", 10, 1, 600);
+    public static final ModConfigSpec.IntValue COUP_HOURS_BETWEEN = BUILDER
+            .comment("Coup d'etat: a realm has at most one coup in this many hours, counted from its start (24 = one a day).",
+                    "A coup called off by a siege does not count")
+            .defineInRange("coup.hoursBetween", 24, 0, 100000);
+
+    public static final ModConfigSpec.BooleanValue AUTH_ENABLED = BUILDER
+            .comment("Login with a password (for servers in offline mode): a player must /register, then /login on every join.",
+                    "Until then they cannot move, act, chat or use commands. Accounts: valoris_accounts.json in the server folder")
+            .define("auth.enabled", true);
+    public static final ModConfigSpec.IntValue AUTH_TIMEOUT_SECONDS = BUILDER
+            .comment("Seconds a player has to log in before being kicked")
+            .defineInRange("auth.loginTimeoutSeconds", 90, 10, 3600);
+    public static final ModConfigSpec.IntValue AUTH_MAX_ATTEMPTS = BUILDER
+            .comment("Wrong passwords before the player is kicked")
+            .defineInRange("auth.maxAttempts", 5, 1, 100);
+    public static final ModConfigSpec.IntValue AUTH_MIN_LENGTH = BUILDER
+            .comment("Shortest password allowed")
+            .defineInRange("auth.minPasswordLength", 6, 1, 64);
+    public static final ModConfigSpec.IntValue AUTH_SESSION_MINUTES = BUILDER
+            .comment("A player who comes back within this many minutes of leaving, from the same IP address, is logged in",
+                    "without the password. 0 = always ask (safest; players behind one shared address could otherwise share a session)")
+            .defineInRange("auth.sessionMinutes", 0, 0, 10080);
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> AUTH_ALLOWED_PAYLOADS = BUILDER
+            .comment("Mod network messages (by namespace) a player who has not logged in yet may still send: what mods need",
+                    "while joining. Everything else (claim maps, team screens, mod menus...) waits for the login")
+            .defineListAllowEmpty("auth.allowedPayloadNamespaces", List.of("minecraft", "neoforge", "c", "voicechat",
+                    "fzzy_config", "kubejs", "jade", "skinrestorer", "architectury", "controlling", "searchables"),
+                    () -> "", o -> o instanceof String);
+
+    public static final ModConfigSpec.BooleanValue DISCORD_ENABLED = BUILDER
+            .comment("Discord bot (server only): shows the number of players in its status and confirms new players.",
+                    "Create an application at https://discord.com/developers/applications, add a bot, copy its token below",
+                    "and invite it to your Discord server (scope: bot). Keep this file private: the token controls the bot")
+            .define("discord.enabled", false);
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_TOKEN = BUILDER
+            .comment("The bot's token")
+            .define("discord.token", "");
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_GUILD = BUILDER
+            .comment("ID of your Discord server (Developer Mode on, right click the server icon, Copy Server ID)")
+            .define("discord.guildId", "");
+    public static final ModConfigSpec.BooleanValue DISCORD_REQUIRE_LINK = BUILDER
+            .comment("On the first join (before choosing a password) a player names their Discord account; the bot asks that",
+                    "member in a DM whether the Minecraft player is them, and only a 'Yes' lets them register. Needs auth.enabled")
+            .define("discord.requireLink", true);
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_STATUS = BUILDER
+            .comment("The bot's status; {online} and {max} are replaced")
+            .define("discord.status", "{online}/{max} players online");
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_INVITE = BUILDER
+            .comment("Invite link to your Discord server, shown to players who are not on it yet (empty = none)")
+            .define("discord.invite", "");
+    public static final ModConfigSpec.BooleanValue DISCORD_ROLES = BUILDER
+            .comment("The bot makes a role for every kingdom and every city (coloured like them in game) and gives them to the",
+                    "confirmed members who live there. Needs the Manage Roles permission; the roles go right under the bot's own role")
+            .define("discord.realmRoles", true);
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_NEWS_CHANNEL = BUILDER
+            .comment("ID of the Discord channel for the news of the realms: wars, sieges, new cities and kingdoms (empty = none).",
+                    "Right click the channel, Copy Channel ID. The bot needs View Channel and Send Messages there")
+            .define("discord.newsChannel", "");
+    public static final ModConfigSpec.BooleanValue DISCORD_PRESENCE = BUILDER
+            .comment("Discord Rich Presence: players running Discord show their realm, city, title and sieges on their profile")
+            .define("discord.richPresence", true);
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_APP_ID = BUILDER
+            .comment("Application ID shown in the Rich Presence (General Information page of your Discord application).",
+                    "Empty = the bot's own application")
+            .define("discord.applicationId", "");
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_PRESENCE_IMAGE = BUILDER
+            .comment("Big picture of the Rich Presence: the name of an image uploaded under Rich Presence > Art Assets of the",
+                    "application, or an https link to a picture. Empty = none")
+            .define("discord.presenceImage", "logo");
+    public static final ModConfigSpec.IntValue DISCORD_LINK_TIMEOUT = BUILDER
+            .comment("Seconds a new player has for the Discord confirmation and the password (instead of auth.loginTimeoutSeconds)")
+            .defineInRange("discord.firstJoinTimeoutSeconds", 300, 30, 3600);
+    public static final ModConfigSpec.IntValue DISCORD_ACCOUNTS_PER_MEMBER = BUILDER
+            .comment("How many Minecraft names one Discord account may confirm")
+            .defineInRange("discord.namesPerMember", 1, 1, 100);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 }

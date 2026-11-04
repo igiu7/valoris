@@ -70,7 +70,7 @@ public final class AdminDisbandCommands {
         data.removeConquest(city.teamId);
         String cityName = city.name;
         CityService.destroyCity(server, city, server.createCommandSourceStack());
-        Msg.broadcast(server, Msg.text("The city of " + cityName + " was disbanded by an administrator.", ChatFormatting.GOLD));
+        Msg.news(server, "🏚️", "The city of " + cityName + " was disbanded by an administrator.", ChatFormatting.GOLD);
         c.getSource().sendSuccess(() -> Component.literal("City " + cityName + " disbanded.").withStyle(ChatFormatting.GREEN), true);
         return 1;
     }
@@ -82,7 +82,7 @@ public final class AdminDisbandCommands {
         Kingdom k = data.kingdomByName(name).orElseThrow(() -> Errors.of("No such kingdom: " + name));
         leaveWars(server, data, k.id, "The " + k.title() + " was dissolved by an administrator.");
         String kingdomName = k.name, kingdomTitle = k.title();
-        Msg.broadcast(server, Msg.text("The " + kingdomTitle + " was dissolved by an administrator.", ChatFormatting.GOLD));
+        Msg.news(server, "📜", "The " + kingdomTitle + " was dissolved by an administrator.", ChatFormatting.GOLD);
         KingdomService.dissolve(data, k);
         c.getSource().sendSuccess(() -> Component.literal("Kingdom " + kingdomName + " dissolved; its cities are free.")
                 .withStyle(ChatFormatting.GREEN), true);

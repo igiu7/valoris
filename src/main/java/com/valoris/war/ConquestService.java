@@ -169,16 +169,32 @@ public final class ConquestService {
             if (from == null) throw Errors.of("That player is neither a resident of " + city.name + " nor one of yours.");
             if (target.equals(from.ruler)) throw Errors.of("The ruler of " + from.name + " cannot leave their city.");
             PartyTeam fromParty = CityService.partyOf(from);
+            ServerPlayer online = server.getPlayerList().getPlayer(target);
             com.valoris.events.TeamGuard.allow(() -> fromParty.leave(target));
-            com.valoris.events.TeamGuard.allow(() -> party.join(server.getPlayerList().getPlayer(target), profile));
+            try {
+                com.valoris.events.TeamGuard.allow(() -> party.join(online, profile));
+            } catch (CommandSyntaxException | RuntimeException e) {
+                com.valoris.events.TeamGuard.allow(() -> fromParty.join(online, profile)); // back home: nothing changed
+                throw Errors.of(profile.getName() + " could not move to " + city.name + ": " + e.getMessage());
+            }
+            // FTB Teams tells about a join only when the player is online: the city records follow here in any case
+            from.members.remove(target);
+            city.members.add(target);
             Msg.toTeam(from.teamId, Msg.text(profile.getName() + " left " + from.name + " to rule the conquered city of "
                     + city.name + ".", ChatFormatting.GOLD));
         }
 
+        // the old ruler stays in the city as a resident (FTB Teams makes the former owner an officer), like everyone else
+        UUID oldRuler = city.ruler;
         party.transferOwnership(server.createCommandSourceStack(), profile);
         city.ruler = target;
+        city.members.add(oldRuler);
         String name = Msg.nameOf(server, target);
-        annex(server, data, c, city, atk);
+        Kingdom ruledBy = annex(server, data, c, city, atk);
+        Msg.news(server, "👑", "The " + ruledBy.title() + " set " + name + " over the conquered city of " + city.name
+                + " as its new ruler.", ChatFormatting.GOLD);
+        Msg.toTeam(city.teamId, Msg.text(name + " now rules " + city.name + " for the conqueror. "
+                + Msg.nameOf(server, oldRuler) + " and every resident stay in the city as its subjects.", ChatFormatting.GOLD));
         Msg.toPlayer(server, target, Msg.text("You now rule the conquered city of " + city.name
                 + ". Place a new city banner with /valoris city banner.", ChatFormatting.GOLD));
         Msg.ok(king, name + " was appointed ruler of " + city.name + ".");
@@ -198,6 +214,8 @@ public final class ConquestService {
         requireKingdomWithRoom(atk);
         Kingdom joined = annex(server, data, c, city, atk);
         String ruler = Msg.nameOf(server, city.ruler);
+        Msg.news(server, "⛓️", "The city of " + city.name + " was forced to submit to the " + joined.title()
+                + ". " + ruler + " goes on ruling it as its vassal.", ChatFormatting.GOLD);
         Msg.toPlayer(server, city.ruler, Msg.text("Your city of " + city.name + " was forced to submit to the "
                 + joined.title() + ". You go on ruling it as one of its cities.", ChatFormatting.GOLD));
         Msg.ok(king, city.name + " now belongs to your kingdom; " + ruler + " goes on ruling it.");
@@ -231,8 +249,8 @@ public final class ConquestService {
         if (c.state == ConquestState.AWAITING_RULER) throw Errors.of("You are waiting for the ruler's answer.");
         data.removeConquest(c.cityTeam);
         Looting.forgetWinners(c.cityTeam);
-        Msg.broadcast(server, Msg.text("The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " spared the city of "
-                + c.cityName + ". It is free again.", ChatFormatting.YELLOW));
+        Msg.news(server, "🕊️", "The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " spared the city of "
+                + c.cityName + ". It is free again.", ChatFormatting.YELLOW);
         data.byTeam(c.cityTeam).ifPresent(city -> Msg.toPlayer(server, city.ruler,
                 Msg.text("Your city was spared and is free again.", ChatFormatting.GREEN)));
     }
@@ -249,8 +267,8 @@ public final class ConquestService {
         if (Looting.minutes() <= 0) throw Errors.of("Looting is turned off on this server.");
         data.byTeam(c.cityTeam).orElseThrow(() -> Errors.of("That city no longer exists."));
         data.removeConquest(c.cityTeam);
-        Msg.broadcast(server, Msg.text("The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " loots the city of "
-                + c.cityName + "! It will be free again in " + Looting.minutes() + " minutes.", ChatFormatting.DARK_RED));
+        Msg.news(server, "💰", "The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " loots the city of "
+                + c.cityName + "! It will be free again in " + Looting.minutes() + " minutes.", ChatFormatting.DARK_RED);
         Looting.start(server, c.cityTeam, c.cityName, c.attackerKingdom);
     }
 
@@ -281,6 +299,8 @@ public final class ConquestService {
         Realm atk = Realms.byId(data, c.attackerKingdom).orElseThrow(() -> Errors.of("They no longer exist."));
         requireKingdomWithRoom(atk);
         Kingdom joined = annex(server, data, c, city, atk);
+        Msg.news(server, "🤝", "The conquered city of " + city.name + " agreed to join the " + joined.title() + ".",
+                ChatFormatting.GOLD);
         Msg.ok(ruler, "Your city joined the " + joined.title() + ".");
     }
 
@@ -328,9 +348,9 @@ public final class ConquestService {
                 } else if (now >= c.decideBy) {   // the conqueror never decided: the city goes free
                     data.removeConquest(c.cityTeam);
                     Looting.forgetWinners(c.cityTeam);
-                    Msg.broadcast(server, Msg.text("The " + Realms.title(data, c.attackerKingdom, c.attackerName)
+                    Msg.news(server, "🕊️", "The " + Realms.title(data, c.attackerKingdom, c.attackerName)
                             + " did not decide the fate of " + c.cityName + " in time. The city is free again.",
-                            ChatFormatting.YELLOW));
+                            ChatFormatting.YELLOW);
                 }
                 continue;
             }

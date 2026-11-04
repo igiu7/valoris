@@ -23,15 +23,23 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * Animals can breed again only after a long cooldown (config, default 2 hours of server time; it runs on even
- * when nobody is near). Looking at an animal shows whether it can breed (see client.AnimalHud). Wolves never
- * breed (and show no label); they drop fur.
+ * Animals can breed again only after a long cooldown (config, default 4 hours of server time; it runs on even
+ * when nobody is near), and their babies grow up in 2 hours (config mobs.babyGrowMinutes, also counted in server
+ * time; feeding a baby does not speed it up). Bred animals give no Hunter XP. Looking at an animal shows whether it
+ * can breed (see client.AnimalHud). Wolves never breed (and show no label); they drop fur.
  */
 @EventBusSubscriber(modid = valoris2.MODID)
 public final class Breeding {
     private Breeding() {}
 
     private static final String UNTIL = "valoris2_breed_until";
+    private static final String GROWN_AT = "valoris2_grown_at";
+    private static final String BRED = "valoris2_bred";
+
+    /** True if the animal was born from breeding (farm animals, no Hunter XP). */
+    public static boolean bred(Entity entity) {
+        return entity.getPersistentData().getBoolean(BRED);
+    }
 
     public static final int READY = 0, COOLDOWN = 1, BABY = 2, IN_LOVE = 3;
 
@@ -54,17 +62,46 @@ public final class Breeding {
             event.setCanceled(true);
             return;
         }
-        long until = event.getParentA().level().getGameTime() + cooldownTicks();
+        long now = event.getParentA().level().getGameTime();
+        long until = now + cooldownTicks();
         for (Mob parent : new Mob[] {event.getParentA(), event.getParentB()}) {
             if (parent instanceof Animal a) a.getPersistentData().putLong(UNTIL, until);
+        }
+        // the baby's age is set when it joins the level (onJoin): vanilla makes it a baby only after this event
+        if (event.getChild() != null) {
+            event.getChild().getPersistentData().putLong(GROWN_AT, now + Config.BABY_GROW_MINUTES.get() * 1200L);
+            event.getChild().getPersistentData().putBoolean(BRED, true);
+        }
+    }
+
+    /** A bred baby is as old as the server time says, also after its chunk was unloaded. */
+    @SubscribeEvent
+    public static void onJoin(net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide() || !(event.getEntity() instanceof Animal animal)) return;
+        long grownAt = animal.getPersistentData().getLong(GROWN_AT);
+        if (grownAt == 0) return;
+        long left = grownAt - event.getLevel().getGameTime();
+        if (left <= 0) {
+            animal.getPersistentData().remove(GROWN_AT);
+            if (animal.isBaby()) animal.setAge(0);
+        } else {
+            animal.setAge((int) -Math.min(Integer.MAX_VALUE, left));
         }
     }
 
     @SubscribeEvent
     public static void onFeed(PlayerInteractEvent.EntityInteract event) {
-        if (event.getLevel().isClientSide() || !(event.getTarget() instanceof Animal animal) || animal.isBaby()) return;
+        if (event.getLevel().isClientSide() || !(event.getTarget() instanceof Animal animal)) return;
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty() || !animal.isFood(stack)) return;
+        if (animal.isBaby()) { // feeding does not make it grow up sooner
+            if (animal instanceof Wolf) return;
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.FAIL);
+            event.getEntity().displayClientMessage(Component.literal("This animal grows up in "
+                    + AnimalInfoPayload.time(-animal.getAge() / 20L)).withStyle(ChatFormatting.GRAY), true);
+            return;
+        }
         // wolves do not breed: meat only heals a hurt tamed wolf and never makes one fall in love
         if (animal instanceof Wolf wolf) {
             if (wolf.isTame() && wolf.getHealth() < wolf.getMaxHealth()) return;

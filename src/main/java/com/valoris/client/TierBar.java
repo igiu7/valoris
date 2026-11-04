@@ -38,9 +38,12 @@ public final class TierBar {
         event.replaceLayer(VanillaGuiLayers.EXPERIENCE_LEVEL, TierBar::renderLabel);
     }
 
-    /** Like Gui.isExperienceBarVisible: not while riding something that jumps (its jump meter is there). */
+    /**
+     * Like Gui.isExperienceBarVisible: not while riding something that jumps (its jump meter is there), and not with
+     * the HUD hidden (F1), which the replaced layer does not check by itself.
+     */
     private static boolean visible(Minecraft mc) {
-        return mc.player != null && mc.gameMode != null && mc.player.jumpableVehicle() == null && mc.gameMode.hasExperience();
+        return !mc.options.hideGui && mc.player != null && mc.gameMode != null && mc.player.jumpableVehicle() == null && mc.gameMode.hasExperience();
     }
 
     private static void renderBar(GuiGraphics g, DeltaTracker delta) {

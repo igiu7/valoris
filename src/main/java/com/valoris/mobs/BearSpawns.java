@@ -23,7 +23,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /**
  * Bears live alone in tier 2 and 3 land (forests, meadows, taiga, savanna, swamps, hills): now and then one
  * spawns 40-72 blocks from a player, never on water, beaches, mushroom islands or a city's land, and never more
- * than one within 128 blocks. Like other creatures they leave when nobody is near. Health, damage and the
+ * than one within 128 blocks. They stay when nobody is near (Bear.removeWhenFarAway). Health, damage and the
  * detection range follow the config whenever a bear is loaded.
  */
 @EventBusSubscriber(modid = valoris2.MODID)

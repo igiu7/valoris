@@ -72,6 +72,7 @@ public final class KingdomService {
 
     public static void checkCanJoin(ValorisData data, City city) throws CommandSyntaxException {
         com.valoris.war.ConquestService.checkNotConquered(data, city);
+        com.valoris.coup.CoupService.checkNoCoup(data, city);
         if (data.relationsOf(city.teamId).containsValue(Relation.WAR)) {
             throw Errors.of(city.name + " is at war. It must make peace before joining a kingdom.");
         }
@@ -109,13 +110,20 @@ public final class KingdomService {
         }
     }
 
+    /** No change of the realm's make-up during its coup d'etat (coup.CoupService). */
+    private static void checkNoCoup(ServerPlayer player) throws CommandSyntaxException {
+        for (City c : Roles.cityOfMember(player).stream().toList()) com.valoris.coup.CoupService.checkNoCoup(ValorisData.get(player.getServer()), c);
+    }
+
     public static void create(ServerPlayer player, String rawName) throws CommandSyntaxException {
+        checkNoCoup(player);
         String name = Names.check(rawName);
         MinecraftServer server = player.getServer();
         City city = CityService.requireFounded(player);
         ValorisData data = ValorisData.get(server);
         if (data.kingdomOfCity(city.teamId).isPresent()) throw Errors.of("Your city already belongs to a kingdom.");
         com.valoris.war.ConquestService.checkNotConquered(data, city);
+        if (com.valoris.war.Looting.involves(city.teamId)) throw Errors.of("Your city is looting or being looted. Wait until that is over.");
         checkEnoughResidents(data, city);
         if (data.kingdomByName(name).isPresent()) throw Errors.of("A kingdom with that name already exists.");
         checkNameFree(data, name, city);
@@ -126,8 +134,8 @@ public final class KingdomService {
         data.replaceRealm(city.teamId, k.id);
         k.color = Heraldry.teamColor(city.teamId);
         com.valoris.city.ClaimLimitHook.syncLimits(server, city); // capital: larger claim limit
-        Msg.broadcast(server, Msg.text("The " + k.title() + " has been proclaimed by "
-                + player.getGameProfile().getName() + "!", ChatFormatting.GOLD));
+        Msg.news(server, "👑", "The " + k.title() + " has been proclaimed by "
+                + player.getGameProfile().getName() + "!", ChatFormatting.GOLD);
     }
 
     // ------------------------------------------------------------ king invites a city
@@ -242,6 +250,7 @@ public final class KingdomService {
      * in that kingdom) may not rebel again for a while (config rebelCooldownHours).
      */
     public static void rebel(ServerPlayer ruler) throws CommandSyntaxException {
+        checkNoCoup(ruler);
         MinecraftServer server = ruler.getServer();
         City city = CityService.requireFounded(ruler);
         ValorisData data = ValorisData.get(server);
@@ -260,13 +269,13 @@ public final class KingdomService {
         Requests.removeWhere(r -> r.from().equals(city.teamId) || r.to().equals(city.teamId));
         data.touch();
 
-        Msg.broadcast(server, Msg.text("REBELLION! The city of " + city.name + " has risen against the "
-                + old.title() + " and declared its independence.", ChatFormatting.DARK_RED));
-        // the rebels attack: the old kingdom's allies come to its defence
+        Msg.news(server, "🔥", "REBELLION! The city of " + city.name + " has risen against the "
+                + old.title() + " and declared its independence.", ChatFormatting.DARK_RED);
+        // the rebels attack: the old kingdom may call its allies to its defence
         var rebelRealm = com.valoris.realm.Realms.byId(data, city.teamId);
         var oldRealm = com.valoris.realm.Realms.byId(data, old.id);
         if (rebelRealm.isPresent() && oldRealm.isPresent()) {
-            ValorisData.War war = com.valoris.diplomacy.WarService.declare(server, data, rebelRealm.get(), oldRealm.get());
+            ValorisData.War war = com.valoris.diplomacy.WarService.declare(server, data, rebelRealm.get(), oldRealm.get(), true);
             war.rebellion = true;
             war.log("The city of " + city.name + " rebelled against the " + old.title() + ".");
             data.touch();
@@ -283,17 +292,24 @@ public final class KingdomService {
             city.rebelCooldownUntil = System.currentTimeMillis() + hours * 3_600_000L;
             Msg.toKingdom(k, Msg.text("The rebellion of " + city.name + " has been put down."
                     + (hours > 0 ? " The city cannot rebel again for " + hours + " hours." : ""), ChatFormatting.GOLD));
+            com.valoris.discord.DiscordLink.announce("⚔️", "The rebellion of " + city.name + " against the " + k.title()
+                    + " has been put down.");
         }
         city.rebelledFrom = null;
     }
 
     public static void expel(ServerPlayer king, String cityName) throws CommandSyntaxException {
+        checkNoCoup(king);
         Kingdom k = requireKing(king);
         ValorisData data = ValorisData.get(king.getServer());
         City city = data.cityByName(cityName).filter(c -> k.cities.contains(c.teamId))
                 .orElseThrow(() -> Errors.of("That city is not in your kingdom."));
         if (city.teamId.equals(k.capital)) throw Errors.of("You cannot expel your own capital.");
         if (SiegeService.isUnderSiege(data, city.teamId)) throw Errors.of("That city is under siege.");
+        com.valoris.war.ConquestService.checkNotConquered(data, city);
+        if (!data.warsOf(k.id).isEmpty()) {
+            throw Errors.of("Your kingdom is at war. A city cannot be released until there is peace (it would leave the war with it).");
+        }
         Msg.toKingdom(k, Msg.text("The city of " + city.name + " was expelled from the " + k.title() + ".", ChatFormatting.RED));
         k.cities.remove(city.teamId);
         data.copyTruces(k.id, city.teamId); // no expelling a city to attack a realm the kingdom has a truce with
@@ -304,6 +320,7 @@ public final class KingdomService {
 
     /** Moves the capital (and with it the crown) to another city of the kingdom. */
     public static void crown(ServerPlayer king, ServerPlayer target) throws CommandSyntaxException {
+        checkNoCoup(king);
         Kingdom k = requireKing(king);
         ValorisData data = ValorisData.get(king.getServer());
         City city = data.byRuler(target.getUUID()).filter(c -> k.cities.contains(c.teamId))
@@ -320,6 +337,7 @@ public final class KingdomService {
     }
 
     public static void disband(ServerPlayer king) throws CommandSyntaxException {
+        checkNoCoup(king);
         Kingdom k = requireKing(king);
         MinecraftServer server = king.getServer();
         ValorisData data = ValorisData.get(server);
@@ -328,7 +346,7 @@ public final class KingdomService {
         boolean siege = data.sieges().stream().anyMatch(s -> s.isAttacking(k.id) || s.defenderKingdom.equals(k.id));
         if (siege) throw Errors.of("Your kingdom is involved in a siege.");
         if (com.valoris.war.Looting.involves(k.id)) throw Errors.of("Your kingdom is looting a city. Wait until the looting time is over.");
-        Msg.broadcast(server, Msg.text("The " + k.title() + " has been dissolved by its " + k.rulerTitle + ".", ChatFormatting.GOLD));
+        Msg.news(server, "📜", "The " + k.title() + " has been dissolved by its " + k.rulerTitle + ".", ChatFormatting.GOLD);
         dissolve(ValorisData.get(server), k);
     }
 
@@ -348,8 +366,8 @@ public final class KingdomService {
     /** A city vanished (team deleted). Capital lost = kingdom falls; otherwise just drop the city. */
     public static void detachCity(MinecraftServer server, ValorisData data, Kingdom k, City city) {
         if (k.capital.equals(city.teamId)) {
-            Msg.broadcast(server, Msg.text("The capital " + city.name + " has fallen; the "
-                    + k.title() + " is no more.", ChatFormatting.DARK_RED));
+            Msg.news(server, "💀", "The capital " + city.name + " has fallen; the "
+                    + k.title() + " is no more.", ChatFormatting.DARK_RED);
             dissolve(data, k);
         } else {
             k.cities.remove(city.teamId);

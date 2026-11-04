@@ -382,6 +382,16 @@ public final class HubScreen extends ValorisFrame {
         tile(p, cw, "Leave city", "You become a wanderer again", Icons.CANCEL).accent(Ui.RED)
                 .click(() -> confirm("Leave " + s.cityName + "?", "You will lose access to the city's land.", Ui.RED,
                         () -> cmd("valoris resident leave")));
+        if (s.founded) coupTile(p, cw, s);
+    }
+
+    /** Coup d'etat against the ruler of the realm (coup.CoupService), for every subject. */
+    private void coupTile(Panel p, int cw, GuiState s) {
+        String ruler = s.realmIsKingdom ? s.rulerTitle : "ruler";
+        tile(p, cw, "Coup d'etat", "Seize power: kill the " + ruler + " before he kills you", Icons.BARRIER).accent(Ui.RED)
+                .click(() -> confirm("Start a coup d'etat?", "You and the " + ruler + " must stand in the same city of your realm. "
+                        + "Everyone of the realm chooses a side; you win by killing the " + ruler + ", he wins by killing you "
+                        + "or by holding out. Leaving the city loses the coup.", Ui.RED, () -> cmd("valoris coup start")));
     }
 
     private void ruler(Panel p, int cw, GuiState s) {
@@ -567,6 +577,7 @@ public final class HubScreen extends ValorisFrame {
                             "Your city becomes independent and a rebellion begins at once. If the " + s.rulerTitle + " takes your city"
                                     + " back, you cannot rebel again for a while.", Ui.RED,
                             () -> cmd("valoris city kingdom rebel")));
+            coupTile(p, cw, s);
         }
     }
 

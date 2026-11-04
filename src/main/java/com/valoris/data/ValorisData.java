@@ -122,7 +122,7 @@ public class ValorisData extends SavedData {
 
     /**
      * A war between two sides. The first realm of each side leads it (the one who declared it, the one attacked);
-     * allies join a side by being called (offensive) or automatically when their ally is attacked (defensive).
+     * allies join a side only by being called to arms (offensive or defensive).
      * Every member of one side is at war with every member of the other side.
      */
     public static class War {
@@ -229,6 +229,8 @@ public class ValorisData extends SavedData {
     public final Set<String> openEras = new LinkedHashSet<>();
     /** Players who may found a kingdom without minResidentsForKingdom residents (uuid -> name), see /valoris admin kingdomfounder. */
     public final Map<UUID, String> kingdomFounders = new java.util.LinkedHashMap<>();
+    /** When the last coup d'etat of a realm began (epoch millis), see coup.CoupService. */
+    public final Map<UUID, Long> lastCoups = new HashMap<>();
 
     public static ValorisData get(MinecraftServer server) {
         return server.overworld().getDataStorage()
@@ -359,6 +361,8 @@ public class ValorisData extends SavedData {
         });
         copyTruces(from, to);
         dropTruces(from);
+        Long coup = lastCoups.remove(from);
+        if (coup != null) lastCoups.merge(to, coup, Math::max);
         for (War w : wars.values()) {
             for (List<UUID> side : List.of(w.attackers, w.defenders)) {
                 int i = side.indexOf(from);
@@ -671,6 +675,9 @@ public class ValorisData extends SavedData {
         CompoundTag founders = new CompoundTag();
         kingdomFounders.forEach((id, name) -> founders.putString(id.toString(), name));
         tag.put("kingdomFounders", founders);
+        CompoundTag coups = new CompoundTag();
+        lastCoups.forEach((id, at) -> coups.putLong(id.toString(), at));
+        tag.put("lastCoups", coups);
         return tag;
     }
 
@@ -783,6 +790,13 @@ public class ValorisData extends SavedData {
         for (String k : founders.getAllKeys()) {
             try {
                 data.kingdomFounders.put(UUID.fromString(k), founders.getString(k));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        CompoundTag coups = tag.getCompound("lastCoups");
+        for (String k : coups.getAllKeys()) {
+            try {
+                data.lastCoups.put(UUID.fromString(k), coups.getLong(k));
             } catch (IllegalArgumentException ignored) {
             }
         }

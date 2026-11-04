@@ -93,11 +93,23 @@ public class SkillEvents {
         if (xp > 0) SkillService.addXp(player, Skill.FARMER, xp);
     }
 
-    /** Breeding animals. */
+    /** player -> {hour (epoch hours), breeding XP given in it} */
+    private static final java.util.Map<java.util.UUID, double[]> BREEDING_HOUR = new java.util.HashMap<>();
+
+    /** Breeding animals, at most XpRules.BREEDING_PER_HOUR an hour. */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBaby(BabyEntitySpawnEvent event) {
         if (event.isCanceled() || !(event.getCausedByPlayer() instanceof ServerPlayer player)) return;
-        SkillService.addXp(player, Skill.FARMER, XpRules.BREEDING);
+        double hour = System.currentTimeMillis() / 3_600_000L;
+        double[] got = BREEDING_HOUR.computeIfAbsent(player.getUUID(), k -> new double[] {hour, 0});
+        if (got[0] != hour) {
+            got[0] = hour;
+            got[1] = 0;
+        }
+        double xp = Math.min(XpRules.BREEDING, XpRules.BREEDING_PER_HOUR - got[1]);
+        if (xp <= 0) return;
+        got[1] += xp;
+        SkillService.addXp(player, Skill.FARMER, xp);
     }
 
     // ------------------------------------------------------------------ hunter
@@ -140,5 +152,6 @@ public class SkillEvents {
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         PlacedBlockTracker.clear();
+        BREEDING_HOUR.clear();
     }
 }

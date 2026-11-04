@@ -7,7 +7,7 @@
     "CraftingMenuMixin",
     "IngredientMixin",
     "MushroomBlockMixin",
-    "LiquidBlockMixin",
+    "BucketItemMixin",
     "ChunkTeamDataImplMixin",
     "SmithingMenuMixin",
     "TrackedEntityMixin",
@@ -18,7 +18,9 @@
     "SaplingBlockMixin",
     "BambooSaplingBlockMixin",
     "PressurePlateMixin",
-    "MineshaftSpiderMixin"
+    "MineshaftSpiderMixin",
+    "AuthLoginMixin",
+    "AuthPayloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

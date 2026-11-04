@@ -12,7 +12,8 @@
     "SiegeExplosionMixin",
     "SiegeMachineShipMixin",
     "SiegeLadderSeatsMixin",
-    "SiegeLadderSeatSaveMixin"
+    "SiegeLadderSeatSaveMixin",
+    "CuffedRestrainMixin"
   ],
   "injectors": {
     "defaultRequire": 1

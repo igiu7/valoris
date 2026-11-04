@@ -57,19 +57,28 @@ public class SiegeEvents {
         return data.cityByBanner(level.dimension().location().toString(), pos.asLong());
     }
 
-    private static Optional<City> cityAt(ValorisData data, ServerLevel level, BlockPos pos) {
+    public static Optional<City> cityAt(ValorisData data, ServerLevel level, BlockPos pos) {
         ClaimedChunk chunk = FTBChunksAPI.api().getManager().getChunk(new ChunkDimPos(level, pos));
         if (chunk == null) return Optional.empty();
         return data.byTeam(chunk.getTeamData().getTeam().getId());
     }
 
     /** The siege in its active phase whose city owns the land at pos. */
-    private static Optional<Siege> activeSiegeAt(ValorisData data, ServerLevel level, BlockPos pos) {
+    public static Optional<Siege> activeSiegeAt(ValorisData data, ServerLevel level, BlockPos pos) {
         if (data.sieges().isEmpty()) return Optional.empty();
         ClaimedChunk chunk = FTBChunksAPI.api().getManager().getChunk(new ChunkDimPos(level, pos));
         if (chunk == null) return Optional.empty();
         UUID team = chunk.getTeamData().getTeam().getId();
         return data.siegeOfCity(team).filter(s -> s.phase == SiegePhase.ACTIVE);
+    }
+
+    /** Players downed in a siege count for its result (SiegeService.summary). Highest priority: PlayerRevive may follow. */
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST)
+    public static void onDeath(net.neoforged.neoforge.event.entity.living.LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer victim && event.getSource().getEntity() instanceof ServerPlayer killer
+                && killer != victim) {
+            SiegeService.countKill(killer, victim);
+        }
     }
 
     // ------------------------------------------------------------------ breaking
@@ -159,7 +168,8 @@ public class SiegeEvents {
     private static final Map<UUID, Long> LAST_PLACE = new HashMap<>();
 
     /**
-     * In a city under an active siege only the two sides build, one block every siegeBlockPlaceSeconds per player
+     * In a city under an active siege only the two sides build, one block every siegeBlockPlaceSeconds per attacker
+     * (siegeBlockPlaceSecondsDefenders per defender)
      * (barricades, ladders, patching a breach); bystanders cannot build there. Only creative mode is exempt
      * (operators playing in survival follow the siege rules like everyone).
      */
@@ -174,7 +184,8 @@ public class SiegeEvents {
             deny(player, "Only the two sides of the siege may build here.");
             return;
         }
-        long every = com.valoris.Config.SIEGE_PLACE_SECONDS.get() * 20L;
+        long every = (SiegeService.isAttacker(player, siege.get()) ? com.valoris.Config.SIEGE_PLACE_SECONDS
+                : com.valoris.Config.SIEGE_PLACE_SECONDS_DEFENDERS).get() * 20L;
         long now = level.getGameTime();
         Long last = LAST_PLACE.get(player.getUUID());
         if (every > 0 && last != null && now - last < every && now >= last) {
@@ -297,20 +308,26 @@ public class SiegeEvents {
         LivingEntity source = event.getExplosion().getIndirectSourceEntity();
         ServerPlayer sourcePlayer = source instanceof ServerPlayer sp ? sp : null;
         Map<Long, Optional<City>> cityByChunk = new HashMap<>();
+        event.getAffectedBlocks().removeIf(pos -> spared(data, level, pos, sourcePlayer, cityByChunk));
+    }
 
-        event.getAffectedBlocks().removeIf(pos -> {
-            if (protectedBannerOf(data, level, pos).isPresent()) return true;
+    /**
+     * True if an explosion (or the fire of a fire pot) of this player (null: of nobody) must leave the block alone:
+     * a city banner, or city land not under an active siege and not the player's own. cityByChunk caches the lookups.
+     */
+    public static boolean spared(ValorisData data, ServerLevel level, BlockPos pos, ServerPlayer sourcePlayer,
+                                 Map<Long, Optional<City>> cityByChunk) {
+        if (protectedBannerOf(data, level, pos).isPresent()) return true;
 
-            Optional<City> city = cityByChunk.computeIfAbsent(ChunkPos.asLong(pos), key -> cityAt(data, level, pos));
-            if (city.isEmpty()) return false;
-            City c = city.get();
+        Optional<City> city = cityByChunk.computeIfAbsent(ChunkPos.asLong(pos), key -> cityAt(data, level, pos));
+        if (city.isEmpty()) return false;
+        City c = city.get();
 
-            Optional<Siege> siege = data.siegeOfCity(c.teamId);
-            if (siege.isPresent() && siege.get().phase == SiegePhase.ACTIVE) return false; // war zone
-            if (sourcePlayer != null && Roles.cityOfMember(sourcePlayer).map(x -> x.teamId.equals(c.teamId)).orElse(false)) {
-                return false; // own land
-            }
-            return true;
-        });
+        Optional<Siege> siege = data.siegeOfCity(c.teamId);
+        if (siege.isPresent() && siege.get().phase == SiegePhase.ACTIVE) return false; // war zone
+        if (sourcePlayer != null && Roles.cityOfMember(sourcePlayer).map(x -> x.teamId.equals(c.teamId)).orElse(false)) {
+            return false; // own land
+        }
+        return true;
     }
 }

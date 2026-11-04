@@ -30,5 +30,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     public static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(com.valoris.registry.ModEntities.BEAR.get(), BearRenderer::new);
+        event.registerEntityRenderer(com.valoris.registry.ModEntities.FIRE_POT.get(),
+                c -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(c, 1.0F, true));
     }
 }

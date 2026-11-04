@@ -147,6 +147,11 @@ public final class DiplomacyService {
         Optional<Relation> current = data.relation(own.id(), target.id());
         if (current.filter(r -> r == Relation.WAR).isPresent()) throw Errors.of("You are already at war.");
         if (current.isPresent()) throw Errors.of("Break the " + current.get().label() + " first.");
+        for (ValorisData.War w : data.warsOf(own.id())) {
+            if (w.sideOf(target.id()) == w.sideOf(own.id())) {
+                throw Errors.of("You fight side by side with the " + target.title() + " in a war. Leave that war first.");
+            }
+        }
         long truce = data.truceUntil(own.id(), target.id());
         if (truce > 0) {
             throw Errors.of("You have a truce with the " + target.title() + " for another " + WarService.truceLeft(truce) + ".");
@@ -164,6 +169,9 @@ public final class DiplomacyService {
                 .filter(r -> r != Relation.WAR)
                 .orElseThrow(() -> Errors.of("You have no alliance with them."));
         data.setRelation(own.id(), target.id(), null);
+        // a call to arms between former allies no longer stands
+        Requests.removeWhere(x -> x.type() == Type.WAR_CALL && ((x.from().equals(own.id()) && x.to().equals(target.id()))
+                || (x.from().equals(target.id()) && x.to().equals(own.id()))));
 
         Component msg = Msg.text("Diplomacy: the " + own.title() + " broke the " + rel.label() + " with the "
                 + target.title() + ".", ChatFormatting.YELLOW);

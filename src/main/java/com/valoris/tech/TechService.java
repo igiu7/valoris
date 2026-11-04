@@ -272,7 +272,7 @@ public final class TechService {
         long now = System.currentTimeMillis();
         city.researching = node.id();
         city.researchStart = now;
-        city.researchEnd = now + node.researchMinutes() * 60_000L;
+        city.researchEnd = now + researchSeconds(city, node) * 1000L;
         saveNow(server);
         if (node.researchMinutes() == 0) {
             update(server, city);
@@ -280,7 +280,7 @@ public final class TechService {
         }
         for (City c : realmCities(ValorisData.get(server), city)) {
             Msg.toTeam(c.teamId, Msg.text("Research started: " + node.name() + " ("
-                    + duration(node.researchMinutes() * 60) + ").", ChatFormatting.AQUA));
+                    + duration(researchSeconds(city, node)) + ").", ChatFormatting.AQUA));
         }
     }
 
@@ -345,6 +345,40 @@ public final class TechService {
             if (holder(data, city) == city) update(server, city);
             else handOverResearch(server, data, city, holder(data, city));
         }
+    }
+
+    // ------------------------------------------------------------------ passive bonuses
+
+    /** The highest researchSpeedPercent among the city's technologies (Bureaucracy). */
+    public static int researchSpeedPercent(City city) {
+        int best = 0;
+        for (TechNode node : TechConfig.nodes().values()) {
+            if (node.researchSpeedPercent() > best && has(city, node.id())) best = node.researchSpeedPercent();
+        }
+        return best;
+    }
+
+    /** The highest cropGrowthPercent among the city's technologies (Crop Rotation). */
+    public static int cropGrowthPercent(City city) {
+        int best = 0;
+        for (TechNode node : TechConfig.nodes().values()) {
+            if (node.cropGrowthPercent() > best && has(city, node.id())) best = node.cropGrowthPercent();
+        }
+        return best;
+    }
+
+    /** The highest wallResistancePercent among the city's technologies (Fortified Masonry). */
+    public static int wallResistancePercent(City city) {
+        int best = 0;
+        for (TechNode node : TechConfig.nodes().values()) {
+            if (node.wallResistancePercent() > best && has(city, node.id())) best = node.wallResistancePercent();
+        }
+        return best;
+    }
+
+    /** How long the realm of this city (its holder) researches the technology, with its research bonus. */
+    public static int researchSeconds(City city, TechNode node) {
+        return (int) Math.round(node.researchMinutes() * 60L * (100 - researchSpeedPercent(city)) / 100.0);
     }
 
     // ------------------------------------------------------------------ claim limit

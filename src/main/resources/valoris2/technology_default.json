@@ -7,6 +7,9 @@
     "researchMinutes: real time the research takes (it keeps running while the server is off; saved immediately).",
     "'starting': true = every city knows it from the start. x / y: column and row in the tree screen.",
     "claimLimit: the city may claim this many chunks once it knows the technology (the highest known value counts).",
+    "researchSpeedPercent: research of the realm takes this much less time (Bureaucracy). cropGrowthPercent: plants on the",
+    "  realm's land grow this much faster (Crop Rotation). wallResistancePercent: stone blocks on the realm's land resist the",
+    "  blasts of siege machines this much more (Fortified Masonry). The highest known value of each counts. Nothing requires them.",
     "features: what the GUI lists under 'Unlocks' (Armory Table items of the technology are shown automatically).",
     "Unlock rules (matching items cannot be crafted until the city has that technology; '_' in ids is ignored):",
     "  item:<id>               one item, e.g. item:minecraft:iron_sword",
@@ -23,7 +26,7 @@
     "version: when the built-in file has a higher version, this file is replaced (old copy kept as .bak).",
     "  Axes ('<material>_axe', type \"axe\") deal less than the weapons of their material."
   ],
-  "version": 6,
+  "version": 13,
   "eraNames": {
     "bronze": "Bronze Age",
     "iron": "Iron Age",
@@ -36,7 +39,7 @@
       "name": "Bronze Age",
       "era": "bronze",
       "icon": "alltheores:bronze_ingot",
-      "description": "Every city starts in the Bronze Age.",
+      "description": "Every city starts in the Bronze Age: copper and tin are melted into bronze.",
       "x": 0,
       "y": 2,
       "requires": [],
@@ -44,11 +47,10 @@
       "researchMinutes": 0,
       "starting": true,
       "features": [
-        "Bronze ingots",
-        "Armory Table",
         "Bronze Furnace: melts copper and tin into bronze (the only way to make bronze)",
+        "Armory Table: weapons, armor, shields and siege engines of the known eras",
         "Wagon wheels and horse-drawn wagons (Conestoga, royal, armored)",
-        "Armor decorations: 32 at the Armory Table"
+        "34 armor decorations at the Armory Table"
       ],
       "unlocks": [
         "item:valoris2:bronze_furnace",
@@ -117,14 +119,14 @@
       "name": "Bronze Weapons",
       "era": "bronze",
       "icon": "magistuarmory:bronze_katzbalger",
-      "description": "Bronze swords, spears and axes (a sword deals 5 damage).",
+      "description": "Bronze swords, spears, axes and the wooden bow.",
       "x": 2,
       "y": 0,
       "requires": [
         "bronze_tools"
       ],
       "features": [
-        "Bronze weapons (a sword deals 5 damage)",
+        "Bronze (and copper, tin) weapons: a sword deals 5 damage",
         "Wooden bow"
       ],
       "unlocks": [
@@ -139,7 +141,7 @@
       "name": "Bronze Armor",
       "era": "bronze",
       "icon": "antiquelegacy:bronze_muscle_cuirass",
-      "description": "Bronze helmets, cuirasses and greaves.",
+      "description": "Bronze helmets, cuirasses and greaves, and the first horse gear.",
       "x": 2,
       "y": 1,
       "requires": [
@@ -149,11 +151,11 @@
         "blacksmith": 1,
         "miner": 3
       },
-      "researchMinutes": 60,
+      "researchMinutes": 90,
       "features": [
-        "Bronze armor: 12 armor points for a full set",
+        "Bronze armor: 14 armor points for a full set",
         "Saddle and leather horse armor",
-        "Wolf fur armor: a hood with a wolf's head and a fur coat"
+        "Wolf fur armor: a full set (hood with a wolf's head, coat, leggings, boots) that keeps you warm"
       ],
       "unlocks": [
         "armor:attichelmet",
@@ -220,9 +222,9 @@
         "blacksmith": 1,
         "hunter": 3
       },
-      "researchMinutes": 45,
+      "researchMinutes": 60,
       "features": [
-        "Scuta, hoplons, peltae and bronze shields"
+        "Scuta, hoplons, peltae, tureos and bronze shields"
       ],
       "unlocks": [
         "shield:hoplon",
@@ -240,7 +242,7 @@
       "name": "Siege Engines",
       "era": "bronze",
       "icon": "siegemachines:catapult",
-      "description": "Catapults, ballistae, siege ladders, battering rams and giant arrows.",
+      "description": "Catapults, ballistae, siege ladders, battering rams, giant arrows and fire pots.",
       "x": 2,
       "y": 4,
       "requires": [
@@ -251,16 +253,19 @@
         "miner": 3,
         "farmer": 3
       },
-      "researchMinutes": 90,
+      "researchMinutes": 120,
       "features": [
-        "Catapult, ballista, siege ladder, battering ram, giant arrow"
+        "Catapult, ballista, siege ladder and battering ram",
+        "Giant arrows for the ballista",
+        "Fire pot: thrown a few blocks, it bursts and sets the ground around on fire (30 s cooldown)"
       ],
       "unlocks": [
         "item:siegemachines:catapult",
         "item:siegemachines:ballista",
         "item:siegemachines:siege_ladder",
         "item:siegemachines:battering_ram",
-        "item:siegemachines:giant_arrow"
+        "item:siegemachines:giant_arrow",
+        "item:valoris2:fire_pot"
       ]
     },
     {
@@ -276,8 +281,7 @@
         "bronze_weapons",
         "bronze_armor",
         "bronze_shields",
-        "bronze_siege",
-        "expand_domain_1"
+        "bronze_siege"
       ],
       "skills": {
         "blacksmith": 4,
@@ -285,11 +289,11 @@
         "miner": 10,
         "hunter": 8
       },
-      "researchMinutes": 360,
+      "researchMinutes": 540,
       "features": [
         "Bloomery: the only way to smelt iron",
-        "Iron decorations",
-        "Armor decorations: 91 at the Armory Table"
+        "91 armor decorations at the Armory Table",
+        "Expand Domain II can be researched"
       ],
       "unlocks": [
         "item:valoris2:bloomery",
@@ -391,7 +395,7 @@
       "name": "Iron Tools",
       "era": "iron",
       "icon": "minecraft:iron_pickaxe",
-      "description": "Iron (and gold) pickaxes, axes, shovels, hoes and shears. Every iron technology grows from them.",
+      "description": "Iron and golden pickaxes, axes, shovels, hoes and shears. Every iron technology grows from them.",
       "x": 4,
       "y": 2,
       "requires": [
@@ -403,7 +407,7 @@
         "miner": 11,
         "hunter": 8
       },
-      "researchMinutes": 300,
+      "researchMinutes": 480,
       "features": [
         "Iron and golden pickaxe, axe, shovel and hoe",
         "Shears"
@@ -421,11 +425,35 @@
       ]
     },
     {
+      "id": "bureaucracy",
+      "name": "Bureaucracy",
+      "era": "iron",
+      "icon": "minecraft:writable_book",
+      "description": "Scribes and officials keep the realm in order: every research of the realm takes 10% less time.",
+      "x": 5,
+      "y": 2,
+      "requires": [
+        "iron_tools"
+      ],
+      "skills": {
+        "blacksmith": 4,
+        "farmer": 9,
+        "miner": 10,
+        "hunter": 8
+      },
+      "researchMinutes": 360,
+      "features": [
+        "Research takes 10% less time (every city of the realm)"
+      ],
+      "researchSpeedPercent": 10,
+      "unlocks": []
+    },
+    {
       "id": "mechanics",
       "name": "Mechanics",
       "era": "iron",
       "icon": "create:cogwheel",
-      "description": "Gears, shafts and water wheels: unlocks Create's mechanisms (automation machines come later).",
+      "description": "Gears, shafts and water wheels: Create's mechanisms and redstone. Machines that work on their own come with Automation.",
       "x": 5,
       "y": 5,
       "requires": [
@@ -437,11 +465,11 @@
         "miner": 11,
         "hunter": 9
       },
-      "researchMinutes": 420,
+      "researchMinutes": 720,
       "features": [
-        "Create's mechanisms: shafts, cogwheels, water wheels, belts, presses, mixers, mills...",
-        "Machines that work on their own come with Automation (steel era)",
-        "Redstone: torches, repeaters, comparators, pistons, observers, hoppers, dispensers, levers, buttons, pressure plates, powered rails and more"
+        "Create's mechanisms: shafts, cogwheels, water wheels, belts, presses, mixers, millstones...",
+        "Redstone: torches, repeaters, comparators, pistons, observers, hoppers, dispensers, levers, buttons, pressure plates, powered rails and more",
+        "Machines that work on their own come with Automation (Gunpowder Age)"
       ],
       "unlocks": [
         "mod:create",
@@ -514,7 +542,7 @@
         "farmer": 12,
         "miner": 10
       },
-      "researchMinutes": 600,
+      "researchMinutes": 780,
       "features": [
         "Create Aeronautics ships (propellers are disabled)",
         "Sails pushed by the wind: catch it from behind, fight it head-on",
@@ -531,7 +559,7 @@
       "name": "Iron Weapons",
       "era": "iron",
       "icon": "magistuarmory:iron_bastardsword",
-      "description": "Iron (and gold, silver) weapons (a sword deals 6 damage).",
+      "description": "Iron (and gold, silver) weapons, the longbow and the crossbow.",
       "x": 5,
       "y": 0,
       "requires": [
@@ -542,9 +570,9 @@
         "miner": 10,
         "hunter": 11
       },
-      "researchMinutes": 600,
+      "researchMinutes": 1020,
       "features": [
-        "Iron weapons (a sword deals 6 damage)",
+        "Iron (and golden, silver) weapons: a sword deals 6 damage",
         "Longbow and crossbow"
       ],
       "unlocks": [
@@ -571,11 +599,11 @@
         "miner": 12,
         "hunter": 10
       },
-      "researchMinutes": 720,
+      "researchMinutes": 1200,
       "features": [
-        "Mail, lamellar and great helms: 15 armor points for a full set",
+        "Mail, lamellar and great helms: 17 armor points for a full set",
         "Iron and chainmail horse armor",
-        "Bear fur armor: a hood with a bear's head and a fur coat"
+        "Bear fur armor: a full set (hood with a bear's head, coat, leggings, boots) that keeps you warm"
       ],
       "unlocks": [
         "armor:agenporthelmet",
@@ -699,9 +727,10 @@
         "blacksmith": 5,
         "hunter": 12
       },
-      "researchMinutes": 420,
+      "researchMinutes": 720,
       "features": [
-        "Bucklers, round, heater and kite shields"
+        "Bucklers, round, heater, kite and target shields",
+        "The vanilla shield"
       ],
       "unlocks": [
         "shield:buckler",
@@ -721,7 +750,7 @@
       "name": "Trebuchet",
       "era": "iron",
       "icon": "siegemachines:trebuchet",
-      "description": "The counterweight trebuchet.",
+      "description": "The counterweight trebuchet: the heaviest stones, thrown the farthest.",
       "x": 5,
       "y": 4,
       "requires": [
@@ -733,13 +762,61 @@
         "farmer": 11,
         "miner": 12
       },
-      "researchMinutes": 720,
+      "researchMinutes": 1200,
       "features": [
         "Counterweight trebuchet"
       ],
       "unlocks": [
         "item:siegemachines:trebuchet"
       ]
+    },
+    {
+      "id": "crop_rotation",
+      "name": "Crop Rotation",
+      "era": "iron",
+      "icon": "minecraft:wheat",
+      "description": "Fields rest and change crops by turns: plants on the realm's land grow 10% faster.",
+      "x": 6,
+      "y": 3,
+      "requires": [
+        "mechanics",
+        "iron_shields"
+      ],
+      "skills": {
+        "blacksmith": 5,
+        "farmer": 14,
+        "miner": 10,
+        "hunter": 10
+      },
+      "researchMinutes": 960,
+      "features": [
+        "Crops, bushes and other plants on the realm's land grow 10% faster (on top of the soil tier)"
+      ],
+      "cropGrowthPercent": 10,
+      "unlocks": []
+    },
+    {
+      "id": "fortified_masonry",
+      "name": "Fortified Masonry",
+      "era": "iron",
+      "icon": "minecraft:stone_bricks",
+      "description": "Thick walls of dressed stone set in mortar: stone on the realm's land resists siege machines 25% more.",
+      "x": 6,
+      "y": 4,
+      "requires": [
+        "iron_siege"
+      ],
+      "skills": {
+        "blacksmith": 5,
+        "farmer": 10,
+        "miner": 14
+      },
+      "researchMinutes": 960,
+      "features": [
+        "Stone, bricks, deepslate, sandstone and the other stone blocks (Create's stones too) on the realm's land resist the blasts of siege machines 25% more"
+      ],
+      "wallResistancePercent": 25,
+      "unlocks": []
     },
     {
       "id": "steel_age",
@@ -750,14 +827,12 @@
       "x": 7,
       "y": 2,
       "requires": [
-        "iron_tools",
         "mechanics",
         "shipbuilding",
         "iron_weapons",
         "iron_armor",
         "iron_shields",
-        "iron_siege",
-        "expand_domain_2"
+        "iron_siege"
       ],
       "skills": {
         "blacksmith": 8,
@@ -765,11 +840,11 @@
         "miner": 18,
         "hunter": 16
       },
-      "researchMinutes": 720,
+      "researchMinutes": 1200,
       "features": [
         "Steel Furnace: the only way to make steel",
-        "Steel decorations",
-        "Armor decorations: 44 at the Armory Table"
+        "44 armor decorations at the Armory Table",
+        "Expand Domain III can be researched"
       ],
       "unlocks": [
         "item:valoris2:steel_furnace",
@@ -836,7 +911,7 @@
         "miner": 19,
         "hunter": 16
       },
-      "researchMinutes": 600,
+      "researchMinutes": 1020,
       "features": [
         "Steel pickaxe, axe, shovel and hoe",
         "Diamond tools"
@@ -857,7 +932,7 @@
       "name": "Steel Weapons",
       "era": "steel",
       "icon": "magistuarmory:steel_zweihander",
-      "description": "Steel weapons (a sword deals 7 damage).",
+      "description": "Steel (and diamond) weapons, the heavy crossbow and the Slavic arms.",
       "x": 9,
       "y": 0,
       "requires": [
@@ -868,9 +943,9 @@
         "miner": 17,
         "hunter": 18
       },
-      "researchMinutes": 720,
+      "researchMinutes": 1380,
       "features": [
-        "Steel weapons (a sword deals 7 damage)",
+        "Steel (and diamond) weapons: a sword deals 7 damage",
         "Heavy crossbow",
         "Rus sword, Rus axe, bardiche and rogatinas (Slavic Armory)"
       ],
@@ -901,9 +976,9 @@
         "miner": 19,
         "hunter": 17
       },
-      "researchMinutes": 840,
+      "researchMinutes": 1560,
       "features": [
-        "Full plate: 18 armor points and toughness for a full set",
+        "Full plate: 20 armor points and 6 toughness for a full set",
         "Greenwich, cuirassier and munition armor, burgonets and morions",
         "Golden horse armor, barding and dark barding"
       ],
@@ -1084,7 +1159,7 @@
         "blacksmith": 9,
         "hunter": 19
       },
-      "researchMinutes": 600,
+      "researchMinutes": 1020,
       "features": [
         "Tartsche, pavise, rondache and elliptical shields"
       ],
@@ -1103,7 +1178,7 @@
       "name": "Mortar",
       "era": "steel",
       "icon": "siegemachines:mortar",
-      "description": "Mortars and cannonballs.",
+      "description": "Mortars and their cannonballs.",
       "x": 9,
       "y": 4,
       "requires": [
@@ -1114,7 +1189,7 @@
         "farmer": 18,
         "miner": 20
       },
-      "researchMinutes": 840,
+      "researchMinutes": 1560,
       "features": [
         "Mortar and cannonballs"
       ],
@@ -1126,22 +1201,22 @@
     {
       "id": "automation",
       "name": "Automation",
-      "era": "steel",
+      "era": "gunpowder",
       "icon": "create:mechanical_drill",
       "description": "Machines that work on their own: drills, saws, harvesters, deployers, mechanical arms, fans and the logistics network.",
-      "x": 10,
+      "x": 11,
       "y": 5,
       "requires": [
-        "steel_tools",
+        "gunpowder_age",
         "mechanics"
       ],
       "skills": {
-        "blacksmith": 9,
-        "farmer": 18,
-        "miner": 20,
-        "hunter": 16
+        "blacksmith": 12,
+        "farmer": 22,
+        "miner": 24,
+        "hunter": 20
       },
-      "researchMinutes": 840,
+      "researchMinutes": 1560,
       "features": [
         "Mechanical drill, saw, harvester, plough and roller",
         "Deployer, mechanical arm and mechanical crafter",
@@ -1176,17 +1251,15 @@
       "name": "Gunpowder Age",
       "era": "gunpowder",
       "icon": "minecraft:gunpowder",
-      "description": "Black powder changes warfare forever.",
-      "x": 11,
+      "description": "Black powder changes warfare forever: firearms, cannons and machines.",
+      "x": 10,
       "y": 2,
       "requires": [
         "steel_tools",
         "steel_weapons",
         "steel_armor",
         "steel_shields",
-        "steel_siege",
-        "automation",
-        "expand_domain_3"
+        "steel_siege"
       ],
       "skills": {
         "blacksmith": 11,
@@ -1194,10 +1267,11 @@
         "miner": 22,
         "hunter": 21
       },
-      "researchMinutes": 960,
+      "researchMinutes": 1560,
       "features": [
-        "Black powder changes warfare forever",
-        "Armor decorations: 37 at the Armory Table"
+        "37 armor decorations at the Armory Table",
+        "Firearms, the culverin and Automation can be researched",
+        "Expand Domain IV can be researched"
       ],
       "unlocks": [
         "item:magistuarmoryaddon:black_puff_and_slash_sleeves_decoration",
@@ -1245,7 +1319,7 @@
       "era": "gunpowder",
       "icon": "minecraft:flint_and_steel",
       "description": "The musket and its ammunition.",
-      "x": 12,
+      "x": 11,
       "y": 0,
       "requires": [
         "gunpowder_age"
@@ -1255,7 +1329,7 @@
         "miner": 23,
         "hunter": 25
       },
-      "researchMinutes": 1080,
+      "researchMinutes": 1980,
       "features": [
         "The musket and its ammunition"
       ],
@@ -1270,7 +1344,7 @@
       "era": "gunpowder",
       "icon": "siegemachines:culverin",
       "description": "The culverin, a long-range cannon.",
-      "x": 12,
+      "x": 11,
       "y": 4,
       "requires": [
         "gunpowder_age"
@@ -1280,7 +1354,7 @@
         "farmer": 23,
         "miner": 25
       },
-      "researchMinutes": 1200,
+      "researchMinutes": 2340,
       "features": [
         "The culverin, a long-range cannon"
       ],
@@ -1293,7 +1367,7 @@
       "name": "Expand Domain I",
       "era": "bronze",
       "icon": "minecraft:map",
-      "description": "The city may claim up to 49 chunks (7 x 7).",
+      "description": "The city may claim up to 64 chunks (8 x 8). Every city knows it from the start.",
       "x": 1,
       "y": 6,
       "requires": [
@@ -1302,9 +1376,9 @@
       "skills": {},
       "researchMinutes": 0,
       "starting": true,
-      "claimLimit": 49,
+      "claimLimit": 64,
       "features": [
-        "Claim limit: 49 chunks"
+        "Claim limit: 64 chunks"
       ],
       "unlocks": []
     },
@@ -1313,7 +1387,7 @@
       "name": "Expand Domain II",
       "era": "iron",
       "icon": "minecraft:filled_map",
-      "description": "The city may claim up to 64 chunks (8 x 8).",
+      "description": "The city may claim up to 81 chunks (9 x 9).",
       "x": 5,
       "y": 6,
       "requires": [
@@ -1325,10 +1399,10 @@
         "miner": 11,
         "hunter": 10
       },
-      "researchMinutes": 600,
-      "claimLimit": 64,
+      "researchMinutes": 780,
+      "claimLimit": 81,
       "features": [
-        "Claim limit: 64 chunks"
+        "Claim limit: 81 chunks"
       ],
       "unlocks": []
     },
@@ -1337,7 +1411,7 @@
       "name": "Expand Domain III",
       "era": "steel",
       "icon": "minecraft:compass",
-      "description": "The city may claim up to 81 chunks (9 x 9).",
+      "description": "The city may claim up to 100 chunks (10 x 10).",
       "x": 9,
       "y": 6,
       "requires": [
@@ -1349,10 +1423,10 @@
         "miner": 18,
         "hunter": 17
       },
-      "researchMinutes": 600,
-      "claimLimit": 81,
+      "researchMinutes": 960,
+      "claimLimit": 100,
       "features": [
-        "Claim limit: 81 chunks"
+        "Claim limit: 100 chunks"
       ],
       "unlocks": []
     },
@@ -1362,7 +1436,7 @@
       "era": "gunpowder",
       "icon": "minecraft:recovery_compass",
       "description": "The city may claim up to 128 chunks (about 11 x 11).",
-      "x": 12,
+      "x": 11,
       "y": 6,
       "requires": [
         "gunpowder_age"
@@ -1373,7 +1447,7 @@
         "miner": 23,
         "hunter": 23
       },
-      "researchMinutes": 960,
+      "researchMinutes": 1440,
       "claimLimit": 128,
       "features": [
         "Claim limit: 128 chunks"
@@ -1443,43 +1517,43 @@
       "magistuarmoryaddon:rich_saxon_sword": "steel"
     },
     "types": {
-      "stiletto": 2.0,
+      "stiletto": 2,
       "shortsword": 2.5,
       "katzbalger": 3.2,
-      "pike": 3.0,
+      "pike": 3,
       "ranseur": 3.3,
       "ahlspiess": 2.8,
       "giantlance": 4.5,
       "bastardsword": 4.25,
       "estoc": 4.1,
       "claymore": 5.3,
-      "zweihander": 6.0,
-      "flamebladedsword": 6.0,
-      "lochaberaxe": 7.0,
+      "zweihander": 6,
+      "flamebladedsword": 6,
+      "lochaberaxe": 7,
       "concaveedgedhalberd": 7.3,
       "heavymace": 4.8,
-      "heavywarhammer": 5.0,
+      "heavywarhammer": 5,
       "lucernehammer": 4.4,
       "morningstar": 4.7,
       "flail": 6.2,
       "guisarme": 3.15,
-      "blacksmithhammer": 5.0,
+      "blacksmithhammer": 5,
       "barbedclub": 5.2,
       "pitchfork": 2.8,
       "noblesword": 4.25,
-      "rustedbastardsword": 2.0,
-      "rustedheavymace": 2.0,
-      "club": 7.0,
+      "rustedbastardsword": 2,
+      "rustedheavymace": 2,
+      "club": 5,
       "messersword": 3.4,
       "antiquedagger": 2.8,
-      "sica": 3.0,
-      "eaglestandard": 2.0,
-      "weatheredeaglestandard": 2.0,
+      "sica": 3,
+      "eaglestandard": 2,
+      "weatheredeaglestandard": 2,
       "rhomphaia": 3.7,
       "antiquespear": 2.8,
       "doru": 3.28,
-      "retiarius": 4.0,
-      "sarissa": 0.0,
+      "retiarius": 4,
+      "sarissa": 0,
       "triariispear": 3.1,
       "antiquesword": 3.55,
       "celticsword": 3.6,
@@ -1503,7 +1577,7 @@
       "parryingdagger": 2.5,
       "rondeldagger": 2.3,
       "sickle": 1.5,
-      "executionerssword": 6.0,
+      "executionerssword": 6,
       "germangreatsword": 5.9,
       "twohandedmesser": 5.6,
       "englishpoleaxe": 7.6,
@@ -1519,25 +1593,25 @@
       "cavalrysabre": 3.58,
       "cutlass": 3.8,
       "falchion": 3.55,
-      "feder": 0.0,
+      "feder": 0,
       "grandfalchion": 5.91,
       "kingsword": 4.5,
       "longsword": 4.2,
-      "longseax": 4.0,
+      "longseax": 4,
       "maciejowskimesser": 3.5,
       "rapier": 3.4,
       "scimitar": 3.9,
       "sidesword": 3.68,
-      "trainingsword": 0.0,
+      "trainingsword": 0,
       "billhook": 2.53,
-      "boarspear": 3.0,
+      "boarspear": 3,
       "fauchard": 3.15,
       "glaive": 3.1,
       "goedendag": 3.9,
       "militaryfork": 2.9,
       "partisan": 3.35,
-      "scythe": 5.0,
-      "shortspear": 3.0,
+      "scythe": 5,
+      "shortspear": 3,
       "voulge": 3.2,
       "welshguisarme": 3.5,
       "armingswordtypexiii": 3.5,
@@ -1547,17 +1621,17 @@
       "sabre": 3.61,
       "saxonsword": 3.5,
       "shortseax": 3.25,
-      "swordbreaker": 3.0,
+      "swordbreaker": 3,
       "byzantineaxe": 4.3,
       "falkopingaxe": 4.3,
       "migrationeraaxe": 4.3,
       "smallbroadaxe": 4.3,
       "suttonhooaxe": 4.3,
       "craykeaxe": 7.2,
-      "decoratedspear": 3.0,
-      "harnhamspear": 3.0,
-      "javelin": 3.0,
-      "kingstonspear": 3.0,
+      "decoratedspear": 3,
+      "harnhamspear": 3,
+      "javelin": 3,
+      "kingstonspear": 3,
       "goldenmigrationerasword": 3.5,
       "jarlssword": 3.5,
       "langseax": 3.5,
@@ -1570,29 +1644,29 @@
       "suttonhoosword": 3.5,
       "vikingsword": 3.5,
       "lucernhammer": 4.4,
-      "stylet": 2.0,
+      "stylet": 2,
       "chivalrylance": 4.5,
       "chainmorgenstern": 6.2,
       "morgenstern": 4.7,
       "concavehalberd": 7.3,
-      "russword": 3.5,
+      "russword": 3.3,
       "rusaxe": 4.8,
       "bardiche": 7.4,
-      "rogatina": 3.0,
+      "rogatina": 3,
       "wingedrogatina": 3.1,
       "axe": 1.5,
-      "katana": 4.0,
+      "katana": 4,
       "wakizashi": 3.3,
       "kunai": 2.2,
       "kama": 2.5,
       "sai": 2.5,
       "jutte": 2.8,
-      "shuriken": 2.0,
+      "shuriken": 2,
       "naginata": 3.3,
-      "yari": 3.0,
+      "yari": 3,
       "sasumata": 3.1,
-      "tetsubo": 5.0,
-      "tonfa": 3.0
+      "tetsubo": 5,
+      "tonfa": 3
     }
   }
 }

@@ -122,6 +122,8 @@ public final class CityService {
         player.server.execute(() -> CityBanner.removeAll(player));
         Msg.ok(player, "The city of " + city.name + " has been founded! You may claim up to "
                 + com.valoris.tech.TechService.claimLimit(city) + " chunks.");
+        com.valoris.discord.DiscordLink.announce("🏘️", "The city of " + city.name + " has been founded by "
+                + player.getGameProfile().getName() + "!");
         return true;
     }
 
@@ -341,6 +343,7 @@ public final class CityService {
     }
 
     public static void kick(ServerPlayer ruler, ServerPlayer target) throws CommandSyntaxException {
+        for (City c : Roles.cityOfMember(ruler).stream().toList()) com.valoris.coup.CoupService.checkNoCoup(ValorisData.get(ruler.getServer()), c);
         City city = requireFounded(ruler);
         com.valoris.war.ConquestService.checkNotConquered(ValorisData.get(ruler.getServer()), city);
         com.valoris.events.TeamGuard.allow(() -> partyOf(city).kick(ruler.createCommandSourceStack(), List.of(target.getGameProfile())));
@@ -359,6 +362,7 @@ public final class CityService {
 
     /** Ruler hands the city to another resident. The capital cannot be transferred (use the crown). */
     public static void transfer(ServerPlayer ruler, ServerPlayer target) throws CommandSyntaxException {
+        for (City c : Roles.cityOfMember(ruler).stream().toList()) com.valoris.coup.CoupService.checkNoCoup(ValorisData.get(ruler.getServer()), c);
         City city = requireFounded(ruler);
         ValorisData data = ValorisData.get(ruler.getServer());
         com.valoris.war.ConquestService.checkNotConquered(data, city);
@@ -374,6 +378,7 @@ public final class CityService {
     // ------------------------------------------------------------ disbanding
 
     public static void disband(ServerPlayer player) throws CommandSyntaxException {
+        for (City c : Roles.cityOfMember(player).stream().toList()) com.valoris.coup.CoupService.checkNoCoup(ValorisData.get(player.getServer()), c);
         City city = requireRuler(player);
         ValorisData data = ValorisData.get(player.getServer());
         Optional<ValorisData.Kingdom> kingdom = data.kingdomOfCity(city.teamId);
@@ -389,9 +394,12 @@ public final class CityService {
         if (siege) throw Errors.of("You cannot disband the city during a siege.");
         if (com.valoris.war.Looting.involves(city.teamId)) throw Errors.of("You cannot disband the city during the looting time.");
         com.valoris.war.ConquestService.checkNotConquered(data, city);
+        String cityName = city.name;
         destroyCity(player.getServer(), city, player.createCommandSourceStack());
         CityBanner.removeAll(player);
         Msg.ok(player, "Your city has been disbanded.");
+        Msg.news(player.getServer(), "🏚️", "The city of " + cityName + " has been disbanded by its ruler "
+                + player.getGameProfile().getName() + ".", ChatFormatting.GOLD);
     }
 
     /** Unclaims everything, disbands the FTB team and removes the city (and its banner block). */
@@ -408,15 +416,17 @@ public final class CityService {
             }
             if (team instanceof PartyTeam party) com.valoris.events.TeamGuard.allow(() -> party.forceDisband(src));
         }
-        ServerLevel level = levelOf(server, city);
-        if (level != null) {
-            BlockPos pos = BlockPos.of(city.bannerPos);
-            if (level.isLoaded(pos)) {
-                BlockState state = level.getBlockState(pos);
-                if (state.is(ModBlocks.CITY_BANNER.get())) level.removeBlock(pos, false);
-            }
-        }
+        removeBanner(server, city);
         onTeamDeleted(server, city.teamId); // no-op if the FTB event already handled it
+    }
+
+    /** Takes the city banner block away, loading its chunk if needed (a city that is gone leaves no banner behind). */
+    public static void removeBanner(MinecraftServer server, City city) {
+        ServerLevel level = levelOf(server, city);
+        if (level == null) return;
+        BlockPos pos = BlockPos.of(city.bannerPos);
+        level.getChunkAt(pos); // loads it
+        if (level.getBlockState(pos).is(ModBlocks.CITY_BANNER.get())) level.removeBlock(pos, false);
     }
 
     // ------------------------------------------------------------ FTB hooks
@@ -429,6 +439,7 @@ public final class CityService {
             com.valoris.data.DataVault.archiveCity(server, city, "removed");
             data.kingdomOfCity(teamId).ifPresent(k -> KingdomService.detachCity(server, data, k, city));
             data.remove(teamId);
+            removeBanner(server, city);
         });
     }
 

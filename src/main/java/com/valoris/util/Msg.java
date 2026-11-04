@@ -42,6 +42,12 @@ public final class Msg {
         server.getPlayerList().broadcastSystemMessage(c, false);
     }
 
+    /** News of the realms: to everyone in game and to the Discord news channel (discord.DiscordLink.announce). */
+    public static void news(MinecraftServer server, String emoji, String text, ChatFormatting color) {
+        broadcast(server, text(text, color));
+        com.valoris.discord.DiscordLink.announce(emoji, text);
+    }
+
     public static String nameOf(MinecraftServer server, UUID id) {
         ServerPlayer online = server.getPlayerList().getPlayer(id);
         if (online != null) return online.getGameProfile().getName();

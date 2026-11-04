@@ -61,6 +61,7 @@ public final class SiegeService {
         City city = data.cityByName(cityName).filter(c -> c.founded).orElseThrow(() -> Errors.of("No such city."));
         Realm defender = Realms.ofCity(data, city).orElseThrow(() -> Errors.of("No such city."));
         if (defender.id().equals(own.id())) throw Errors.of("You cannot besiege your own city.");
+        com.valoris.coup.CoupService.checkNoCoup(own.id(), own.title());
         if (data.relation(own.id(), defender.id()).filter(r -> r == Relation.WAR).isEmpty()) {
             throw Errors.of("You are not at war with the " + defender.title() + ".");
         }
@@ -87,11 +88,12 @@ public final class SiegeService {
         siege.endTick = siege.startTick + Config.SIEGE_DURATION_MINUTES.get() * TICKS_PER_MINUTE;
         siege.lastMark = closestMark(prep / 20);
         data.addSiege(siege);
+        com.valoris.coup.CoupService.siegeStarted(player.getServer(), data, own.id(), defender.id(), city.teamId);
 
-        Msg.broadcast(server, Msg.text("SIEGE! The " + own.title() + " will besiege the city of " + city.name
+        Msg.news(server, "🏰", "SIEGE! The " + own.title() + " will besiege the city of " + city.name
                 + " (" + defender.title() + ") in " + formatTime(prep / 20) + ". The siege will last "
                 + Config.SIEGE_DURATION_MINUTES.get() + " minutes. Other enemies of the " + defender.title()
-                + " may join it.", ChatFormatting.DARK_RED));
+                + " may join it.", ChatFormatting.DARK_RED);
         SiegeAnnouncer.declared(server, siege, own.title(), prep / 20);
         for (ValorisData.War w : warsOf(data, siege)) w.log("The " + own.title() + " began the siege of " + city.name + ".");
     }
@@ -131,8 +133,8 @@ public final class SiegeService {
         s.coAttackerNames.put(own.id(), own.name());
         data.touch();
         String leader = Realms.title(data, s.attackerKingdom, s.attackerName);
-        Msg.broadcast(server, Msg.text("The " + own.title() + " joins the siege of " + s.cityName + " led by the "
-                + leader + ".", ChatFormatting.DARK_RED));
+        Msg.news(server, "🏰", "The " + own.title() + " joins the siege of " + s.cityName + " led by the "
+                + leader + ".", ChatFormatting.DARK_RED);
         SiegeAnnouncer.joined(server, s, own, leader);
         for (ValorisData.War w : warsOf(data, s)) w.log("The " + own.title() + " joined the siege of " + s.cityName + ".");
         if (s.phase == SiegePhase.ACTIVE) {
@@ -268,8 +270,8 @@ public final class SiegeService {
         long duration = (s.endTick - s.startTick) / 20;
         s.lastMark = closestMark(duration);
         data.touch();
-        Msg.broadcast(server, Msg.text("The siege of " + s.cityName + " has begun! " + capital(attackersTitle(data, s))
-                + " must destroy the city banner within " + formatTime(duration) + ".", ChatFormatting.DARK_RED));
+        Msg.news(server, "🔥", "The siege of " + s.cityName + " has begun! " + capital(attackersTitle(data, s))
+                + " must destroy the city banner within " + formatTime(duration) + ".", ChatFormatting.DARK_RED);
         SiegeAnnouncer.began(server, s, duration);
         // the attackers learn where the banner stands
         net.minecraft.core.BlockPos banner = net.minecraft.core.BlockPos.of(city.get().bannerPos);
@@ -295,6 +297,42 @@ public final class SiegeService {
         return out;
     }
 
+    /** siege -> players downed by {attackers, defenders} (index 1, 2) during it; kept while the server runs */
+    private static final java.util.Map<java.util.UUID, int[]> KILLS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** A player of one side downed a player of the other side during the active phase (SiegeEvents.onDeath). */
+    public static void countKill(ServerPlayer killer, ServerPlayer victim) {
+        ValorisData data = ValorisData.get(killer.getServer());
+        for (Siege s : data.sieges()) {
+            if (s.phase != SiegePhase.ACTIVE || !isParticipant(killer, s) || !isParticipant(victim, s)) continue;
+            boolean atk = isAttacker(killer, s);
+            if (atk == isAttacker(victim, s)) continue;
+            KILLS.computeIfAbsent(s.id, k -> new int[3])[atk ? 1 : 2]++;
+        }
+    }
+
+    /** The result of a siege for the Discord news channel: how it ended, how long it took and the numbers. */
+    private static void summary(MinecraftServer server, ValorisData data, Siege s, String result) {
+        java.util.function.Function<String, String> p = com.valoris.discord.DiscordLink::plain;
+        int[] kills = KILLS.getOrDefault(s.id, new int[3]);
+        KILLS.remove(s.id);
+        long now = server.overworld().getGameTime();
+        long seconds = Math.max(0, (now - s.startTick) / 20);
+        java.util.List<String> attackers = new java.util.ArrayList<>();
+        for (java.util.UUID id : attackersOf(data, s)) {
+            attackers.add(Realms.title(data, id, id.equals(s.attackerKingdom) ? s.attackerName
+                    : s.coAttackerNames.getOrDefault(id, "?")));
+        }
+        String text = "📊 **The siege of " + p.apply(s.cityName) + " is over**\n"
+                + "Result: **" + p.apply(result) + "**\n"
+                + "Lasted: " + formatTime(seconds) + "\n"
+                + "City banner: " + s.bannerHits + " / " + Config.SIEGE_BANNER_HITS.get() + " hits\n\n"
+                + "**Attackers**: " + p.apply(String.join(", ", attackers)) + " · " + kills[1] + " enemies downed\n"
+                + "**Defenders**: " + p.apply(Realms.title(data, s.defenderKingdom, s.defenderName)) + " · "
+                + kills[2] + " enemies downed";
+        com.valoris.discord.DiscordLink.announceRaw(text);
+    }
+
     private static void captured(MinecraftServer server, ValorisData data, Siege s, City city) {
         for (ValorisData.War w : warsOf(data, s)) {
             w.citiesTaken[w.sideOf(s.defenderKingdom) == 1 ? 2 : 1]++;
@@ -306,9 +344,10 @@ public final class SiegeService {
         for (java.util.UUID realm : winners) leaderCity(data, realm).ifPresent(board::addSiegeWon);
         SiegeAnnouncer.removeBar(s.id);
         SiegeAnnouncer.captured(server, s, involved);
-        Msg.broadcast(server, Msg.text("VICTORY for " + attackersTitle(data, s) + "! The city banner of " + s.cityName
+        Msg.news(server, "🏆", "VICTORY for " + attackersTitle(data, s) + "! The city banner of " + s.cityName
                 + " has been destroyed and the city falls to the " + Realms.title(data, s.attackerKingdom, s.attackerName)
-                + ".", ChatFormatting.DARK_RED));
+                + ".", ChatFormatting.DARK_RED);
+        summary(server, data, s, "the attackers took the city");
         restoreProtections(data, s);
         data.removeSiege(s.id);
 
@@ -330,9 +369,10 @@ public final class SiegeService {
         leaderCity(data, s.defenderKingdom).ifPresent(com.valoris.data.LeaderboardData.get(server)::addSiegeRepelled);
         SiegeAnnouncer.removeBar(s.id);
         SiegeAnnouncer.defended(server, s);
-        Msg.broadcast(server, Msg.text("The siege of " + s.cityName + " has failed! The defenders of the "
+        Msg.news(server, "🛡️", "The siege of " + s.cityName + " has failed! The defenders of the "
                 + Realms.title(data, s.defenderKingdom, s.defenderName) + " hold the city against "
-                + attackersTitle(data, s) + ".", ChatFormatting.GREEN));
+                + attackersTitle(data, s) + ".", ChatFormatting.GREEN);
+        summary(server, data, s, "the defenders held the city");
         restoreProtections(data, s);
         data.removeSiege(s.id);
         data.setCooldown(s.cityTeam, now + Config.SIEGE_COOLDOWN_MINUTES.get() * TICKS_PER_MINUTE);
@@ -342,7 +382,8 @@ public final class SiegeService {
         for (ValorisData.War w : warsOf(data, s)) w.log(reason);
         SiegeAnnouncer.removeBar(s.id);
         SiegeAnnouncer.cancelled(server, s, reason);
-        Msg.broadcast(server, Msg.text(reason, ChatFormatting.YELLOW));
+        Msg.news(server, "🏳️", reason, ChatFormatting.YELLOW);
+        KILLS.remove(s.id);
         restoreProtections(data, s);
         data.removeSiege(s.id);
     }
@@ -446,6 +487,15 @@ public final class SiegeService {
             return true;
         }
         return Roles.cityOfMember(player).map(c -> c.teamId.equals(s.cityTeam)).orElse(false);
+    }
+
+    /** True if the player is on either side of a siege in its active phase. */
+    public static boolean inActiveSiege(ServerPlayer player) {
+        ValorisData data = ValorisData.get(player.getServer());
+        for (Siege s : data.sieges()) {
+            if (s.phase == SiegePhase.ACTIVE && isParticipant(player, s)) return true;
+        }
+        return false;
     }
 
     public static boolean isAttacker(ServerPlayer player, Siege s) {

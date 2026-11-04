@@ -24,7 +24,7 @@ import net.minecraft.world.item.Item;
  * charge does not lose damage to an attack bar that was not full (the collision fires on its own while riding).
  * Each era has its own multiplier, so that a full charge deals 8 damage (4 hearts) through a full set of armor of
  * the lance's own era: steel 8 x 1.95 = 15.6 against 20 armor / 6 toughness, iron 7 x 1.31 = 9.17 against 16 armor,
- * bronze 6 x 1.5 = 9.0 against 14 armor.
+ * bronze 6 x 1.5 = 9.0 against 14 armor. On top of that a hit from horseback pierces armor by era (compat.Lances).
  */
 @Mixin(targets = "com.magistuarmory.item.LanceItem")
 public abstract class LanceChargeMixin {
@@ -48,20 +48,14 @@ public abstract class LanceChargeMixin {
         cir.setReturnValue(result);
     }
 
-    /**
-     * The charge multiplier of the lance's era, by its material ("iron_chivalrylance" -> iron): up to the base damage
-     * of bronze the bronze age, up to iron the iron age, above it the steel age.
-     */
+    /** The charge multiplier of the lance's era (compat.Lances.era). */
     @Unique
     private static double valoris$eraBonus(Item item) {
-        String path = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item).getPath();
-        int split = path.indexOf('_');
-        var mats = WeaponBalance.materials();
-        Double mat = split > 0 ? mats.get(path.substring(0, split)) : null;
-        if (mat == null || path.startsWith("wood_")) mat = 0.0; // wood_ is not in the table: bronze age
-        if (mat <= mats.getOrDefault("bronze", 5.0)) return Config.LANCE_CHARGE_BONUS_BRONZE.get();
-        if (mat <= mats.getOrDefault("iron", 6.0)) return Config.LANCE_CHARGE_BONUS_IRON.get();
-        return Config.LANCE_CHARGE_BONUS.get();
+        return switch (com.valoris.compat.Lances.era(item)) {
+            case com.valoris.compat.Lances.BRONZE -> Config.LANCE_CHARGE_BONUS_BRONZE.get();
+            case com.valoris.compat.Lances.IRON -> Config.LANCE_CHARGE_BONUS_IRON.get();
+            default -> Config.LANCE_CHARGE_BONUS.get();
+        };
     }
 
     /** The charged hit: at least the era damage, plus the charge bonus. */

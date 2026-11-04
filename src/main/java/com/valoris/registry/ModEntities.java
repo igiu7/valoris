@@ -25,6 +25,14 @@ public final class ModEntities {
                     .clientTrackingRange(10)
                     .build("bear"));
 
+    /** A thrown fire pot (archery.FirePot). */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.valoris.archery.FirePot>> FIRE_POT = ENTITY_TYPES.register("fire_pot",
+            () -> EntityType.Builder.<com.valoris.archery.FirePot>of(com.valoris.archery.FirePot::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build("fire_pot"));
+
     public static void register(IEventBus bus) {
         ENTITY_TYPES.register(bus);
         bus.addListener((EntityAttributeCreationEvent e) -> e.put(BEAR.get(), Bear.createAttributes().build()));

@@ -100,7 +100,10 @@ public final class TechConfig {
                     o.has("x") ? o.get("x").getAsInt() : -1,
                     o.has("y") ? o.get("y").getAsInt() : -1,
                     strings(o, "features"),
-                    o.has("claimLimit") ? o.get("claimLimit").getAsInt() : 0));
+                    o.has("claimLimit") ? o.get("claimLimit").getAsInt() : 0,
+                    o.has("researchSpeedPercent") ? Math.max(0, Math.min(90, o.get("researchSpeedPercent").getAsInt())) : 0,
+                    o.has("cropGrowthPercent") ? Math.max(0, o.get("cropGrowthPercent").getAsInt()) : 0,
+                    o.has("wallResistancePercent") ? Math.max(0, o.get("wallResistancePercent").getAsInt()) : 0));
         }
         for (TechNode n : parsed.values()) {
             for (String r : n.requires()) {
@@ -142,7 +145,8 @@ public final class TechConfig {
             while (n.y() < 0 && used.contains(((long) col << 32) | row)) row++;
             used.add(((long) col << 32) | row);
             e.setValue(new TechNode(n.id(), n.name(), n.era(), n.icon(), n.description(), n.requires(), n.skills(),
-                    n.starting(), n.unlocks(), n.researchMinutes(), col, row, n.features(), n.claimLimit()));
+                    n.starting(), n.unlocks(), n.researchMinutes(), col, row, n.features(), n.claimLimit(),
+                    n.researchSpeedPercent(), n.cropGrowthPercent(), n.wallResistancePercent()));
         }
     }
 

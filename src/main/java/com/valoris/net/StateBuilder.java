@@ -90,7 +90,7 @@ public final class StateBuilder {
                 s.techs.add(new com.valoris.net.TechRow(node.id(), node.era(),
                         TechConfig.eraNames().getOrDefault(node.era(), node.era()), node.name(), node.icon(),
                         node.description(), node.x(), node.y(), node.requires(), req, node.features(),
-                        status.ordinal(), node.researchMinutes() * 60,
+                        status.ordinal(), TechService.researchSeconds(c, node),
                         status == TechService.Status.RESEARCHING ? TechService.remainingSeconds(c) : 0));
             }
         });

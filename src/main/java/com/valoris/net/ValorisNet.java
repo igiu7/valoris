@@ -39,6 +39,9 @@ public final class ValorisNet {
         registrar.playToServer(AnimalInfoRequestPayload.TYPE, AnimalInfoRequestPayload.CODEC, (payload, ctx) -> ctx.enqueueWork(() -> {
             if (ctx.player() instanceof ServerPlayer player) com.valoris.mobs.Breeding.sendInfo(player, payload.entityId());
         }));
+        registrar.playToServer(GateInfoRequestPayload.TYPE, GateInfoRequestPayload.CODEC, (payload, ctx) -> ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer player) com.valoris.gate.Gates.sendInfo(player, payload.pos());
+        }));
         registrar.playToServer(WagonInputPayload.TYPE, WagonInputPayload.CODEC, (payload, ctx) -> ctx.enqueueWork(() -> {
             var player = ctx.player();
             if (player.level().getEntity(payload.vehicle()) instanceof com.valoris.compat.WagonDrive wagon
@@ -46,6 +49,16 @@ public final class ValorisNet {
                 // only -1, 0 or 1 (a modified client could send NaN or huge values)
                 wagon.valoris$setInput(sign(payload.forward()), sign(payload.strafe()));
             }
+        }));
+        registrar.playToServer(TreatySavePayload.TYPE, TreatySavePayload.CODEC, (payload, ctx) -> ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer player) com.valoris.treaty.TreatyService.save(player,
+                    payload.offhand() ? net.minecraft.world.InteractionHand.OFF_HAND : net.minecraft.world.InteractionHand.MAIN_HAND,
+                    payload.title(), payload.content());
+        }));
+        registrar.playToServer(TreatySignPayload.TYPE, TreatySignPayload.CODEC, (payload, ctx) -> ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer player) com.valoris.treaty.TreatyService.sign(player,
+                    payload.offhand() ? net.minecraft.world.InteractionHand.OFF_HAND : net.minecraft.world.InteractionHand.MAIN_HAND,
+                    payload.slot(), payload.strokes());
         }));
         if (FMLEnvironment.dist.isClient()) {
             registrar.playToClient(AnimalInfoPayload.TYPE, AnimalInfoPayload.CODEC, ClientHandlers::onAnimalInfo);
@@ -69,7 +82,16 @@ public final class ValorisNet {
                     (payload, ctx) -> ctx.enqueueWork(com.valoris.client.GunReloadClient::interrupted));
             registrar.playToClient(NameColorsPayload.TYPE, NameColorsPayload.CODEC,
                     (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.NameColorsClient.receive(payload.colors(), payload.realms())));
+            registrar.playToClient(CoupPayload.TYPE, CoupPayload.CODEC,
+                    (payload, ctx) -> ctx.enqueueWork(() -> new com.valoris.client.gui.CoupScreen(payload).openGui()));
+            registrar.playToClient(GateInfoPayload.TYPE, GateInfoPayload.CODEC,
+                    (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.GateHud.receive(payload)));
+            registrar.playToClient(PresencePayload.TYPE, PresencePayload.CODEC,
+                    (payload, ctx) -> com.valoris.client.RichPresence.receive(payload));
         } else {
+            registrar.playToClient(CoupPayload.TYPE, CoupPayload.CODEC, (payload, ctx) -> {});
+            registrar.playToClient(GateInfoPayload.TYPE, GateInfoPayload.CODEC, (payload, ctx) -> {});
+            registrar.playToClient(PresencePayload.TYPE, PresencePayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(ClimatePayload.TYPE, ClimatePayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(ReloadInterruptPayload.TYPE, ReloadInterruptPayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(NameColorsPayload.TYPE, NameColorsPayload.CODEC, (payload, ctx) -> {});

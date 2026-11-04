@@ -13,7 +13,7 @@
     "removeAllRecipesFrom: like removeRecipesFrom, but keepRecipes does not apply (ingots go too);",
     "keepRecipeIds: recipes whose id starts with one of these are always kept."
   ],
-  "version": 16,
+  "version": 20,
   "armorBalance": {
     "_comment": "Every armor piece of an era gets these values, whatever mod it comes from.",
     "bronze": {
@@ -27,7 +27,7 @@
     },
     "iron": {
       "helmet": 3,
-      "chestplate": 6,
+      "chestplate": 7,
       "leggings": 5,
       "boots": 2,
       "toughness": 0,
@@ -14989,6 +14989,30 @@
       ]
     },
     {
+      "id": "fire_pot",
+      "category": "siege",
+      "era": "bronze",
+      "tech": "bronze_siege",
+      "result": {
+        "id": "valoris2:fire_pot",
+        "count": 1
+      },
+      "cost": [
+        {
+          "item": "minecraft:brick",
+          "count": 8
+        },
+        {
+          "item": "minecraft:coal_block",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 2
+        }
+      ]
+    },
+    {
       "id": "trebuchet",
       "category": "siege",
       "era": "iron",
@@ -21961,121 +21985,6 @@
         {
           "item": "valoris2:japanese_fabric",
           "count": 3
-        },
-        {
-          "item": "valoris2:fur",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "id": "japanese_oni_mask",
-      "category": "armor",
-      "era": "iron",
-      "tech": "iron_armor",
-      "result": {
-        "id": "valoris2:oni_mask"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 5
-        },
-        {
-          "tag": "c:leathers",
-          "count": 2
-        },
-        {
-          "item": "valoris2:fur",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "id": "japanese_hannya_mask",
-      "category": "armor",
-      "era": "iron",
-      "tech": "iron_armor",
-      "result": {
-        "id": "valoris2:hannya_mask"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 5
-        },
-        {
-          "item": "minecraft:coal",
-          "count": 2
-        },
-        {
-          "item": "valoris2:fur",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "id": "japanese_hyottoko_mask",
-      "category": "armor",
-      "era": "iron",
-      "tech": "iron_armor",
-      "result": {
-        "id": "valoris2:hyottoko_mask"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 5
-        },
-        {
-          "item": "minecraft:clay_ball",
-          "count": 2
-        },
-        {
-          "item": "valoris2:fur",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "id": "japanese_tengu_mask",
-      "category": "armor",
-      "era": "iron",
-      "tech": "iron_armor",
-      "result": {
-        "id": "valoris2:tengu_mask"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 5
-        },
-        {
-          "item": "minecraft:feather",
-          "count": 3
-        },
-        {
-          "item": "valoris2:fur",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "id": "japanese_kitsune_mask",
-      "category": "armor",
-      "era": "iron",
-      "tech": "iron_armor",
-      "result": {
-        "id": "valoris2:kitsune_mask"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 5
-        },
-        {
-          "item": "valoris2:japanese_fabric",
-          "count": 2
         },
         {
           "item": "valoris2:fur",

@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -24,7 +25,8 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 
 /**
  * Chunk generator "valoris2:map": the normal noise generator (terrain, caves, aquifers, ores, trees and plants)
- * with no structures at all - no villages, temples, mineshafts, strongholds and so on.
+ * with no structures at all - no villages, temples, mineshafts, strongholds and so on. Rivers and lakes below sea
+ * level are filled with water up to the sea (the aquifers alone left dry stretches in the shallow river beds).
  */
 public final class MapChunkGenerator extends NoiseBasedChunkGenerator {
     public static final MapCodec<MapChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -39,6 +41,35 @@ public final class MapChunkGenerator extends NoiseBasedChunkGenerator {
     @Override
     protected MapCodec<? extends ChunkGenerator> codec() {
         return CODEC;
+    }
+
+    /**
+     * Before the surface rules (which then see the water and lay sand and gravel on the bed): every column whose map
+     * height is under the sea gets water from the sea level down to its ground. Only open air is filled, and not
+     * deeper than a little under the map height, so caves under a river are not flooded.
+     */
+    @Override
+    public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random, ChunkAccess chunk) {
+        ChunkPos cp = chunk.getPos();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        BlockState water = Blocks.WATER.defaultBlockState();
+        int sea = MapDesign.SEA_LEVEL;
+        for (int x = cp.getMinBlockX(); x <= cp.getMaxBlockX(); x++) {
+            for (int z = cp.getMinBlockZ(); z <= cp.getMaxBlockZ(); z++) {
+                int h = MapDesign.height(x, z);
+                if (h >= sea) continue;
+                for (int y = sea - 1; y >= Math.max(h - 2, chunk.getMinBuildHeight()); y--) {
+                    pos.set(x, y, z);
+                    BlockState state = chunk.getBlockState(pos);
+                    if (!state.isAir()) {
+                        if (state.getFluidState().isEmpty()) break; // the ground (water already there: go on)
+                        continue;
+                    }
+                    chunk.setBlockState(pos, water, false);
+                }
+            }
+        }
+        super.buildSurface(level, structureManager, random, chunk);
     }
 
     /**

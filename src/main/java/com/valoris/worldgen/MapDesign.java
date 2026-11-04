@@ -179,31 +179,37 @@ public final class MapDesign {
             new Blob(2, -1550, -900, 260, 330, 15),
             new Blob(2, -1600, -400, 150, 260, 0),
             new Blob(2, 100, -1650, 260, 110, -10),
-            // warm: one wide, massive horseshoe in the south-east, open to the south around a big gulf
-            new Blob(1, 1000, 1100, 620, 430, -10),
-            new Blob(1, 1430, 640, 320, 290, 0),
-            new Blob(1, 480, 1330, 320, 280, 15),
-            new Blob(1, 1380, 1520, 300, 220, 0),
-            new Blob(1, 560, 1650, 220, 150, -10),
+            // warm: a ragged horseshoe in the south-east around a big gulf, with lobes of different sizes, a long
+            // cape to the south-west, an arm to the north-east and smaller capes on its east coast
+            new Blob(1, 980, 1120, 560, 360, -25),
+            new Blob(1, 1420, 680, 300, 230, 20),
+            new Blob(1, 520, 1300, 300, 230, 30),
+            new Blob(1, 1400, 1480, 270, 190, -15),
+            new Blob(1, 600, 1640, 210, 120, -20),
+            new Blob(1, 350, 1610, 200, 72, 35),
+            new Blob(1, 1610, 380, 230, 85, -55),
+            new Blob(1, 1720, 1060, 170, 65, 15),
+            new Blob(1, 1300, 1680, 180, 75, -25),
+            new Blob(1, 760, 820, 170, 95, -40),
             // north-east archipelago
             new Blob(3, 1100, -1550, 200, 140, 20),
             new Blob(3, 1250, -1480, 110, 60, -30),
             new Blob(4, 1600, -1300, 150, 120, 0),
-            new Blob(5, 700, -1150, 120, 90, -20),
+            new Blob(5, 610, -1235, 115, 85, -20),
             new Blob(6, 1350, -850, 180, 120, 30),
-            new Blob(7, 980, -760, 120, 100, 0),
+            new Blob(7, 960, -1010, 100, 85, 0),
             new Blob(8, 1050, -250, 170, 120, 10),
             new Blob(8, 1180, -180, 90, 45, -25),
-            new Blob(9, 650, 250, 150, 110, 0),
-            new Blob(10, 1700, -650, 110, 80, 0),
+            new Blob(9, 760, 270, 150, 110, 0),
+            new Blob(10, 1780, -560, 110, 80, 0),
             // west and south-west
-            new Blob(11, -1640, 700, 170, 120, 0),
+            new Blob(11, -1730, 760, 165, 115, 0),
             // the big desert island along the south coast, and a jungle island west of it
             new Blob(12, -550, 1590, 480, 220, 5),
             new Blob(12, -980, 1470, 230, 150, 20),
             new Blob(12, -180, 1520, 180, 120, -25),
-            new Blob(13, -1400, 1220, 200, 150, 10),
-            new Blob(14, -140, 980, 120, 100, 0),
+            new Blob(13, -1560, 1200, 190, 140, 10),
+            new Blob(14, -100, 1195, 95, 80, 0),
     };
 
     /** How strongly lobes melt together: lower = rounder joints. */
@@ -216,6 +222,8 @@ public final class MapDesign {
             new Blob(0, -591, 627, 160, 125, 0),
             new Blob(2, -800, -1130, 160, 110, 0),
             new Blob(1, 960, 1700, 230, 260, 0),
+            new Blob(1, 1660, 860, 120, 90, 0),
+            new Blob(1, 1050, 700, 140, 90, 20),
             new Blob(12, -620, 1640, 110, 70, 0),
     };
 
