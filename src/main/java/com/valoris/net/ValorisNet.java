@@ -86,11 +86,14 @@ public final class ValorisNet {
                     (payload, ctx) -> ctx.enqueueWork(() -> new com.valoris.client.gui.CoupScreen(payload).openGui()));
             registrar.playToClient(GateInfoPayload.TYPE, GateInfoPayload.CODEC,
                     (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.GateHud.receive(payload)));
+            registrar.playToClient(HandcuffProgressPayload.TYPE, HandcuffProgressPayload.CODEC,
+                    (payload, ctx) -> ctx.enqueueWork(() -> com.valoris.client.HandcuffHud.receive(payload)));
             registrar.playToClient(PresencePayload.TYPE, PresencePayload.CODEC,
                     (payload, ctx) -> com.valoris.client.RichPresence.receive(payload));
         } else {
             registrar.playToClient(CoupPayload.TYPE, CoupPayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(GateInfoPayload.TYPE, GateInfoPayload.CODEC, (payload, ctx) -> {});
+            registrar.playToClient(HandcuffProgressPayload.TYPE, HandcuffProgressPayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(PresencePayload.TYPE, PresencePayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(ClimatePayload.TYPE, ClimatePayload.CODEC, (payload, ctx) -> {});
             registrar.playToClient(ReloadInterruptPayload.TYPE, ReloadInterruptPayload.CODEC, (payload, ctx) -> {});

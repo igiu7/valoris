@@ -42,11 +42,12 @@ displayName="${mod_name}" #mandatory
 credits="Japanese armor and weapons: a port of Epic Knights : Japanese Armory by chivas477 (Academic Free License 3.0)"
 
 # The authors of the mod, displayed in the mod UI (optional)
-#authors=""
+authors="igiu7"
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Example mod description.
+A medieval nation-building mod for multiplayer servers: found cities, unite them into kingdoms, research from the
+Bronze Age to gunpowder and conquer your rivals in sieges. Everything is managed from one menu (key K).
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.

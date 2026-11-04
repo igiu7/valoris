@@ -26,7 +26,7 @@
     "version: when the built-in file has a higher version, this file is replaced (old copy kept as .bak).",
     "  Axes ('<material>_axe', type \"axe\") deal less than the weapons of their material."
   ],
-  "version": 13,
+  "version": 14,
   "eraNames": {
     "bronze": "Bronze Age",
     "iron": "Iron Age",
@@ -151,7 +151,7 @@
         "blacksmith": 1,
         "miner": 3
       },
-      "researchMinutes": 90,
+      "researchMinutes": 270,
       "features": [
         "Bronze armor: 14 armor points for a full set",
         "Saddle and leather horse armor",
@@ -222,7 +222,7 @@
         "blacksmith": 1,
         "hunter": 3
       },
-      "researchMinutes": 60,
+      "researchMinutes": 180,
       "features": [
         "Scuta, hoplons, peltae, tureos and bronze shields"
       ],
@@ -253,7 +253,7 @@
         "miner": 3,
         "farmer": 3
       },
-      "researchMinutes": 120,
+      "researchMinutes": 390,
       "features": [
         "Catapult, ballista, siege ladder and battering ram",
         "Giant arrows for the ballista",

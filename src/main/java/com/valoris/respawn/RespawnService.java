@@ -72,8 +72,10 @@ public final class RespawnService {
     /**
      * A player joining for the very first time (no play time yet) chooses where to begin, like after a death.
      * Someone who left before choosing gets the choice again; players who played before this existed never see it.
+     * Lowest priority: after auth.Auth, so a player who still has to log in (or confirm Discord) is shown the choice
+     * only once that is done (afterAuth).
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || !Config.RESPAWN_CHOICE.get()) return;
         net.minecraft.nbt.CompoundTag tag = persisted(player);
@@ -85,7 +87,12 @@ public final class RespawnService {
         }
         tag.putBoolean(START_PENDING, true);
         STARTING.add(player.getUUID());
-        sendOptions(player);
+        if (com.valoris.auth.Auth.isLoggedIn(player)) sendOptions(player);
+    }
+
+    /** The player has just logged in (password and Discord): now they choose where to begin, if they still have to. */
+    public static void afterAuth(ServerPlayer player) {
+        if (STARTING.contains(player.getUUID())) sendOptions(player);
     }
 
     /** Nothing can hurt a player who is still choosing where to begin. */

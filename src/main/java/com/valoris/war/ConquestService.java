@@ -35,8 +35,9 @@ import net.minecraft.server.level.ServerPlayer;
  * What happens after a city fell: a conquering king appoints a new ruler (a resident of the city or one of his
  * own) or forces the city to submit with its current ruler - both add the city to his kingdom; or he leaves the
  * city alone (it is free again). A conquered city is never destroyed: the winners loot it instead (see Looting).
- * The ruler of an independent city has no kingdom to add it to, so he can only leave it alone. A fallen capital has already ended its kingdom
- * (SiegeService.captured): its other cities are free, and its king may go on ruling it under the conqueror.
+ * The ruler of an independent city has no kingdom to add it to, so he can only leave it alone. A fallen capital has already left its kingdom
+ * (SiegeService.captured, KingdomService.cityConquered): the crown passed to the ruler of another of its cities (or,
+ * if it was the last one, the kingdom ended), and its old king may go on ruling it under the conqueror.
  */
 public final class ConquestService {
     private ConquestService() {}

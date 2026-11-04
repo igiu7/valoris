@@ -354,8 +354,8 @@ public final class SiegeService {
         Conquest conquest = new Conquest(city.teamId, s.attackerKingdom, city.name, s.attackerName);
         conquest.decideBy = server.overworld().getGameTime() + Config.CONQUEST_DECISION_MINUTES.get() * TICKS_PER_MINUTE;
         data.addConquest(conquest);
-        // the city leaves its old kingdom (if it was the capital, that kingdom falls)
-        data.kingdomById(s.defenderKingdom).ifPresent(k -> KingdomService.detachCity(server, data, k, city));
+        // the city leaves its old kingdom (a fallen capital passes the crown on; the last city ends the kingdom)
+        data.kingdomById(s.defenderKingdom).ifPresent(k -> KingdomService.cityConquered(server, data, k, city));
         // everyone who won the siege takes part if the conqueror chooses to loot the city
         Looting.rememberWinners(city.teamId, winners);
         ConquestService.openMenu(server, data, conquest, "");

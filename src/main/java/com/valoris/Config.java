@@ -60,6 +60,10 @@ public class Config {
     public static final ModConfigSpec.IntValue SIEGE_PLACE_SECONDS_DEFENDERS = BUILDER
             .comment("The same for the defenders of the besieged city (siegeBlockPlaceSeconds is then for the attackers)")
             .defineInRange("siegeBlockPlaceSecondsDefenders", 5, 0, 3600);
+    public static final ModConfigSpec.IntValue SIEGE_HANDCUFF_SECONDS = BUILDER
+            .comment("During an active siege, handcuffing a downed player takes this many seconds: the captor has to stay",
+                    "next to him with the handcuffs in hand (a bar shows the progress). Reviving him stops it")
+            .defineInRange("siegeHandcuffSeconds", 30, 1, 600);
 
     public static final ModConfigSpec.IntValue LOOTING_MINUTES = BUILDER
             .comment("Looting time, one of the choices after a won siege: the winning side may do anything on the fallen city's land (break,",

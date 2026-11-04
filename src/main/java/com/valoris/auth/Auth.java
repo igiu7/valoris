@@ -230,6 +230,7 @@ public final class Auth {
         p.connection.send(new ClientboundSetTitleTextPacket(Component.empty()));
         p.connection.send(new ClientboundSetSubtitleTextPacket(Component.empty()));
         Accounts.touch(p.getGameProfile().getName(), ip(p), 0);
+        com.valoris.respawn.RespawnService.afterAuth(p); // the start choice waits for the login
     }
 
     @SubscribeEvent

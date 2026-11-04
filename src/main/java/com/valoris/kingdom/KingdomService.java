@@ -376,6 +376,39 @@ public final class KingdomService {
         }
     }
 
+    /**
+     * A city of the kingdom was conquered in a siege and leaves it. A fallen capital does not end the kingdom while
+     * it has other cities: the ruler of a random one of them takes the crown and that city becomes the capital.
+     * Only the fall of its last city ends the kingdom.
+     */
+    public static void cityConquered(MinecraftServer server, ValorisData data, Kingdom k, City city) {
+        if (!k.capital.equals(city.teamId)) {
+            detachCity(server, data, k, city);
+            return;
+        }
+        java.util.List<City> heirs = new java.util.ArrayList<>();
+        for (UUID id : k.cities) {
+            if (id.equals(city.teamId)) continue;
+            data.byTeam(id).filter(c -> c.founded && c.ruler != null).ifPresent(heirs::add);
+        }
+        if (heirs.isEmpty()) {
+            detachCity(server, data, k, city);
+            return;
+        }
+        City heir = heirs.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(heirs.size()));
+        com.valoris.tech.TechService.moveResearch(data, city, heir);
+        k.capital = heir.teamId;
+        k.cities.remove(city.teamId);
+        data.copyTruces(k.id, city.teamId);
+        data.touch();
+        com.valoris.city.ClaimLimitHook.syncLimits(server, city);
+        com.valoris.city.ClaimLimitHook.syncLimits(server, heir);
+        String heirName = server.getProfileCache() == null ? "?" : server.getProfileCache().get(heir.ruler)
+                .map(com.mojang.authlib.GameProfile::getName).orElse("?");
+        Msg.news(server, "👑", "The capital " + city.name + " has fallen, but the " + k.title() + " endures: "
+                + heirName + " of " + heir.name + " is its new " + k.rulerTitle + ".", ChatFormatting.GOLD);
+    }
+
     // ------------------------------------------------------------ info
 
     public static void info(ServerPlayer player, Kingdom k) {

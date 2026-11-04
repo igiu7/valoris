@@ -457,6 +457,11 @@ public final class HubScreen extends ValorisFrame {
             tile(p, cw, "Disband city", "Removes the city and its team for good", Icons.BIN).accent(Ui.RED)
                     .click(() -> confirm("Disband " + s.cityName + "?", "The city, its claims and its team are removed. "
                             + "This cannot be undone.", Ui.RED, () -> cmd("valoris city disband")));
+        } else if (s.capital) {
+            section(p, cw, "Danger zone");
+            tile(p, cw, "Disband city", "Your city is the capital: disband the kingdom first", Icons.BIN).disabled()
+                    .tip("A capital cannot be disbanded while its kingdom exists.",
+                            "Disband the kingdom (Kingdom tab) or pass the crown first.");
         }
     }
 
