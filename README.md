@@ -65,3 +65,7 @@ The menu (**K**) covers everything for players. Useful extras:
 ## Credits
 
 Japanese armor and weapons are a port of *Epic Knights: Japanese Armory* by chivas477 (Academic Free License 3.0).
+
+## Warning!
+
+There are many bugs and exploits still in the mod.
