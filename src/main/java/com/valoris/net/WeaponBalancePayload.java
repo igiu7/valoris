@@ -10,9 +10,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
-/** Server -> client: the era weapon damage table, so tooltips match the damage the server applies. */
+/** Server -> client: the era weapon damage table and the blocking changes, so tooltips match the damage the server applies. */
 public record WeaponBalancePayload(double referenceBase, Map<String, Double> materials, Map<String, Double> types,
-                                   Map<String, String> itemMaterials)
+                                   Map<String, String> itemMaterials, Map<String, Double> maxBlockDamage,
+                                   Map<String, Double> weight)
         implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<WeaponBalancePayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(valoris2.MODID, "weapon_balance"));
@@ -42,6 +43,8 @@ public record WeaponBalancePayload(double referenceBase, Map<String, Double> mat
                     buf.writeUtf(k);
                     buf.writeUtf(v);
                 });
+                writeMap(buf, p.maxBlockDamage());
+                writeMap(buf, p.weight());
             },
             buf -> {
                 double ref = buf.readDouble();
@@ -50,7 +53,7 @@ public record WeaponBalancePayload(double referenceBase, Map<String, Double> mat
                 int n = buf.readVarInt();
                 Map<String, String> perItem = new HashMap<>();
                 for (int i = 0; i < n; i++) perItem.put(buf.readUtf(), buf.readUtf());
-                return new WeaponBalancePayload(ref, mats, types, perItem);
+                return new WeaponBalancePayload(ref, mats, types, perItem, readMap(buf), readMap(buf));
             });
 
     @Override

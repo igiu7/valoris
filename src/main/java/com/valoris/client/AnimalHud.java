@@ -33,9 +33,9 @@ public final class AnimalHud {
 
     private static Animal target() {
         Minecraft mc = Minecraft.getInstance();
-        // wolves do not breed, so they get no label
+        // only vanilla animals that can be bred and are not dangerous get a label (see Breeding.showsInfo)
         if (mc.hitResult instanceof EntityHitResult hit && hit.getEntity() instanceof Animal a
-                && !(a instanceof net.minecraft.world.entity.animal.Wolf)) return a;
+                && com.valoris.mobs.Breeding.showsInfo(a)) return a;
         return null;
     }
 

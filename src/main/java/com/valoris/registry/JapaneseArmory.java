@@ -171,11 +171,9 @@ public final class JapaneseArmory {
     static {
         eraWeapon("katana", 300, 7.5, 1.4, 0);
         eraWeapon("wakizashi", 300, 6.5, 1.5, 0);
-        eraWeapon("kunai", 200, 4.0, 2.0, 0);
         eraWeapon("kama", 200, 5.0, 1.9, 0);
         eraWeapon("sai", 200, 5.0, 2.0, 0);
         eraWeapon("jutte", 200, 5.1, 1.8, 0);
-        eraWeapon("shuriken", 150, 4.5, 2.0, 0);
         eraWeapon("naginata", 400, 10.0, 0.8, 1.0);
         eraWeapon("yari", 400, 9.3, 0.9, 1.0);
         eraWeapon("sasumata", 400, 9.0, 0.8, 1.0);

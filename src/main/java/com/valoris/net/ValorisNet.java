@@ -133,7 +133,9 @@ public final class ValorisNet {
                 com.valoris.tech.WeaponBalance.referenceBase(),
                 com.valoris.tech.WeaponBalance.materials(),
                 com.valoris.tech.WeaponBalance.types(),
-                com.valoris.tech.WeaponBalance.itemMaterials()));
+                com.valoris.tech.WeaponBalance.itemMaterials(),
+                com.valoris.tech.WeaponBalance.maxBlockDamage(),
+                com.valoris.tech.WeaponBalance.weight()));
     }
 
     public static void sendConquest(ServerPlayer player, ConquestPayload payload) {

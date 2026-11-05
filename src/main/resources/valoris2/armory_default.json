@@ -13,7 +13,7 @@
     "removeAllRecipesFrom: like removeRecipesFrom, but keepRecipes does not apply (ingots go too);",
     "keepRecipeIds: recipes whose id starts with one of these are always kept."
   ],
-  "version": 20,
+  "version": 21,
   "armorBalance": {
     "_comment": "Every armor piece of an era gets these values, whatever mod it comes from.",
     "bronze": {
@@ -20940,63 +20940,6 @@
       ]
     },
     {
-      "id": "japanese_bronze_kunai",
-      "category": "weapons",
-      "era": "bronze",
-      "tech": "bronze_weapons",
-      "result": {
-        "id": "valoris2:bronze_kunai"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/bronze",
-          "count": 1
-        },
-        {
-          "item": "valoris2:japanese_hilt",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "id": "japanese_iron_kunai",
-      "category": "weapons",
-      "era": "iron",
-      "tech": "iron_weapons",
-      "result": {
-        "id": "valoris2:iron_kunai"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 2
-        },
-        {
-          "item": "valoris2:japanese_hilt",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "id": "japanese_steel_kunai",
-      "category": "weapons",
-      "era": "steel",
-      "tech": "steel_weapons",
-      "result": {
-        "id": "valoris2:steel_kunai"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/steel",
-          "count": 2
-        },
-        {
-          "item": "valoris2:japanese_hilt",
-          "count": 1
-        }
-      ]
-    },
-    {
       "id": "japanese_bronze_kama",
       "category": "weapons",
       "era": "bronze",
@@ -21164,51 +21107,6 @@
         {
           "item": "valoris2:japanese_hilt",
           "count": 1
-        }
-      ]
-    },
-    {
-      "id": "japanese_bronze_shuriken",
-      "category": "weapons",
-      "era": "bronze",
-      "tech": "bronze_weapons",
-      "result": {
-        "id": "valoris2:bronze_shuriken"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/bronze",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "id": "japanese_iron_shuriken",
-      "category": "weapons",
-      "era": "iron",
-      "tech": "iron_weapons",
-      "result": {
-        "id": "valoris2:iron_shuriken"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/iron",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "id": "japanese_steel_shuriken",
-      "category": "weapons",
-      "era": "steel",
-      "tech": "steel_weapons",
-      "result": {
-        "id": "valoris2:steel_shuriken"
-      },
-      "cost": [
-        {
-          "tag": "c:ingots/steel",
-          "count": 2
         }
       ]
     },

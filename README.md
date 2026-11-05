@@ -2,6 +2,8 @@
 
 **A medieval nation-building mod for multiplayer servers.** Found cities, unite them into kingdoms, research your way from the Bronze Age to gunpowder and take your rivals' cities by siege.
 
+> **Private mod.** Valoris is made for the Valoris server and its private modpack only. It is not published publicly and may not be redistributed.
+
 ## What's inside
 
 - **Cities and kingdoms** - claim land around a City Banner, invite residents, unite cities under a king.

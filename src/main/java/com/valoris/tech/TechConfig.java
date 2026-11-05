@@ -122,6 +122,15 @@ public final class TechConfig {
                 wb.getAsJsonObject("itemMaterials").entrySet().forEach(e -> perItem.put(e.getKey(), e.getValue().getAsString()));
             }
             WeaponBalance.set(wb.has("referenceBase") ? wb.get("referenceBase").getAsDouble() : 3.5, mats, types, perItem);
+            Map<String, Double> block = new HashMap<>();
+            Map<String, Double> weight = new HashMap<>();
+            if (wb.has("maxBlockDamage")) {
+                wb.getAsJsonObject("maxBlockDamage").entrySet().forEach(e -> block.put(e.getKey(), e.getValue().getAsDouble()));
+            }
+            if (wb.has("weight")) {
+                wb.getAsJsonObject("weight").entrySet().forEach(e -> weight.put(e.getKey(), e.getValue().getAsDouble()));
+            }
+            WeaponBalance.setBlocking(block, weight);
         }
 
         autoLayout(parsed);

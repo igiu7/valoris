@@ -21,7 +21,10 @@ public final class ClientHandlers {
     }
 
     public static void onWeaponBalance(WeaponBalancePayload payload, IPayloadContext ctx) {
-        ctx.enqueueWork(() -> WeaponBalance.set(payload.referenceBase(), payload.materials(), payload.types(), payload.itemMaterials()));
+        ctx.enqueueWork(() -> {
+            WeaponBalance.set(payload.referenceBase(), payload.materials(), payload.types(), payload.itemMaterials());
+            WeaponBalance.setBlocking(payload.maxBlockDamage(), payload.weight());
+        });
     }
 
     public static void onArmoryCatalog(ArmoryCatalogPayload payload, IPayloadContext ctx) {

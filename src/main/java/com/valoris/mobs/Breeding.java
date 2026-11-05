@@ -118,10 +118,20 @@ public final class Breeding {
                 + AnimalInfoPayload.time(left / 20)).withStyle(ChatFormatting.GOLD), true);
     }
 
+    /**
+     * Animals that get the breeding label: vanilla ones that can be bred and are not dangerous. Other mods' entities
+     * (siege machines, bears) are left out, so are wolves (they never breed), polar bears and hoglins.
+     */
+    public static boolean showsInfo(Entity e) {
+        return e instanceof Animal && !(e instanceof Wolf) && !(e instanceof net.minecraft.world.entity.animal.PolarBear)
+                && !(e instanceof net.minecraft.world.entity.monster.Enemy)
+                && net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getNamespace().equals("minecraft");
+    }
+
     /** Answer to a client looking at an animal. */
     public static void sendInfo(ServerPlayer player, int entityId) {
         Entity e = player.level().getEntity(entityId);
-        if (!(e instanceof Animal animal) || animal instanceof Wolf || animal.distanceToSqr(player) > 12 * 12) return;
+        if (!showsInfo(e) || !(e instanceof Animal animal) || animal.distanceToSqr(player) > 12 * 12) return;
         int state;
         long seconds = 0;
         if (animal.isBaby()) {
