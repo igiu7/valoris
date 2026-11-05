@@ -44,6 +44,7 @@ public final class RichPresence {
 
     private static final Path CACHE = FMLPaths.CONFIGDIR.get().resolve("valoris2-presence.txt");
     private static final long MIN_GAP_MS = 5_000; // Discord takes 5 updates in 20 s
+    private static final long REFRESH_MS = 15_000;
 
     private static volatile String appId, image = "";
     private static volatile JsonObject wanted;
@@ -171,7 +172,9 @@ public final class RichPresence {
                 }
                 long v = version;
                 long now = System.currentTimeMillis();
-                if (v != sentVersion && now - lastSend >= MIN_GAP_MS) {
+                // sent again now and then even when nothing changed, so that ours is the activity updated last and
+                // not the one of a launcher (CurseForge) that keeps updating its own
+                if ((v != sentVersion && now - lastSend >= MIN_GAP_MS) || now - lastSend >= REFRESH_MS) {
                     JsonObject args = new JsonObject();
                     args.addProperty("pid", ProcessHandle.current().pid());
                     args.add("activity", wanted);
