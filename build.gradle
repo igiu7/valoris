@@ -152,7 +152,7 @@ idea {
 // ---------------------------------------------------------------
 def deployDirs = [
         "C:/Users/igiga/Documents/serwer/mods",
-        "C:/Users/igiga/curseforge/minecraft/Instances/valoris 2/mods"
+        "C:/Users/igiga/AppData/Roaming/ModrinthApp/profiles/valoris 2/mods"
 ]
 
 tasks.register('deployJar') {

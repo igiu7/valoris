@@ -48,6 +48,13 @@ public class Config {
     public static final ModConfigSpec.IntValue GATE_AUTO_CLOSE_SECONDS = BUILDER
             .comment("Portcullis gates close by themselves this many seconds after they were opened (0 = never)")
             .defineInRange("gateAutoCloseSeconds", 15, 0, 3600);
+    public static final ModConfigSpec.IntValue RAM_DURABILITY = BUILDER
+            .comment("Siege Machines: health of a battering ram (replaces the durability of siege-machines-specs.toml)")
+            .defineInRange("ramDurability", 250, 1, 100000);
+    public static final ModConfigSpec.IntValue RAM_HOLE = BUILDER
+            .comment("Siege Machines: a battering ram's hit breaks a hole this many blocks wide and high (one block deep) in the",
+                    "wall it strikes, wherever blocks can be blown up there")
+            .defineInRange("ramHoleSize", 3, 1, 7);
 
     public static final ModConfigSpec.IntValue SIEGE_COOLDOWN_MINUTES = BUILDER
             .comment("After a city survives a siege it cannot be besieged again for this long")
@@ -286,7 +293,7 @@ public class Config {
             .defineInRange("mobs.babyGrowMinutes", 120, 1, 100000);
 
     public static final ModConfigSpec.BooleanValue BAN_BONE_MEAL = BUILDER
-            .comment("Bone meal does nothing, cannot be crafted, picked up or kept in survival")
+            .comment("Bone meal does not grow crops, berry bushes, cocoa or tree saplings (grass, flowers and the like still work)")
             .define("food.banBoneMeal", true);
     public static final ModConfigSpec.BooleanValue EGGS_NO_CHICKS = BUILDER
             .comment("Thrown eggs never hatch chicks")

@@ -14,10 +14,11 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Fortified Masonry (tech wallResistancePercent): on the land of a realm knowing it, the walls - every stone block:
- * stone, cobblestone, bricks, deepslate, sandstone, basalt, blackstone, quartz, prismarine... and Create's stones
- * (asurine, crimsite, limestone, ochrum, scorchia, scoria, veridium) with all their cut, polished, brick and pillar
- * forms - resist the blasts of siege machines that much more (compatmixin.SiegeExplosionMixin).
+ * Fortified Masonry (tech wallResistancePercent): on the land of a realm knowing it, that percentage of the walls a
+ * siege machine's blast would destroy stays standing - each wall block survives with that chance. Walls are every
+ * stone block: stone, cobblestone, bricks, deepslate, sandstone, basalt, blackstone, quartz, prismarine... and Create's
+ * stones (asurine, crimsite, limestone, ochrum, scorchia, scoria, veridium) with all their cut, polished, brick and
+ * pillar forms (compatmixin.SiegeExplosionMixin).
  */
 public final class Masonry {
     private Masonry() {}
@@ -29,7 +30,7 @@ public final class Masonry {
     private static final String[] NOT = {"redstone", "glowstone", "lodestone", "stonecutter", "grindstone", "_ore",
             "button", "pressure_plate", "infested"};
 
-    /** One explosion's land multipliers by chunk: its rays ask for the same chunks many times. */
+    /** One explosion's survival chances by chunk: it asks for the same chunks many times. */
     private static Explosion cached;
     private static final Map<Long, Float> BY_CHUNK = new HashMap<>();
 
@@ -40,17 +41,17 @@ public final class Masonry {
         return false;
     }
 
-    /** The blast resistance multiplier of the block at pos (1 when it is no wall or its realm lacks the technology). */
-    public static float multiplier(Explosion explosion, ServerLevel level, BlockPos pos, BlockState state) {
-        if (!isWall(state)) return 1;
+    /** True if this wall block, which the blast would destroy, stays standing (its realm knows Fortified Masonry). */
+    public static boolean survives(Explosion explosion, ServerLevel level, BlockPos pos, BlockState state) {
+        if (!isWall(state)) return false;
         if (explosion != cached) {
             cached = explosion;
             BY_CHUNK.clear();
         }
-        return BY_CHUNK.computeIfAbsent(ChunkPos.asLong(pos), k -> {
+        float chance = BY_CHUNK.computeIfAbsent(ChunkPos.asLong(pos), k -> {
             ValorisData data = ValorisData.get(level.getServer());
-            return SiegeEvents.cityAt(data, level, pos)
-                    .map(c -> 1.0F + TechService.wallResistancePercent(c) / 100.0F).orElse(1.0F);
+            return SiegeEvents.cityAt(data, level, pos).map(c -> TechService.wallResistancePercent(c) / 100.0F).orElse(0.0F);
         });
+        return chance > 0 && level.random.nextFloat() < chance;
     }
 }

@@ -105,6 +105,7 @@ public final class Looting {
             Loot loot = e.getValue();
             if (now < loot.endTick() && data.byTeam(e.getKey()).isPresent()) continue;
             ACTIVE.remove(e.getKey());
+            data.byTeam(e.getKey()).ifPresent(city -> com.valoris.city.CityService.restoreBanner(server, city));
             for (UUID realm : loot.realms()) {
                 Realms.message(data, realm, Msg.text("The looting of " + loot.cityName() + " is over.", ChatFormatting.YELLOW));
             }

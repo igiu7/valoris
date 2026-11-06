@@ -196,8 +196,7 @@ public final class ConquestService {
                 + " as its new ruler.", ChatFormatting.GOLD);
         Msg.toTeam(city.teamId, Msg.text(name + " now rules " + city.name + " for the conqueror. "
                 + Msg.nameOf(server, oldRuler) + " and every resident stay in the city as its subjects.", ChatFormatting.GOLD));
-        Msg.toPlayer(server, target, Msg.text("You now rule the conquered city of " + city.name
-                + ". Place a new city banner with /valoris city banner.", ChatFormatting.GOLD));
+        Msg.toPlayer(server, target, Msg.text("You now rule the conquered city of " + city.name + ".", ChatFormatting.GOLD));
         Msg.ok(king, name + " was appointed ruler of " + city.name + ".");
     }
 
@@ -250,6 +249,7 @@ public final class ConquestService {
         if (c.state == ConquestState.AWAITING_RULER) throw Errors.of("You are waiting for the ruler's answer.");
         data.removeConquest(c.cityTeam);
         Looting.forgetWinners(c.cityTeam);
+        data.byTeam(c.cityTeam).ifPresent(city -> CityService.restoreBanner(server, city));
         Msg.news(server, "🕊️", "The " + Realms.title(data, c.attackerKingdom, c.attackerName) + " spared the city of "
                 + c.cityName + ". It is free again.", ChatFormatting.YELLOW);
         data.byTeam(c.cityTeam).ifPresent(city -> Msg.toPlayer(server, city.ruler,
@@ -322,6 +322,7 @@ public final class ConquestService {
     private static Kingdom annex(MinecraftServer server, ValorisData data, Conquest c, City city, Realm atk) {
         data.removeConquest(c.cityTeam);
         Looting.forgetWinners(c.cityTeam);
+        CityService.restoreBanner(server, city);
         Kingdom k = Realms.asKingdom(server, data, atk);
         KingdomService.dropCityDiplomacy(data, city);
         k.cities.add(city.teamId);
@@ -340,6 +341,7 @@ public final class ConquestService {
             if (data.byTeam(c.cityTeam).isEmpty() || Realms.byId(data, c.attackerKingdom).isEmpty()) {
                 data.removeConquest(c.cityTeam); // city or conquering kingdom is gone: the city stays independent
                 Looting.forgetWinners(c.cityTeam);
+                data.byTeam(c.cityTeam).ifPresent(city -> CityService.restoreBanner(server, city));
                 continue;
             }
             if (c.state == ConquestState.CHOOSING) {
@@ -349,6 +351,7 @@ public final class ConquestService {
                 } else if (now >= c.decideBy) {   // the conqueror never decided: the city goes free
                     data.removeConquest(c.cityTeam);
                     Looting.forgetWinners(c.cityTeam);
+                    data.byTeam(c.cityTeam).ifPresent(city -> CityService.restoreBanner(server, city));
                     Msg.news(server, "🕊️", "The " + Realms.title(data, c.attackerKingdom, c.attackerName)
                             + " did not decide the fate of " + c.cityName + " in time. The city is free again.",
                             ChatFormatting.YELLOW);

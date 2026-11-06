@@ -1,7 +1,5 @@
 package com.valoris.compatmixin;
 
-import java.util.Optional;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +19,7 @@ import net.minecraft.world.level.material.Fluids;
  * Siege Machines: missiles also destroy blocks in water and behind water. An explosion's rays lose strength on
  * every block by its blast resistance, and water has 100, so normally nothing under or behind water breaks.
  * Here water does not hold the blast back (a waterlogged block counts as the block alone), and the water itself
- * is never removed. Walls of a realm with Fortified Masonry hold the blast back more (war.Masonry).
+ * is never removed. Of the walls of a realm with Fortified Masonry a part stays standing (war.Masonry).
  */
 @Mixin(targets = "ru.magistu.siegemachines.entity.projectile.ExplosiveBasedExplosionDamageCalculator")
 public abstract class SiegeExplosionMixin {
@@ -39,19 +37,18 @@ public abstract class SiegeExplosionMixin {
         return Fluids.EMPTY.defaultFluidState();
     }
 
-    @Inject(method = "getBlockExplosionResistance", at = @At("RETURN"), cancellable = true)
-    private void valoris$masonry(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid,
-                                 CallbackInfoReturnable<Optional<Float>> cir) {
-        if (!(reader instanceof net.minecraft.server.level.ServerLevel level)) return;
-        Optional<Float> res = cir.getReturnValue();
-        if (res.isEmpty()) return;
-        float m = com.valoris.war.Masonry.multiplier(explosion, level, pos, state);
-        if (m != 1) cir.setReturnValue(Optional.of(res.get() * m));
-    }
-
     @Inject(method = "shouldBlockExplode", at = @At("HEAD"), cancellable = true)
     private void valoris$keepWater(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, float power,
                                    CallbackInfoReturnable<Boolean> cir) {
         if (state.getBlock() instanceof LiquidBlock) cir.setReturnValue(false);
+    }
+
+    @Inject(method = "shouldBlockExplode", at = @At("RETURN"), cancellable = true)
+    private void valoris$masonry(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, float power,
+                                 CallbackInfoReturnable<Boolean> cir) {
+        if (cir.getReturnValueZ() && reader instanceof net.minecraft.server.level.ServerLevel level
+                && com.valoris.war.Masonry.survives(explosion, level, pos, state)) {
+            cir.setReturnValue(false);
+        }
     }
 }

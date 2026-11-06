@@ -8,8 +8,8 @@
     "'starting': true = every city knows it from the start. x / y: column and row in the tree screen.",
     "claimLimit: the city may claim this many chunks once it knows the technology (the highest known value counts).",
     "researchSpeedPercent: research of the realm takes this much less time (Bureaucracy). cropGrowthPercent: plants on the",
-    "  realm's land grow this much faster (Crop Rotation). wallResistancePercent: stone blocks on the realm's land resist the",
-    "  blasts of siege machines this much more (Fortified Masonry). The highest known value of each counts. Nothing requires them.",
+    "  realm's land grow this much faster (Crop Rotation). wallResistancePercent: this percentage of the stone blocks on the",
+    "  realm's land that a siege machine's blast would destroy stays standing (Fortified Masonry). The highest known value of each counts. Nothing requires them.",
     "features: what the GUI lists under 'Unlocks' (Armory Table items of the technology are shown automatically).",
     "Unlock rules (matching items cannot be crafted until the city has that technology; '_' in ids is ignored):",
     "  item:<id>               one item, e.g. item:minecraft:iron_sword",
@@ -28,7 +28,7 @@
     "  maxBlockDamage / weight (per type, Epic Knights weapons): damage a parry stops (0 = cannot block) and the weight;",
     "  a parry works when a roll of 0-17 is above the weight."
   ],
-  "version": 16,
+  "version": 17,
   "eraNames": {
     "bronze": "Bronze Age",
     "iron": "Iron Age",
@@ -802,7 +802,7 @@
       "name": "Fortified Masonry",
       "era": "iron",
       "icon": "minecraft:stone_bricks",
-      "description": "Thick walls of dressed stone set in mortar: stone on the realm's land resists siege machines 25% more.",
+      "description": "Thick walls of dressed stone set in mortar: a quarter of the stone a siege machine would smash on the realm's land stays standing.",
       "x": 6,
       "y": 4,
       "requires": [
@@ -815,7 +815,7 @@
       },
       "researchMinutes": 960,
       "features": [
-        "Stone, bricks, deepslate, sandstone and the other stone blocks (Create's stones too) on the realm's land resist the blasts of siege machines 25% more"
+        "Stone, bricks, deepslate, sandstone and the other stone blocks (Create's stones too) on the realm's land: 25% fewer of them are destroyed by the blasts of siege machines"
       ],
       "wallResistancePercent": 25,
       "unlocks": []

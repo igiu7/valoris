@@ -8,30 +8,35 @@ import com.valoris.valoris2;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import com.valoris.plant.MedicinalHerbBushBlock;
+
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.animal.MushroomCow;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CocoaBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.MangrovePropaguleBlock;
+import net.minecraft.world.level.block.PitcherCropBlock;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.util.TriState;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.BonemealEvent;
-import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Food balance:
- * - bone meal does not exist in survival: it does nothing, cannot be crafted, picked up or kept (it vanishes);
+ * - bone meal does not grow crops or tree saplings (grass, flowers and the like still work); the composter makes it;
  * - thrown eggs never hatch chicks;
  * - a mooshroom gives stew only once every 20 minutes (config);
  * - suspicious stew no longer gives Regeneration.
@@ -45,36 +50,18 @@ public final class FoodRules {
 
     // ------------------------------------------------------------------ bone meal
 
-    private static boolean bonemeal(ItemStack stack) {
-        return Config.BAN_BONE_MEAL.get() && stack.is(Items.BONE_MEAL);
+    /** Crops (also of other mods), berry bushes, cocoa and tree saplings; grass, flowers and the like still take bone meal. */
+    public static boolean noBonemeal(BlockState state) {
+        Block b = state.getBlock();
+        return state.is(BlockTags.CROPS) || state.is(BlockTags.SAPLINGS) || b instanceof CropBlock || b instanceof StemBlock
+                || b instanceof SaplingBlock || b instanceof MangrovePropaguleBlock || b instanceof CocoaBlock
+                || b instanceof SweetBerryBushBlock || b instanceof PitcherCropBlock || b instanceof MedicinalHerbBushBlock;
     }
 
     @SubscribeEvent
     public static void onBonemeal(BonemealEvent event) {
-        if (Config.BAN_BONE_MEAL.get()) event.setCanceled(true);
-    }
-
-    @SubscribeEvent
-    public static void onItemJoin(EntityJoinLevelEvent event) {
-        if (!event.getLevel().isClientSide() && event.getEntity() instanceof ItemEntity item && bonemeal(item.getItem())) {
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPickup(ItemEntityPickupEvent.Pre event) {
-        if (bonemeal(event.getItemEntity().getItem()) && !event.getPlayer().isCreative()) event.setCanPickup(TriState.FALSE);
-    }
-
-    /** Bone meal that got into an inventory some other way (machines, chests) vanishes. */
-    @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 40 != 0) return;
-        if (!Config.BAN_BONE_MEAL.get() || player.isCreative() || player.isSpectator()) return;
-        Inventory inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            if (inv.getItem(i).is(Items.BONE_MEAL)) inv.setItem(i, ItemStack.EMPTY);
-        }
+        // not successful: nothing grows and the bone meal is not used up
+        if (Config.BAN_BONE_MEAL.get() && noBonemeal(event.getState())) event.setSuccessful(false);
     }
 
     // ------------------------------------------------------------------ eggs

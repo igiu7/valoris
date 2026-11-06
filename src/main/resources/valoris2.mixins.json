@@ -15,6 +15,8 @@
     "ChunkMapAccessor",
     "PlayerLeaveMessageMixin",
     "PartyTeamMixin",
+    "PartyTeamAccessor",
+    "AbstractTeamBaseAccessor",
     "SaplingBlockMixin",
     "BambooSaplingBlockMixin",
     "PressurePlateMixin",

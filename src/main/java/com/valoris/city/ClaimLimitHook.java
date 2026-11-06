@@ -36,7 +36,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
  * - a new chunk must touch the city's land (side by side); the chunk holding the city banner cannot be unclaimed,
  *   nor a chunk whose removal would cut the land in two,
  * - force-loading is disabled everywhere (0/0), so no chunks stay loaded and lag the server,
- * - waypoint sharing is off (waypoints are disabled on the client).
+ * - waypoint sharing is off (waypoints are disabled on the client),
+ * - PvP is always allowed, also on claimed land.
  */
 @EventBusSubscriber(modid = com.valoris.valoris2.MODID)
 public final class ClaimLimitHook {
@@ -190,6 +191,9 @@ public final class ClaimLimitHook {
         FTBChunksWorldConfig.WAYPOINT_SHARING_SERVER.set(false);
         FTBChunksWorldConfig.WAYPOINT_SHARING_PARTY.set(false);
         FTBChunksWorldConfig.WAYPOINT_SHARING_PLAYERS.set(false);
+        // PvP everywhere, city land included: no claim keeps its people safe from a fight
+        FTBChunksWorldConfig.PVP_MODE.set(dev.ftb.mods.ftbchunks.data.PvPMode.ALWAYS);
+        server.setPvpAllowed(true);
 
         CommandSourceStack src = server.createCommandSourceStack();
         int released = 0;

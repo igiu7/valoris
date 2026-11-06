@@ -383,6 +383,15 @@ public final class HubScreen extends ValorisFrame {
                 .click(() -> confirm("Leave " + s.cityName + "?", "You will lose access to the city's land.", Ui.RED,
                         () -> cmd("valoris resident leave")));
         if (s.founded) coupTile(p, cw, s);
+        if (s.founded && s.realmIsKingdom && !s.capital) {
+            tile(p, cw, "Coup in the city", "Seize " + s.cityName + ": kill its ruler before he kills you", Icons.BARRIER)
+                    .accent(Ui.RED)
+                    .click(() -> confirm("Start a coup against the ruler of " + s.cityName + "?", "You and "
+                            + s.cityRuler + " must stand in the same city of your kingdom. Only the people of " + s.cityName
+                            + " choose a side; you win by killing " + s.cityRuler + ", he wins by killing you or by "
+                            + "holding out. Leaving the city loses the coup. The " + s.rulerTitle + " stays as he is.",
+                            Ui.RED, () -> cmd("valoris coup start city")));
+        }
     }
 
     /** Coup d'etat against the ruler of the realm (coup.CoupService), for every subject. */

@@ -135,6 +135,7 @@ public class SiegeEvents {
         Optional<Siege> siege = data.siegeOfCity(city.get().teamId);
         if (siege.isEmpty() || siege.get().phase != SiegePhase.ACTIVE || !SiegeService.isAttacker(player, siege.get())) return;
         Siege s = siege.get();
+        if (!seesBanner(player, level, pos)) return; // no hitting it through a wall
 
         long now = level.getGameTime();
         Long last = LAST_HIT.get(player.getUUID());
@@ -160,6 +161,22 @@ public class SiegeEvents {
                         + s.bannerHits + " / " + needed + " hits)", ChatFormatting.RED));
             }
         }
+    }
+
+    /** Points of the banner (the rock, the hilt, the blade) of which one must be in the player's line of sight. */
+    private static final double[][] BANNER_POINTS = {{0.5, 0.3, 0.5}, {0.5, 0.55, 0.5}, {0.5, 0.85, 0.5},
+            {0.15, 0.3, 0.5}, {0.85, 0.3, 0.5}, {0.5, 0.3, 0.15}, {0.5, 0.3, 0.85}};
+
+    /** True if nothing solid stands between the player's eyes and the banner at pos. */
+    private static boolean seesBanner(ServerPlayer player, ServerLevel level, BlockPos pos) {
+        net.minecraft.world.phys.Vec3 eye = player.getEyePosition();
+        for (double[] p : BANNER_POINTS) {
+            net.minecraft.world.phys.Vec3 to = new net.minecraft.world.phys.Vec3(pos.getX() + p[0], pos.getY() + p[1], pos.getZ() + p[2]);
+            var hit = level.clip(new net.minecraft.world.level.ClipContext(eye, to, net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                    net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+            if (hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS || hit.getBlockPos().equals(pos)) return true;
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------ building

@@ -184,9 +184,20 @@ public final class SiegeService {
 
     // ------------------------------------------------------------ ticking (called every second)
 
+    private static boolean bannersChecked;
+
     public static void tick(MinecraftServer server) {
         ValorisData data = ValorisData.get(server);
         long now = server.overworld().getGameTime();
+        if (!bannersChecked) {
+            // a looting does not outlive a restart: banners destroyed in a siege whose city is free again come back
+            bannersChecked = true;
+            for (City c : List.copyOf(data.all())) {
+                if (c.founded && data.conquestOfCity(c.teamId).isEmpty() && data.siegeOfCity(c.teamId).isEmpty()) {
+                    CityService.restoreBanner(server, c);
+                }
+            }
+        }
 
         for (Siege s : List.copyOf(data.sieges())) {
             Optional<City> city = data.byTeam(s.cityTeam);

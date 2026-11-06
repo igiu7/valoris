@@ -55,8 +55,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * the two leaves the city (or the game) loses unless back within Config.COUP_RETURN_SECONDS - everyone sees the
  * countdown. A won coup: in an independent city the leader becomes its ruler; a kingdom changes hands whole - the
  * leader moves into the capital (which stays where it is) and rules it, so he is king of every city of the kingdom. A
- * city he ruled himself passes to its next resident (only if it has none does it become the capital instead). The
- * fallen ruler stays a resident of the capital.
+ * city he ruled himself passes to its next resident; if it has none, the two swap: the fallen king rules that city
+ * (still in the kingdom), otherwise the fallen ruler stays a resident of the capital.
+ * A resident of a city of a kingdom (not the capital) may also rise against the ruler of his city only: then only
+ * that city's people choose sides, and a won coup makes him its ruler and the fallen ruler a resident of it. One
+ * coup at a time in a kingdom, of either kind.
  */
 @EventBusSubscriber(modid = valoris2.MODID)
 public final class CoupService {
@@ -66,6 +69,7 @@ public final class CoupService {
 
     private static final class Coup {
         final UUID realm;
+        final UUID target;        // the city whose ruler is overthrown (coup in a city of a kingdom), else null
         final String realmTitle, rulerTitle;
         final UUID city;          // the city where it happens
         final UUID leader, ruler;
@@ -80,9 +84,10 @@ public final class CoupService {
         final int[] fallen = new int[3]; // players of each side (RULER, LEADER) who went down in the fight
         final ServerBossEvent bar = new ServerBossEvent(Component.empty(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
-        Coup(UUID realm, String realmTitle, String rulerTitle, UUID city, UUID leader, String leaderName, UUID ruler,
-             String rulerName, long now) {
+        Coup(UUID realm, UUID target, String realmTitle, String rulerTitle, UUID city, UUID leader, String leaderName,
+             UUID ruler, String rulerName, long now) {
             this.realm = realm;
+            this.target = target;
             this.realmTitle = realmTitle;
             this.rulerTitle = rulerTitle;
             this.city = city;
@@ -92,6 +97,11 @@ public final class CoupService {
             this.rulerName = rulerName;
             this.fightAt = now + Config.COUP_CHOICE_SECONDS.get() * 20L;
             this.endAt = fightAt + Config.COUP_MINUTES.get() * 1200L;
+        }
+
+        /** What the time between coups is kept for: the city of a coup in a city, else the realm. */
+        UUID cooldownKey() {
+            return target != null ? target : realm;
         }
     }
 
@@ -103,6 +113,21 @@ public final class CoupService {
         return SiegeEvents.cityAt(data, p.serverLevel(), p.blockPosition());
     }
 
+    /** The people of the coup: the city's for a coup in a city, the whole realm's otherwise. */
+    private static List<UUID> members(Realm realm, UUID target) {
+        if (target == null) return members(realm);
+        List<UUID> out = new ArrayList<>();
+        FTBTeamsAPI.api().getManager().getTeamByID(target).ifPresent(t -> out.addAll(t.getMembers()));
+        return out;
+    }
+
+    /** Whom the coup is against: the ruler of the city of a coup in a city (still one of the kingdom, not its capital), else the realm's leader. */
+    private static Optional<UUID> rulerOf(ValorisData data, Realm realm, UUID target) {
+        if (target == null) return Realms.leaderOf(data, realm);
+        return data.byTeam(target).filter(c -> realm.isKingdom() && realm.kingdom().cities.contains(c.teamId)
+                && !c.teamId.equals(realm.kingdom().capital)).map(c -> c.ruler);
+    }
+
     private static List<UUID> members(Realm realm) {
         List<UUID> out = new ArrayList<>();
         for (UUID city : Realms.citiesOf(realm)) {
@@ -111,17 +136,33 @@ public final class CoupService {
         return out;
     }
 
-    public static void start(ServerPlayer player) throws CommandSyntaxException {
+    /**
+     * A coup against the leader of the player's realm, or (inCity) against the ruler of his own city, which must be
+     * a city of a kingdom other than its capital.
+     */
+    public static void start(ServerPlayer player, boolean inCity) throws CommandSyntaxException {
         MinecraftServer server = player.getServer();
         ValorisData data = ValorisData.get(server);
         Realm realm = Realms.of(player).orElseThrow(() -> Errors.of("You are not a subject of a kingdom or a city."));
-        UUID rulerId = Realms.leaderOf(data, realm).orElseThrow(() -> Errors.of("Your realm has no ruler."));
-        if (rulerId.equals(player.getUUID())) throw Errors.of("You already rule the " + realm.title() + ".");
+        UUID target = null;
+        String coupTitle = realm.title(), leaderTitle = realm.leaderTitle();
+        if (inCity) {
+            City own = com.valoris.city.Roles.cityOfMember(player).orElseThrow(() -> Errors.of("You do not belong to a city."));
+            if (!realm.isKingdom()) throw Errors.of(own.name + " belongs to no kingdom: its ruler is the one a coup d'etat is against.");
+            if (own.teamId.equals(realm.kingdom().capital)) {
+                throw Errors.of("The ruler of the capital is the " + leaderTitle + ": rise against him with a coup d'etat.");
+            }
+            target = own.teamId;
+            coupTitle = "City of " + own.name;
+            leaderTitle = "Ruler";
+        }
+        UUID rulerId = rulerOf(data, realm, target).orElseThrow(() -> Errors.of("Your realm has no ruler."));
+        if (rulerId.equals(player.getUUID())) throw Errors.of("You already rule the " + coupTitle + ".");
         if (COUPS.containsKey(realm.id())) throw Errors.of("A coup is already under way in the " + realm.title() + ".");
         long now = server.overworld().getGameTime();
-        long allowed = data.lastCoups.getOrDefault(realm.id(), 0L) + Config.COUP_HOURS_BETWEEN.get() * 3_600_000L;
+        long allowed = data.lastCoups.getOrDefault(target != null ? target : realm.id(), 0L) + Config.COUP_HOURS_BETWEEN.get() * 3_600_000L;
         if (System.currentTimeMillis() < allowed) {
-            throw Errors.of("The " + realm.title() + " already had a coup d'etat today. The next one is possible in "
+            throw Errors.of("The " + coupTitle + " already had a coup d'etat today. The next one is possible in "
                     + com.valoris.moderation.Durations.format(allowed - System.currentTimeMillis()) + ".");
         }
         List<UUID> cities = Realms.citiesOf(realm);
@@ -135,32 +176,32 @@ public final class CoupService {
             throw Errors.of("No coup while the " + realm.title() + " loots or is looted.");
         }
         ServerPlayer ruler = server.getPlayerList().getPlayer(rulerId);
-        String leaderTitle = realm.leaderTitle();
         if (ruler == null) throw Errors.of("The " + leaderTitle + " is not here. A coup needs him in the same city as you.");
+        String against = leaderTitle;
         City here = cityAt(data, player).filter(c -> cities.contains(c.teamId))
-                .orElseThrow(() -> Errors.of("Stand in a city of the " + realm.title() + ", where the " + leaderTitle + " is."));
+                .orElseThrow(() -> Errors.of("Stand in a city of the " + realm.title() + ", where the " + against + " is."));
         if (ruler.level() != player.level() || cityAt(data, ruler).map(c -> !c.teamId.equals(here.teamId)).orElse(true)) {
             throw Errors.of("The " + leaderTitle + " must be in " + here.name + " with you.");
         }
 
-        Coup coup = new Coup(realm.id(), realm.title(), leaderTitle, here.teamId, player.getUUID(),
+        Coup coup = new Coup(realm.id(), target, coupTitle, leaderTitle, here.teamId, player.getUUID(),
                 player.getGameProfile().getName(), rulerId, ruler.getGameProfile().getName(), now);
-        for (UUID id : members(realm)) coup.sides.put(id, RULER);
+        for (UUID id : members(realm, target)) coup.sides.put(id, RULER);
         coup.sides.put(coup.leader, LEADER);
         coup.sides.put(coup.ruler, RULER);
         COUPS.put(realm.id(), coup);
-        coup.previousCoup = data.lastCoups.put(realm.id(), System.currentTimeMillis());
+        coup.previousCoup = data.lastCoups.put(coup.cooldownKey(), System.currentTimeMillis());
         data.setDirty();
 
         Msg.news(server, "🗡️", "COUP D'ETAT! " + coup.leaderName + " rises against the " + leaderTitle + " of the "
-                + realm.title() + ", " + coup.rulerName + ", in " + here.name + "!", ChatFormatting.DARK_PURPLE);
+                + coupTitle + ", " + coup.rulerName + ", in " + here.name + "!", ChatFormatting.DARK_PURPLE);
         int seconds = Config.COUP_CHOICE_SECONDS.get();
         for (UUID id : coup.sides.keySet()) {
             ServerPlayer p = server.getPlayerList().getPlayer(id);
             if (p == null) continue;
             coup.bar.addPlayer(p);
             boolean locked = id.equals(coup.leader) || id.equals(coup.ruler); // they see it too, their side is fixed
-            PacketDistributor.sendToPlayer(p, new CoupPayload(coup.leaderName, coup.rulerName, leaderTitle, realm.title(), seconds,
+            PacketDistributor.sendToPlayer(p, new CoupPayload(coup.leaderName, coup.rulerName, leaderTitle, coupTitle, seconds,
                     coup.sides.get(id), locked));
         }
         updateBar(server, coup, now);
@@ -213,8 +254,8 @@ public final class CoupService {
     private static void callOff(MinecraftServer server, Coup coup, String why) {
         COUPS.remove(coup.realm);
         ValorisData data = ValorisData.get(server);
-        if (coup.previousCoup == null) data.lastCoups.remove(coup.realm);
-        else data.lastCoups.put(coup.realm, coup.previousCoup);
+        if (coup.previousCoup == null) data.lastCoups.remove(coup.cooldownKey());
+        else data.lastCoups.put(coup.cooldownKey(), coup.previousCoup);
         data.setDirty();
         titles(server, coup, null, null);
         coup.bar.removeAllPlayers();
@@ -228,11 +269,11 @@ public final class CoupService {
      */
     private static boolean stillValid(MinecraftServer server, ValorisData data, Coup coup) {
         Optional<Realm> realm = Realms.byId(data, coup.realm);
-        if (realm.isEmpty() || !Realms.leaderOf(data, realm.get()).map(coup.ruler::equals).orElse(false)) {
+        if (realm.isEmpty() || !rulerOf(data, realm.get(), coup.target).map(coup.ruler::equals).orElse(false)) {
             callOff(server, coup, "The " + coup.realmTitle + " changed: the coup is called off.");
             return true;
         }
-        if (!members(realm.get()).contains(coup.leader)) {
+        if (!members(realm.get(), coup.target).contains(coup.leader)) {
             end(server, coup, RULER, coup.leaderName + " left the " + coup.realmTitle + ": the coup failed.");
             return true;
         }
@@ -393,12 +434,17 @@ public final class CoupService {
         ValorisData data = ValorisData.get(server);
         Realm realm = Realms.byId(data, coup.realm).orElseThrow(() -> Errors.of("the realm no longer exists"));
         GameProfile profile = new GameProfile(coup.leader, coup.leaderName);
+        if (coup.target != null) { // a coup in a city of the kingdom: only that city changes hands
+            take(server, data.byTeam(coup.target).orElseThrow(() -> Errors.of("the city no longer exists")), profile);
+            return;
+        }
         if (!realm.isKingdom()) {
             take(server, realm.city(), profile);
             return;
         }
         // a kingdom: the whole kingdom changes hands, its capital stays where it is. The leader moves into the capital
-        // (if he lives elsewhere) and rules it, so he is king; the fallen king stays there as a resident
+        // (if he lives elsewhere) and rules it, so he is king; the fallen king stays there as a resident (or takes
+        // over the leader's city if nobody else lives in it)
         Kingdom k = realm.kingdom();
         City capital = data.byTeam(k.capital).orElseThrow(() -> Errors.of("the kingdom has no capital"));
         PartyTeam capitalParty = CityService.partyOf(capital);
@@ -415,15 +461,10 @@ public final class CoupService {
                 Optional<UUID> heir = party.getMembers().stream().filter(id -> !id.equals(coup.leader))
                         .max(java.util.Comparator.comparingInt(id -> party.getRankForPlayer(id).getPower()));
                 if (heir.isEmpty()) {
-                    // nobody to leave it to (leaving would empty and delete the city): it becomes the capital instead
-                    City city = from;
-                    com.valoris.tech.TechService.moveResearch(data, capital, city);
-                    k.capital = city.teamId;
-                    data.touch();
-                    com.valoris.city.ClaimLimitHook.syncLimits(server, capital);
-                    com.valoris.city.ClaimLimitHook.syncLimits(server, city);
-                    Msg.toKingdom(k, Msg.text(coup.leaderName + " has no one to leave " + city.name
-                            + " to: it becomes the capital of the " + k.title() + ".", ChatFormatting.YELLOW));
+                    // nobody to leave it to (leaving would empty and delete the city): the fallen king takes it over
+                    swapRulers(server, data, capital, coup.ruler, from, coup.leader);
+                    Msg.toKingdom(k, Msg.text(coup.leaderName + " takes the capital, " + capital.name + "; "
+                            + coup.rulerName + " now rules " + from.name + ".", ChatFormatting.YELLOW));
                     return;
                 }
                 take(server, from, new GameProfile(heir.get(), Msg.nameOf(server, heir.get())));
@@ -444,6 +485,54 @@ public final class CoupService {
             data.touch();
         }
         take(server, capital, profile);
+    }
+
+    /**
+     * The ruler of the capital and the only resident (and ruler) of another city change places: each rules the other
+     * city. FTB Teams cannot do it by leaving and joining (a player is in one party at a time, and the last one to
+     * leave deletes the party), so both parties are changed directly; the other residents of the capital stay.
+     */
+    private static void swapRulers(MinecraftServer server, ValorisData data, City capital, UUID king, City city, UUID alone)
+            throws CommandSyntaxException {
+        PartyTeam a = CityService.partyOf(capital), b = CityService.partyOf(city);
+        if (!a.isOwner(king) || !b.isOwner(alone) || b.getMembers().size() != 1) throw Errors.of("the cities changed");
+        var manager = (dev.ftb.mods.ftbteams.data.TeamManagerImpl) FTBTeamsAPI.api().getManager();
+        var ranksA = ((com.valoris.mixin.AbstractTeamBaseAccessor) a).valoris$ranks();
+        var ranksB = ((com.valoris.mixin.AbstractTeamBaseAccessor) b).valoris$ranks();
+        ranksA.remove(king);
+        ranksA.put(alone, dev.ftb.mods.ftbteams.api.TeamRank.OWNER);
+        ((com.valoris.mixin.PartyTeamAccessor) a).valoris$setOwner(alone);
+        ranksB.remove(alone);
+        ranksB.put(king, dev.ftb.mods.ftbteams.api.TeamRank.OWNER);
+        ((com.valoris.mixin.PartyTeamAccessor) b).valoris$setOwner(king);
+        var personalKing = manager.getPersonalTeamForPlayerID(king);
+        var personalAlone = manager.getPersonalTeamForPlayerID(alone);
+        if (personalKing != null) {
+            personalKing.setEffectiveTeam(b);
+            personalKing.markDirty();
+        }
+        if (personalAlone != null) {
+            personalAlone.setEffectiveTeam(a);
+            personalAlone.markDirty();
+        }
+        a.markDirty();
+        b.markDirty();
+        manager.markDirty();
+        manager.syncToAll(a, b);
+
+        capital.members.remove(king);
+        capital.members.add(alone);
+        capital.ruler = alone;
+        city.members.remove(alone);
+        city.members.add(king);
+        city.ruler = king;
+        data.touch();
+        for (UUID id : new UUID[]{king, alone}) {
+            ServerPlayer p = server.getPlayerList().getPlayer(id);
+            if (p != null) server.getCommands().sendCommands(p);
+        }
+        com.valoris.city.ClaimLimitHook.syncLimits(server, capital);
+        com.valoris.city.ClaimLimitHook.syncLimits(server, city);
     }
 
     private static void take(MinecraftServer server, City city, GameProfile profile) throws CommandSyntaxException {

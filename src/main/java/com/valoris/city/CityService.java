@@ -429,6 +429,33 @@ public final class CityService {
         if (level.getBlockState(pos).is(ModBlocks.CITY_BANNER.get())) level.removeBlock(pos, false);
     }
 
+    /**
+     * Puts a destroyed city banner back (after the city's conquest is over, so no city stays without a banner and
+     * out of reach of sieges): on its old spot, or the first free spot above it. Loads the chunk if needed.
+     */
+    public static void restoreBanner(MinecraftServer server, City city) {
+        ServerLevel level = levelOf(server, city);
+        if (level == null || ValorisData.get(server).byTeam(city.teamId).isEmpty()) return;
+        BlockPos old = BlockPos.of(city.bannerPos);
+        level.getChunkAt(old); // loads it
+        if (level.getBlockState(old).is(ModBlocks.CITY_BANNER.get())) return;
+        BlockPos pos = old;
+        while (pos.getY() < level.getMaxBuildHeight() - 1 && pos.getY() - old.getY() < 64) {
+            BlockState here = level.getBlockState(pos);
+            if (here.isAir() || here.canBeReplaced()) break;
+            pos = pos.above();
+        }
+        if (!(level.getBlockState(pos).isAir() || level.getBlockState(pos).canBeReplaced())) {
+            com.valoris.valoris2.LOGGER.warn("Could not put back the city banner of {} at {}", city.name, old);
+            return;
+        }
+        level.setBlock(pos, ModBlocks.CITY_BANNER.get().defaultBlockState(), 3);
+        city.bannerPos = pos.asLong();
+        ValorisData.get(server).touch();
+        Msg.toTeam(city.teamId, Msg.text("The city banner of " + city.name + " stands again at " + pos.getX() + ", "
+                + pos.getY() + ", " + pos.getZ() + ".", ChatFormatting.GOLD));
+    }
+
     // ------------------------------------------------------------ FTB hooks
 
     /** The FTB team of a city disappeared (disband, or removed through FTB commands). */
