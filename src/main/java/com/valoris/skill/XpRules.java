@@ -262,8 +262,8 @@ public final class XpRules {
     /** XP for picking a bush by hand (sweet berries, medicinal herbs), 0 if it is not ready. */
     public static double picked(BlockState state) {
         Block block = state.getBlock();
-        if (block instanceof DeadMedicinalHerbBlock) return state.getValue(MedicinalHerbBushBlock.AGE) > 1 ? 15 : 0;
-        if (block instanceof MedicinalHerbBushBlock) return state.getValue(MedicinalHerbBushBlock.AGE) > 1 ? 12 : 0;
+        if (block instanceof DeadMedicinalHerbBlock) return state.getValue(MedicinalHerbBushBlock.AGE) == MedicinalHerbBushBlock.MAX_AGE ? 15 : 0;
+        if (block instanceof MedicinalHerbBushBlock) return state.getValue(MedicinalHerbBushBlock.AGE) == MedicinalHerbBushBlock.MAX_AGE ? 12 : 0;
         if (block instanceof net.minecraft.world.level.block.SweetBerryBushBlock) {
             return state.getValue(net.minecraft.world.level.block.SweetBerryBushBlock.AGE) > 1 ? SWEET_BERRY_HARVEST : 0;
         }

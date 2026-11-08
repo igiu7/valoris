@@ -28,7 +28,7 @@
     "  maxBlockDamage / weight (per type, Epic Knights weapons): damage a parry stops (0 = cannot block) and the weight;",
     "  a parry works when a roll of 0-17 is above the weight."
   ],
-  "version": 17,
+  "version": 18,
   "eraNames": {
     "bronze": "Bronze Age",
     "iron": "Iron Age",
@@ -153,7 +153,7 @@
         "blacksmith": 1,
         "miner": 3
       },
-      "researchMinutes": 270,
+      "researchMinutes": 225,
       "features": [
         "Bronze armor: 14 armor points for a full set",
         "Saddle and leather horse armor",
@@ -222,9 +222,9 @@
       ],
       "skills": {
         "blacksmith": 1,
-        "hunter": 3
+        "hunter": 2
       },
-      "researchMinutes": 180,
+      "researchMinutes": 150,
       "features": [
         "Scuta, hoplons, peltae, tureos and bronze shields"
       ],
@@ -255,7 +255,7 @@
         "miner": 3,
         "farmer": 3
       },
-      "researchMinutes": 390,
+      "researchMinutes": 330,
       "features": [
         "Catapult, ballista, siege ladder and battering ram",
         "Giant arrows for the ballista",
@@ -289,9 +289,9 @@
         "blacksmith": 4,
         "farmer": 8,
         "miner": 10,
-        "hunter": 8
+        "hunter": 4
       },
-      "researchMinutes": 540,
+      "researchMinutes": 465,
       "features": [
         "Bloomery: the only way to smelt iron",
         "91 armor decorations at the Armory Table",
@@ -407,9 +407,9 @@
         "blacksmith": 4,
         "farmer": 8,
         "miner": 11,
-        "hunter": 8
+        "hunter": 4
       },
-      "researchMinutes": 480,
+      "researchMinutes": 405,
       "features": [
         "Iron and golden pickaxe, axe, shovel and hoe",
         "Shears"
@@ -441,9 +441,9 @@
         "blacksmith": 4,
         "farmer": 9,
         "miner": 10,
-        "hunter": 8
+        "hunter": 4
       },
-      "researchMinutes": 360,
+      "researchMinutes": 300,
       "features": [
         "Research takes 10% less time (every city of the realm)"
       ],
@@ -465,9 +465,9 @@
         "blacksmith": 4,
         "farmer": 9,
         "miner": 11,
-        "hunter": 9
+        "hunter": 5
       },
-      "researchMinutes": 720,
+      "researchMinutes": 615,
       "features": [
         "Create's mechanisms: shafts, cogwheels, water wheels, belts, presses, mixers, millstones...",
         "Redstone: torches, repeaters, comparators, pistons, observers, hoppers, dispensers, levers, buttons, pressure plates, powered rails and more",
@@ -544,7 +544,7 @@
         "farmer": 12,
         "miner": 10
       },
-      "researchMinutes": 780,
+      "researchMinutes": 660,
       "features": [
         "Create Aeronautics ships (propellers are disabled)",
         "Sails pushed by the wind: catch it from behind, fight it head-on",
@@ -570,9 +570,9 @@
       "skills": {
         "blacksmith": 5,
         "miner": 10,
-        "hunter": 11
+        "hunter": 6
       },
-      "researchMinutes": 1020,
+      "researchMinutes": 870,
       "features": [
         "Iron (and golden, silver) weapons: a sword deals 6 damage",
         "Longbow and crossbow"
@@ -599,9 +599,9 @@
       "skills": {
         "blacksmith": 5,
         "miner": 12,
-        "hunter": 10
+        "hunter": 5
       },
-      "researchMinutes": 1200,
+      "researchMinutes": 1020,
       "features": [
         "Mail, lamellar and great helms: 17 armor points for a full set",
         "Iron and chainmail horse armor",
@@ -727,9 +727,9 @@
       ],
       "skills": {
         "blacksmith": 5,
-        "hunter": 12
+        "hunter": 6
       },
-      "researchMinutes": 720,
+      "researchMinutes": 615,
       "features": [
         "Bucklers, round, heater, kite and target shields",
         "The vanilla shield"
@@ -764,7 +764,7 @@
         "farmer": 11,
         "miner": 12
       },
-      "researchMinutes": 1200,
+      "researchMinutes": 1020,
       "features": [
         "Counterweight trebuchet"
       ],
@@ -788,9 +788,9 @@
         "blacksmith": 5,
         "farmer": 14,
         "miner": 10,
-        "hunter": 10
+        "hunter": 5
       },
-      "researchMinutes": 960,
+      "researchMinutes": 810,
       "features": [
         "Crops, bushes and other plants on the realm's land grow 10% faster (on top of the soil tier)"
       ],
@@ -813,7 +813,7 @@
         "farmer": 10,
         "miner": 14
       },
-      "researchMinutes": 960,
+      "researchMinutes": 810,
       "features": [
         "Stone, bricks, deepslate, sandstone and the other stone blocks (Create's stones too) on the realm's land: 25% fewer of them are destroyed by the blasts of siege machines"
       ],
@@ -840,9 +840,9 @@
         "blacksmith": 8,
         "farmer": 16,
         "miner": 18,
-        "hunter": 16
+        "hunter": 8
       },
-      "researchMinutes": 1200,
+      "researchMinutes": 1020,
       "features": [
         "Steel Furnace: the only way to make steel",
         "44 armor decorations at the Armory Table",
@@ -911,9 +911,9 @@
         "blacksmith": 8,
         "farmer": 16,
         "miner": 19,
-        "hunter": 16
+        "hunter": 8
       },
-      "researchMinutes": 1020,
+      "researchMinutes": 870,
       "features": [
         "Steel pickaxe, axe, shovel and hoe",
         "Diamond tools"
@@ -943,9 +943,9 @@
       "skills": {
         "blacksmith": 9,
         "miner": 17,
-        "hunter": 18
+        "hunter": 9
       },
-      "researchMinutes": 1380,
+      "researchMinutes": 1170,
       "features": [
         "Steel (and diamond) weapons: a sword deals 7 damage",
         "Heavy crossbow",
@@ -976,9 +976,9 @@
       "skills": {
         "blacksmith": 10,
         "miner": 19,
-        "hunter": 17
+        "hunter": 9
       },
-      "researchMinutes": 1560,
+      "researchMinutes": 1320,
       "features": [
         "Full plate: 20 armor points and 6 toughness for a full set",
         "Greenwich, cuirassier and munition armor, burgonets and morions",
@@ -1159,9 +1159,9 @@
       ],
       "skills": {
         "blacksmith": 9,
-        "hunter": 19
+        "hunter": 10
       },
-      "researchMinutes": 1020,
+      "researchMinutes": 870,
       "features": [
         "Tartsche, pavise, rondache and elliptical shields"
       ],
@@ -1191,7 +1191,7 @@
         "farmer": 18,
         "miner": 20
       },
-      "researchMinutes": 1560,
+      "researchMinutes": 1320,
       "features": [
         "Mortar and cannonballs"
       ],
@@ -1216,9 +1216,9 @@
         "blacksmith": 12,
         "farmer": 22,
         "miner": 24,
-        "hunter": 20
+        "hunter": 10
       },
-      "researchMinutes": 1560,
+      "researchMinutes": 1320,
       "features": [
         "Mechanical drill, saw, harvester, plough and roller",
         "Deployer, mechanical arm and mechanical crafter",
@@ -1267,9 +1267,9 @@
         "blacksmith": 11,
         "farmer": 20,
         "miner": 22,
-        "hunter": 21
+        "hunter": 11
       },
-      "researchMinutes": 1560,
+      "researchMinutes": 1320,
       "features": [
         "37 armor decorations at the Armory Table",
         "Firearms, the culverin and Automation can be researched",
@@ -1329,9 +1329,9 @@
       "skills": {
         "blacksmith": 12,
         "miner": 23,
-        "hunter": 25
+        "hunter": 13
       },
-      "researchMinutes": 1980,
+      "researchMinutes": 1680,
       "features": [
         "The musket and its ammunition"
       ],
@@ -1356,7 +1356,7 @@
         "farmer": 23,
         "miner": 25
       },
-      "researchMinutes": 2340,
+      "researchMinutes": 1995,
       "features": [
         "The culverin, a long-range cannon"
       ],
@@ -1399,9 +1399,9 @@
         "blacksmith": 4,
         "farmer": 12,
         "miner": 11,
-        "hunter": 10
+        "hunter": 5
       },
-      "researchMinutes": 780,
+      "researchMinutes": 660,
       "claimLimit": 81,
       "features": [
         "Claim limit: 81 chunks"
@@ -1423,9 +1423,9 @@
         "blacksmith": 7,
         "farmer": 19,
         "miner": 18,
-        "hunter": 17
+        "hunter": 9
       },
-      "researchMinutes": 960,
+      "researchMinutes": 810,
       "claimLimit": 100,
       "features": [
         "Claim limit: 100 chunks"
@@ -1447,9 +1447,9 @@
         "blacksmith": 11,
         "farmer": 25,
         "miner": 23,
-        "hunter": 23
+        "hunter": 12
       },
-      "researchMinutes": 1440,
+      "researchMinutes": 1230,
       "claimLimit": 128,
       "features": [
         "Claim limit: 128 chunks"

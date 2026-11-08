@@ -29,6 +29,7 @@ public final class WeaponBalance {
     /** WeaponType -> its own maxBlockDamage, weight, canBlock (1/0), to restore what the config no longer changes */
     private static final Map<Object, float[]> ORIGINAL = new IdentityHashMap<>();
     private static final String WEAPON_TYPE = "com.magistuarmory.item.WeaponType";
+    private static final String WEAPON_ITEM = "com.magistuarmory.item.MedievalWeaponItem";
 
     private WeaponBalance() {}
 
@@ -101,19 +102,22 @@ public final class WeaponBalance {
     }
 
     private static void applyBlocking() throws ReflectiveOperationException {
+        // only the weapon class of Epic Knights (its add-ons extend it) is looked into: listing the fields of every
+        // item would also touch armour classes with client-only fields (HumanoidModel), which on a server fails
+        // and floods the log with errors
+        Class<?> weaponClass;
+        try {
+            weaponClass = Class.forName(WEAPON_ITEM);
+        } catch (ClassNotFoundException e) {
+            return; // Epic Knights is not installed
+        }
+        Field typeField = weaponClass.getField("type");
+        if (!typeField.getType().getName().equals(WEAPON_TYPE)) return;
         Class<?> typeClass = null;
         Field block = null, heavy = null, can = null;
         for (Item item : BuiltInRegistries.ITEM) {
-            Object type = null;
-            for (Class<?> c = item.getClass(); c != null && c != Item.class && type == null; c = c.getSuperclass()) {
-                for (Field f : c.getDeclaredFields()) {
-                    if (f.getName().equals("type") && f.getType().getName().equals(WEAPON_TYPE)) {
-                        f.setAccessible(true);
-                        type = f.get(item);
-                        break;
-                    }
-                }
-            }
+            if (!weaponClass.isInstance(item)) continue;
+            Object type = typeField.get(item);
             if (type == null) continue;
             if (typeClass == null) {
                 typeClass = type.getClass();

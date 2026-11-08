@@ -85,10 +85,15 @@ public class SkillEvents {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer player)) return;
-        // the event fires for both hands; bushes are picked by the main hand (herbs only with an empty hand)
+        // the event fires for both hands; bushes are picked by the main hand, whatever it holds - except when the
+        // item is used instead: bone meal on a bush that is not ripe, or anything held while crouching
         if (event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) return;
         BlockState state = event.getLevel().getBlockState(event.getPos());
-        if (state.getBlock() instanceof com.valoris.plant.MedicinalHerbBushBlock && !player.getMainHandItem().isEmpty()) return;
+        net.minecraft.world.item.ItemStack held = player.getMainHandItem();
+        if (player.isSecondaryUseActive() && !(held.isEmpty() && player.getOffhandItem().isEmpty())) return;
+        if (held.is(net.minecraft.world.item.Items.BONE_MEAL)
+                && state.getBlock() instanceof net.minecraft.world.level.block.BonemealableBlock b
+                && b.isValidBonemealTarget(event.getLevel(), event.getPos(), state)) return;
         double xp = XpRules.picked(state);
         if (xp > 0) SkillService.addXp(player, Skill.FARMER, xp);
     }

@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -242,6 +243,22 @@ public final class Auth {
             ServerPlayer p = server.getPlayerList().getPlayer(e.getKey());
             if (p == null) continue;
             Pending pend = e.getValue();
+            if (p.isDeadOrDying()) {
+                // joined dead: the respawn screen would stay open (its messages wait for the login) and hide the
+                // chat, so /login or /discord could never be typed - respawn now, at the bed or world spawn
+                if (now - pend.since < 20) continue;
+                ServerPlayer alive = server.getPlayerList().respawn(p, false, Entity.RemovalReason.KILLED);
+                Pending fresh = new Pending(alive, pend.since);
+                fresh.attempts = pend.attempts;
+                fresh.passwordOk = pend.passwordOk;
+                PENDING.put(e.getKey(), fresh);
+                continue;
+            }
+            if (now - pend.since == 40) {
+                // a client may still show the respawn or start choice from before (it can only be answered after
+                // the login, and it hides the chat): close it; the start choice comes again after the login
+                net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(p, new com.valoris.net.RespawnGoPayload());
+            }
             boolean registered = Accounts.get(p.getGameProfile().getName()) != null;
             long timeout = (needsDiscord(p) ? Config.DISCORD_LINK_TIMEOUT.get() : Config.AUTH_TIMEOUT_SECONDS.get()) * 20L;
             if (now - pend.since > timeout) {

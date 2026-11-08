@@ -30,8 +30,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Grows like a sweet berry bush (4 stages, random ticks, bone meal) but does not prick. From stage 2 it can be
- * picked with an empty hand for medicinal herbs, and goes back to stage 1.
+ * Grows like a sweet berry bush (4 stages, random ticks, bone meal), a bit slower, and does not prick. Only when
+ * fully grown it can be picked for medicinal herbs, and goes back to stage 1.
  */
 public class MedicinalHerbBushBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<MedicinalHerbBushBlock> CODEC = simpleCodec(MedicinalHerbBushBlock::new);
@@ -79,7 +79,7 @@ public class MedicinalHerbBushBlock extends BushBlock implements BonemealableBlo
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         int age = state.getValue(AGE);
         if (age < MAX_AGE && level.getRawBrightness(pos.above(), 0) >= 9
-                && net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt(5) == 0)) {
+                && net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt(8) == 0)) {
             BlockState next = state.setValue(AGE, age + 1);
             level.setBlock(pos, next, 2);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(next));
@@ -98,7 +98,7 @@ public class MedicinalHerbBushBlock extends BushBlock implements BonemealableBlo
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         int age = state.getValue(AGE);
-        if (age <= 1) return super.useWithoutItem(state, level, pos, player, hit);
+        if (age < MAX_AGE) return super.useWithoutItem(state, level, pos, player, hit);
         int count = 1;
         popResource(level, pos, new ItemStack(product(), count));
         level.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F,

@@ -21,7 +21,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
  * Players cannot use any FTB Chunks / FTB Teams / FTB Library command (/ftbchunks, /chunks, /ftbteams, /ftblibrary...):
  * cities, residents and
  * claims are managed only through Valoris. The commands are hidden from players (no tab completion) and refused if
- * typed anyway; the server console keeps them. The FTB map, claim manager and team logic do not use these commands,
+ * typed anyway; the server console and operators keep them. The FTB map, claim manager and team logic do not use these commands,
  * so they keep working.
  */
 @EventBusSubscriber(modid = valoris2.MODID)
@@ -45,7 +45,7 @@ public class FtbTeamsGuard {
             if (node == null) continue;
             Predicate<CommandSourceStack> old = node.getRequirement();
             try {
-                requirement.set(node, (Predicate<CommandSourceStack>) src -> !src.isPlayer() && old.test(src));
+                requirement.set(node, (Predicate<CommandSourceStack>) src -> (!src.isPlayer() || src.hasPermission(2)) && old.test(src));
             } catch (ReflectiveOperationException | RuntimeException e) {
                 valoris2.LOGGER.warn("Cannot hide /{} from players", name, e);
             }
@@ -56,7 +56,7 @@ public class FtbTeamsGuard {
     @SubscribeEvent
     public static void onCommand(CommandEvent event) {
         CommandSourceStack source = event.getParseResults().getContext().getSource();
-        if (!(source.getEntity() instanceof ServerPlayer player)) return;
+        if (!(source.getEntity() instanceof ServerPlayer player) || source.hasPermission(2)) return; // operators may
 
         String input = event.getParseResults().getReader().getString().trim();
         if (input.startsWith("/")) input = input.substring(1);
