@@ -60,6 +60,11 @@ public class Config {
             .comment("After a city survives a siege it cannot be besieged again for this long")
             .defineInRange("siegeCooldownMinutes", 120, 0, 100000);
 
+    public static final ModConfigSpec.DoubleValue SIEGE_MINING_SPEED = BUILDER
+            .comment("Both sides on the besieged city's land mine with Mining Fatigue II, and this much of that speed on top",
+                    "(1.0 = plain Mining Fatigue II, 0.5 = twice as slow; Mining Fatigue III would be 0.03)")
+            .defineInRange("siegeMiningSpeed", 0.5, 0.01, 1.0);
+
     public static final ModConfigSpec.IntValue SIEGE_PLACE_SECONDS = BUILDER
             .comment("During an active siege both sides may place blocks in the besieged city, one block every this many",
                     "seconds per player (bystanders cannot build there at all). 0 = no limit")

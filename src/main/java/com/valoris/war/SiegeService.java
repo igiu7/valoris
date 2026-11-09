@@ -240,18 +240,49 @@ public final class SiegeService {
             }
         }
         SiegeAnnouncer.cleanBars(data);
+        endSlowdowns(server, now);
         Looting.tick(server);
         ConquestService.tick(server, data, now);
     }
 
-    /** Both sides standing on the besieged city's land get Mining Fatigue II while they are there. */
+    private static final net.minecraft.resources.ResourceLocation SIEGE_MINING =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(com.valoris.valoris2.MODID, "siege_mining");
+    /** players slowed down by a siege -> game time they were last seen on its land */
+    private static final java.util.Map<java.util.UUID, Long> SLOWED = new java.util.HashMap<>();
+
+    /**
+     * Both sides standing on the besieged city's land mine slower while they are there: Mining Fatigue II and
+     * Config.SIEGE_MINING_SPEED of that on top (a block break speed modifier, which the client knows too, so its
+     * mining keeps in step with the server's).
+     */
     private static void fatigueInside(MinecraftServer server, Siege s) {
+        long now = server.overworld().getGameTime();
+        double extra = Config.SIEGE_MINING_SPEED.get() - 1.0;
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             if (!isParticipant(p, s)) continue;
             ClaimedChunk chunk = FTBChunksAPI.api().getManager().getChunk(new ChunkDimPos(p));
             if (chunk == null || !chunk.getTeamData().getTeam().getId().equals(s.cityTeam)) continue;
             p.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 1, false, true, true));
+            var speed = p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.BLOCK_BREAK_SPEED);
+            if (speed != null) {
+                speed.addOrUpdateTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(SIEGE_MINING,
+                        extra, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+            }
+            SLOWED.put(p.getUUID(), now);
         }
+    }
+
+    /** The extra slowdown ends with the Mining Fatigue: once a player has not been on besieged land for 3 seconds. */
+    private static void endSlowdowns(MinecraftServer server, long now) {
+        SLOWED.entrySet().removeIf(e -> {
+            ServerPlayer p = server.getPlayerList().getPlayer(e.getKey());
+            if (p != null && now - e.getValue() < 60) return false;
+            if (p != null) {
+                var speed = p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.BLOCK_BREAK_SPEED);
+                if (speed != null) speed.removeModifier(SIEGE_MINING);
+            }
+            return true;
+        });
     }
 
     private static void countdown(ValorisData data, Siege s, long remainingSec, String prefix) {
@@ -365,8 +396,8 @@ public final class SiegeService {
         Conquest conquest = new Conquest(city.teamId, s.attackerKingdom, city.name, s.attackerName);
         conquest.decideBy = server.overworld().getGameTime() + Config.CONQUEST_DECISION_MINUTES.get() * TICKS_PER_MINUTE;
         data.addConquest(conquest);
-        // the city leaves its old kingdom (a fallen capital passes the crown on; the last city ends the kingdom)
-        data.kingdomById(s.defenderKingdom).ifPresent(k -> KingdomService.cityConquered(server, data, k, city));
+        // the city stays in its kingdom until the conqueror takes it (ConquestService.annex): spared or looted, it
+        // goes on belonging to it, and a kingdom whose only city fell does not end
         // everyone who won the siege takes part if the conqueror chooses to loot the city
         Looting.rememberWinners(city.teamId, winners);
         ConquestService.openMenu(server, data, conquest, "");

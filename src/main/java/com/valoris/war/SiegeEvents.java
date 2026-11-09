@@ -34,7 +34,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  * - the city banner can only be destroyed by the attackers during the active phase, by hitting it
  *   (Config siegeBannerHits, 10 by default; the hits of all attackers count together);
  * - in a city under an active siege only the two sides may place blocks (one every siegeBlockPlaceSeconds) and
- *   break them (both get Mining Fatigue II there), and siege machine explosions break walls;
+ *   break them (both get Mining Fatigue II and slower still there, see SiegeService.fatigueInside), and siege machine explosions break walls;
  * - explosions never destroy city land, except in a city under an active siege.
  * While a siege is active FTB Chunks protection of that city is switched off (see SiegeService), so these
  * handlers are the city's protection then: bystanders cannot touch anything there, and nobody pours fluids.
@@ -106,7 +106,7 @@ public class SiegeEvents {
             return;
         }
 
-        // in a city under an active siege only the two sides may break blocks (both with Mining Fatigue II)
+        // in a city under an active siege only the two sides may break blocks (both mine slowly, see SiegeService.fatigueInside)
         Optional<Siege> siege = activeSiegeAt(data, level, pos);
         if (siege.isPresent() && !SiegeService.isParticipant(player, siege.get()) && !player.isCreative()) {
             event.setCanceled(true);

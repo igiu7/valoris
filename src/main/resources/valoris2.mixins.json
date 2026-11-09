@@ -8,6 +8,8 @@
     "IngredientMixin",
     "MushroomBlockMixin",
     "BucketItemMixin",
+    "ShieldDisableMixin",
+    "GhostBlockMoveMixin",
     "ChunkTeamDataImplMixin",
     "SmithingMenuMixin",
     "TrackedEntityMixin",

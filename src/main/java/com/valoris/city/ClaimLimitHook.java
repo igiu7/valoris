@@ -33,7 +33,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
  * Valoris rules on top of FTB Chunks:
  * - a city claims at most {@link TechService#claimLimit} chunks (that is also the limit FTB shows in the claim manager),
  * - only the city ruler may claim or unclaim, players outside a city cannot claim at all,
- * - a new chunk must touch the city's land (side by side); the chunk holding the city banner cannot be unclaimed,
+ * - a new chunk must touch the city's land (side by side), and not another realm's land, diagonals too (BufferZone);
+ *   the chunk holding the city banner cannot be unclaimed,
  *   nor a chunk whose removal would cut the land in two,
  * - force-loading is disabled everywhere (0/0), so no chunks stay loaded and lag the server,
  * - waypoint sharing is off (waypoints are disabled on the client),
@@ -67,6 +68,10 @@ public final class ClaimLimitHook {
             }
             if (isPlayer(source) && !touchesOwnLand(teamData, chunk.getPos())) {
                 return CompoundEventResult.interruptFalse(ClaimResult.customProblem(ADJACENT_KEY));
+            }
+            if (isPlayer(source) && BufferZone.foreignNeighbour(ValorisData.get(server), chunk.getPos(),
+                    teamData.getTeam().getId()).isPresent()) {
+                return CompoundEventResult.interruptFalse(ClaimResult.customProblem(BufferZone.CLAIM_KEY));
             }
             return CompoundEventResult.pass();
         });

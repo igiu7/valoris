@@ -346,6 +346,11 @@ public final class KingdomService {
         boolean siege = data.sieges().stream().anyMatch(s -> s.isAttacking(k.id) || s.defenderKingdom.equals(k.id));
         if (siege) throw Errors.of("Your kingdom is involved in a siege.");
         if (com.valoris.war.Looting.involves(k.id)) throw Errors.of("Your kingdom is looting a city. Wait until the looting time is over.");
+        for (UUID c : k.cities) {
+            if (data.conquestOfCity(c).isPresent() || com.valoris.war.Looting.involves(c)) {
+                throw Errors.of("A city of your kingdom has fallen and awaits its conqueror, or is being looted.");
+            }
+        }
         Msg.news(server, "📜", "The " + k.title() + " has been dissolved by its " + k.rulerTitle + ".", ChatFormatting.GOLD);
         dissolve(ValorisData.get(server), k);
     }

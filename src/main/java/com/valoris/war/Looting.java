@@ -89,6 +89,11 @@ public final class Looting {
         return Realms.of(player).map(r -> loot.realms().contains(r.id())).orElse(false);
     }
 
+    /** The city is being looted. */
+    public static boolean isLooted(UUID cityTeam) {
+        return ACTIVE.containsKey(cityTeam);
+    }
+
     /** The city is being looted, or the realm is looting a city. */
     public static boolean involves(UUID cityOrRealm) {
         if (ACTIVE.containsKey(cityOrRealm)) return true;

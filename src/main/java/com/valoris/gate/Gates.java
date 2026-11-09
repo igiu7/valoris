@@ -386,12 +386,39 @@ public final class Gates extends SavedData {
         }
     }
 
+    /**
+     * The gate whose frame this block is: a block right next to the gate's closed shape (diagonals, in front and
+     * behind too). Null if it is none.
+     */
+    private Gate frameOf(ServerLevel level, BlockPos pos) {
+        for (BlockPos n : BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 1, 1))) {
+            Gate g = at(level, n);
+            if (g == null && isGate(level.getBlockState(n))) g = track(level, n.immutable());
+            if (g != null) return g;
+        }
+        return null;
+    }
+
+    /**
+     * Gates fall only by their hit points, and so does their frame: an explosion leaves both standing, and a siege
+     * machine's hit on the frame takes a hit point of the gate like a hit on the gate itself. Once the gate is
+     * destroyed its frame is a wall like any other.
+     */
     @SubscribeEvent
     public static void onExplosion(ExplosionEvent.Detonate event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
-        event.getAffectedBlocks().removeIf(p -> isGate(level.getBlockState(p))); // gates fall only by their hit points
-        if (!event.getExplosion().getClass().getName().equals(MISSILE_EXPLOSION)) return;
         Gates gates = get(level.getServer());
+        Set<Gate> framed = new LinkedHashSet<>();
+        event.getAffectedBlocks().removeIf(p -> {
+            BlockState s = level.getBlockState(p);
+            if (isGate(s)) return true;
+            if (s.isAir()) return false;
+            Gate g = gates.frameOf(level, p);
+            if (g == null) return false;
+            framed.add(g);
+            return true;
+        });
+        if (!event.getExplosion().getClass().getName().equals(MISSILE_EXPLOSION)) return;
         ValorisData data = ValorisData.get(level.getServer());
         BlockPos center = BlockPos.containing(event.getExplosion().center());
         Set<Gate> hit = new LinkedHashSet<>();
@@ -400,6 +427,10 @@ public final class Gates extends SavedData {
             if (SiegeEvents.activeSiegeAt(data, level, p).isEmpty()) continue;
             Gate g = gates.track(level, p.immutable());
             if (g != null) hit.add(g);
+        }
+        for (Gate g : framed) {
+            if (g.blocks.isEmpty() || !gates.gates.containsKey(g.id)) continue;
+            if (SiegeEvents.activeSiegeAt(data, level, BlockPos.of(g.blocks.iterator().next())).isPresent()) hit.add(g);
         }
         int max = Config.GATE_HITS.get();
         for (Gate g : hit) {

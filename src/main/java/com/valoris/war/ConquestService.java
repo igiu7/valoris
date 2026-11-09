@@ -35,9 +35,10 @@ import net.minecraft.server.level.ServerPlayer;
  * What happens after a city fell: a conquering king appoints a new ruler (a resident of the city or one of his
  * own) or forces the city to submit with its current ruler - both add the city to his kingdom; or he leaves the
  * city alone (it is free again). A conquered city is never destroyed: the winners loot it instead (see Looting).
- * The ruler of an independent city has no kingdom to add it to, so he can only leave it alone. A fallen capital has already left its kingdom
- * (SiegeService.captured, KingdomService.cityConquered): the crown passed to the ruler of another of its cities (or,
- * if it was the last one, the kingdom ended), and its old king may go on ruling it under the conqueror.
+ * The ruler of an independent city has no kingdom to add it to, so he can only leave it alone. The fallen city stays
+ * in its kingdom until the conqueror adds it to his own (annex, KingdomService.cityConquered): a fallen capital then
+ * passes the crown to the ruler of another of its cities (or, if it was the last one, the kingdom ends), and its old
+ * king may go on ruling it under the conqueror. A city left alone or looted stays in its kingdom.
  */
 public final class ConquestService {
     private ConquestService() {}
@@ -202,8 +203,8 @@ public final class ConquestService {
 
     /**
      * Option 2: the city is forced into the conquering kingdom and keeps its current ruler (he is not asked).
-     * If it was a kingdom's capital, that kingdom already fell when the city did (its other cities are free), so
-     * the old king goes on ruling his city as a city of the conqueror's kingdom.
+     * If it was a kingdom's capital, it leaves that kingdom (the crown passes on, see annex), and the old king goes
+     * on ruling his city as a city of the conqueror's kingdom.
      */
     public static void subjugate(ServerPlayer king) throws CommandSyntaxException {
         Conquest c = requireOwn(king);
@@ -241,7 +242,7 @@ public final class ConquestService {
         if (ruler != null) sendRequest(ruler, c, minutes * 60);
     }
 
-    /** Option 4: leave the city alone. It keeps its ruler and its land and is free (independent) again. */
+    /** Option 4: leave the city alone. It keeps its ruler, its land and its kingdom (or stays independent). */
     public static void release(ServerPlayer king) throws CommandSyntaxException {
         Conquest c = requireOwn(king);
         MinecraftServer server = king.getServer();
@@ -318,11 +319,15 @@ public final class ConquestService {
 
     // ------------------------------------------------------------ internals
 
-    /** The conquered city joins the conqueror; an independent conqueror becomes a kingdom for that. */
+    /**
+     * The conquered city joins the conqueror; an independent conqueror becomes a kingdom for that. Only now does
+     * it leave its old kingdom (a fallen capital passes the crown on; the last city ends the kingdom).
+     */
     private static Kingdom annex(MinecraftServer server, ValorisData data, Conquest c, City city, Realm atk) {
         data.removeConquest(c.cityTeam);
         Looting.forgetWinners(c.cityTeam);
         CityService.restoreBanner(server, city);
+        data.kingdomOfCity(city.teamId).ifPresent(old -> KingdomService.cityConquered(server, data, old, city));
         Kingdom k = Realms.asKingdom(server, data, atk);
         KingdomService.dropCityDiplomacy(data, city);
         k.cities.add(city.teamId);

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "key": {
+    "I": {
+      "tag": "c:ingots/bronze"
+    },
+    "S": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    " I ",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:stonecutter"
+  }
+}
