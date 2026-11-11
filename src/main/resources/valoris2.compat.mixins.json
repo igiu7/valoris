@@ -14,7 +14,9 @@
     "SiegeMachineShipMixin",
     "SiegeLadderSeatsMixin",
     "SiegeLadderSeatSaveMixin",
-    "CuffedRestrainMixin"
+    "CuffedRestrainMixin",
+    "CreateDrillOreMixin",
+    "CreateContraptionDrillOreMixin"
   ],
   "injectors": {
     "defaultRequire": 1

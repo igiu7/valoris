@@ -23,6 +23,7 @@ public final class CompatMixinPlugin implements IMixinConfigPlugin {
         if (targetClassName.startsWith("com.magistuarmory.")) return present("magistuarmory");
         if (targetClassName.startsWith("lekavar.lma.drinkbeer.")) return present("drinkbeer");
         if (targetClassName.startsWith("com.lazrproductions.cuffed.")) return present("cuffed_ported");
+        if (targetClassName.startsWith("com.simibubi.create.")) return present("create");
         return true;
     }
 

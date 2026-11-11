@@ -276,6 +276,10 @@ public class Config {
     public static final ModConfigSpec.BooleanValue NO_LAVA_POURING = BUILDER
             .comment("Lava can be picked up with a bucket, but not poured out into the world (a cauldron still works; except in creative)")
             .define("rules.noLavaPouring", true);
+    public static final ModConfigSpec.DoubleValue HUNGER_MULTIPLIER = BUILDER
+            .comment("Players get hungry this many times faster than in vanilla: every food exhaustion (sprinting, jumping,",
+                    "fighting, mining, swimming, being hurt...) is multiplied by it. 1.0 = vanilla")
+            .defineInRange("rules.hungerMultiplier", 1.5, 0.0, 10.0);
     public static final ModConfigSpec.BooleanValue CAMPFIRE_REST_ENABLED = BUILDER
             .comment("Being near a lit campfire with a full hunger bar (also while moving) slowly heals")
             .define("healing.campfireRest", true);

@@ -360,19 +360,23 @@ public final class CityService {
         Msg.ok(player, "You left the city of " + city.name + ".");
     }
 
-    /** Ruler hands the city to another resident. The capital cannot be transferred (use the crown). */
+    /** Ruler hands the city to another resident. A king handing over the capital hands over the crown with it. */
     public static void transfer(ServerPlayer ruler, ServerPlayer target) throws CommandSyntaxException {
         for (City c : Roles.cityOfMember(ruler).stream().toList()) com.valoris.coup.CoupService.checkNoCoup(ValorisData.get(ruler.getServer()), c);
         City city = requireFounded(ruler);
         ValorisData data = ValorisData.get(ruler.getServer());
         com.valoris.war.ConquestService.checkNotConquered(data, city);
-        if (data.kingdomOfCity(city.teamId).map(k -> k.capital.equals(city.teamId)).orElse(false)) {
-            throw Errors.of("This is a capital. Use /valoris kingdom crown or disband the kingdom first.");
+        if (target.getUUID().equals(ruler.getUUID())) throw Errors.of("You already rule this city.");
+        if (Roles.cityOfMember(target).filter(c -> c.teamId.equals(city.teamId)).isEmpty()) {
+            throw Errors.of("That player is not a resident of your city.");
         }
         partyOf(city).transferOwnership(ruler.createCommandSourceStack(), target.getGameProfile());
         city.ruler = target.getUUID();
         data.touch();
         Msg.ok(ruler, target.getGameProfile().getName() + " now rules " + city.name + ".");
+        data.kingdomOfCity(city.teamId).filter(k -> k.capital.equals(city.teamId)).ifPresent(k -> Msg.toKingdom(k, Msg.text(
+                target.getGameProfile().getName() + " of " + city.name + " is now the " + k.rulerTitle + " of the " + k.title() + ".",
+                ChatFormatting.GOLD)));
     }
 
     // ------------------------------------------------------------ disbanding
@@ -383,7 +387,7 @@ public final class CityService {
         ValorisData data = ValorisData.get(player.getServer());
         Optional<ValorisData.Kingdom> kingdom = data.kingdomOfCity(city.teamId);
         if (kingdom.isPresent() && kingdom.get().capital.equals(city.teamId)) {
-            throw Errors.of("You rule a kingdom. Disband the kingdom or transfer the crown first.");
+            throw Errors.of("You rule a kingdom. Disband the kingdom, transfer the city or pass the crown first.");
         }
         if (kingdom.isPresent()) {
             throw Errors.of("Your city belongs to the " + kingdom.get().title()
